@@ -32,8 +32,13 @@ A real open-source project is a collaborated work not only from a bunch of peopl
 I want to have some C dependencies in my code instead of rewriting everything in Julia. This would serve as an attempt to quickly make things work.
 
 Right now this seems to be a little bit difficult for me. I need to learn from experts. The tracing scheme in C is rewritten in Julia so I don't need to bother for now.
-Checkout [BinaryBuilder](https://juliapackaging.github.io/BinaryBuilder.jl/latest/#Project-flow-1) for more information.
+Checkout [BinaryBuilder](https://juliapackaging.github.io/BinaryBuilder.jl/latest/#Project-flow-1) for more information. A nice example is given in [this C package](https://github.com/jakubwro/SineWaves.jl).
 
+## Interoperability with Python
+
+In the current version of PyCall and PyJulia, there is already direct support for accessing Julia struct objects (noted as `jlwrap`). 
+
+As to avoid the cross-dependency hail on PyPlot, I split the original package into pure IO [SWMF](https://github.com/henry2004y/SWMF) and post-processing and plotting. This is also a nicer way of organizing larger code base.
 
 ## Issues
 
@@ -46,8 +51,6 @@ Precise control of colorbar position in Matplotlib is not an easy task. `axis(â€
 The current support of animation in Matplotlib is not good enough, especially for interactive plotting and scanning through multiple snapshots. The color range is constantly giving me headaches.
 
 The current wrapper over Matplotlib makes it difficult to modify the plots afterwards, which especially causes problems when dealing with time series snapshots. The colorbar is so hard to fix. The solution is, instead of using `level`, provide a range of points.
-
-In the roadmap of PyCall 2.0, there will direct support for accessing Julia objects. I hesitate to do it myself, so let's just wait for it to come.
 
 The support for a long string containing several filenames as inputs has been dropped. It should be substituted by an array of strings.
 
@@ -77,8 +80,6 @@ There is a unit package in Julia [unitful](https://github.com/PainterQubits/Unit
 I have encountered a very bad problem of corrupting binary *.vtu files. It turned out that the issue is the starting position of data is wrong because of the way I skip the header AUXDATA part. Sometimes the binary numbers may contain newline character that confuses the reader. It is now fixed. Later on the reading of the header part is completely rewritten to provide better support for a variety of Tecplot Ascii headers.
 
 I have already made a lot of mistakes by mixing the row-major and column-major codes. Explicitly list all the parts that require extra care!
-
-I have a new issue coming up with the interoperability with Python. I may need to split this package into pure IO and pure plotting to avoid the cross-dependency of Matplotlib. The idea is that PyPlot is only needed when I want to quickly scan through the data!
 
 As for the GUI development, GTK seems to be an ideal candidate.
 
