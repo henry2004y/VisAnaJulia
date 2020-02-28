@@ -1,9 +1,7 @@
 # Script for further analysis of simulation results.
+# Diamagnetic velocity, plasma beta
 #
 # Hongyang Zhou, hyzhou@umich.edu 10/01/2019
-
-using Pkg
-Pkg.activate("/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia")
 
 using VisAna, PyPlot, PyCall, Glob, Printf
 
@@ -163,18 +161,6 @@ Mid,zrange], levels=cont_levels)
    plt.savefig(saveDir*"/diamagnetic_$(i).png")
 end
 
-function vtk_auto_conversion(fnames::String, dir=".")
-
-   filenames = Vector{String}(undef,0)
-   filesfound = glob(fnames, dir)
-   filenames = vcat(filenames, filesfound)
-   for filename in filenames
-      head, data, connectivity = readtecdata(filename, false)
-      convertVTK(head, data, connectivity, filename[1:end-4])
-   end
-
-end
-
 #=
 filename = "box*outs";
 dir = "/Users/hyzhou/Ganymede/run_mercury_80s_newbox/GM";
@@ -186,11 +172,6 @@ dir = "/Users/hyzhou/Ganymede/run_mercury_80s_newbox/GM";
 #filename = "cut*.dat";
 #dir = "GM/IO2";
 #vtk_auto_conversion(filename, dir)
-
-
-using Pkg
-Pkg.activate("/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia");
-using VisAna, PyCall, PyPlot
 
 function y_by_cuts()
    np = pyimport("numpy");
