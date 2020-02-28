@@ -17,9 +17,9 @@ version = "1.0.6+1"
 
 [[CSV]]
 deps = ["CategoricalArrays", "DataFrames", "Dates", "FilePathsBase", "Mmap", "Parsers", "PooledArrays", "Tables", "Unicode", "WeakRefStrings"]
-git-tree-sha1 = "177e58c6965e6a0f544593b490c38a6c267bd8ce"
+git-tree-sha1 = "dd7861a31c6a2a9404186a80e5dec919a25b3abb"
 uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-version = "0.5.24"
+version = "0.5.25"
 
 [[CategoricalArrays]]
 deps = ["Compat", "DataAPI", "Future", "JSON", "Missings", "Printf", "Reexport", "Statistics", "Unicode"]
@@ -143,10 +143,10 @@ deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[GR]]
-deps = ["Base64", "DelimitedFiles", "LinearAlgebra", "Printf", "Random", "Serialization", "Sockets", "Test"]
-git-tree-sha1 = "10633436bc2fc836347bda5073b7b6f06dcdc5e6"
+deps = ["Base64", "DelimitedFiles", "LinearAlgebra", "Printf", "Random", "Serialization", "Sockets", "Test", "UUIDs"]
+git-tree-sha1 = "41dd1395d4dc559f1c2cb558cba784ef37b561fe"
 uuid = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-version = "0.46.0"
+version = "0.47.0"
 
 [[GeometryTypes]]
 deps = ["ColorTypes", "FixedPointNumbers", "LinearAlgebra", "StaticArrays"]
@@ -188,10 +188,9 @@ uuid = "c1c5ebd0-6772-5130-a774-d5fcae4a789d"
 version = "3.100.0+0"
 
 [[LaTeXStrings]]
-deps = ["Compat"]
-git-tree-sha1 = "7ab9b8788cfab2bdde22adf9004bda7ad9954b6c"
+git-tree-sha1 = "de44b395389b84fd681394d4e8d39ef14e3a2ea8"
 uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
-version = "1.0.3"
+version = "1.1.0"
 
 [[LibGit2]]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
@@ -295,9 +294,9 @@ version = "0.6.3"
 
 [[Plots]]
 deps = ["Base64", "Contour", "Dates", "FFMPEG", "FixedPointNumbers", "GR", "GeometryTypes", "JSON", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "Printf", "REPL", "Random", "RecipesBase", "Reexport", "Requires", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs"]
-git-tree-sha1 = "5655c2e4d1296448afbec71a1b1c8716c83420cc"
+git-tree-sha1 = "305a6ceea7c6bf063fce224e4bcc0e0e6ce10ced"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "0.29.2"
+version = "0.29.3"
 
 [[PooledArrays]]
 deps = ["DataAPI"]
@@ -351,7 +350,7 @@ uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [[SWMF]]
 deps = ["Glob", "Printf", "WriteVTK"]
-git-tree-sha1 = "116c09146605ddf9456669f8f053f827e4282543"
+git-tree-sha1 = "2c11d81329dd4d67378ab27bd5ee1b3f8a3c255d"
 repo-rev = "master"
 repo-url = "https://github.com/henry2004y/SWMF.git"
 uuid = "e74ebddf-6ac1-4047-a0e5-c32c99e57753"
