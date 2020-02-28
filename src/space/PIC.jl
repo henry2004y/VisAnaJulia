@@ -8,7 +8,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 02/06/2020
 
-using SWMF, PyPlot
+using SWMF, VisAna, PyPlot
 
 # For precise colorbar control
 using PyCall
