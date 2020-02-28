@@ -3,7 +3,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 01/30/2020
 
-using VisAna, PyPlot, Printf, LinearAlgebra, Statistics
+using SWMF, VisAna, PyPlot, Printf, LinearAlgebra, Statistics
 # For precise colorbar control
 using PyCall
 axes_grid1 = pyimport("mpl_toolkits.axes_grid1")
@@ -283,10 +283,16 @@ function dist_plot(pType='e')
 
    # Electron
    if pType == 'e'
+      #=
       region[:,1] = [-1.950, -1.945, -0.08, 0.08, -0.10, -0.06]
       region[:,2] = [-1.915, -1.910, -0.08, 0.08, -0.10, -0.06]
       region[:,3] = [-1.905, -1.900, -0.08, 0.08, -0.10, -0.06]
       region[:,4] = [-1.895, -1.890, -0.08, 0.08, -0.10, -0.06]
+      =#
+      region[:,1] = [-1.930, -1.925, -0.08, 0.08, -0.30, -0.26]
+      region[:,2] = [-1.930, -1.925, -0.08, 0.08, -0.20, -0.16]
+      region[:,3] = [-1.930, -1.925, -0.08, 0.08, -0.10, -0.06]
+      region[:,4] = [-1.930, -1.925, -0.08, 0.08,  0.00,  0.04]
 
       head, data = readdata(fnameE, dir=dir)
 
@@ -316,10 +322,16 @@ function dist_plot(pType='e')
 
       binRange = binRangeE
    elseif pType == 'i'
+      #=
       region[:,1] = [-1.865, -1.855, -0.08, 0.08, -0.29, -0.25]
       region[:,2] = [-1.910, -1.900, -0.08, 0.08, 0.11, 0.15]
       region[:,3] = [-1.970, -1.960, -0.08, 0.08, -0.10, -0.06]
       region[:,4] = [-1.850, -1.840, -0.08, 0.08, -0.10, -0.06]
+      =#
+      region[:,1] = [-1.930, -1.920, -0.08, 0.08, -0.30, -0.26]
+      region[:,2] = [-1.930, -1.920, -0.08, 0.08, -0.20, -0.16]
+      region[:,3] = [-1.930, -1.920, -0.08, 0.08, -0.10, -0.06]
+      region[:,4] = [-1.930, -1.920, -0.08, 0.08,  0.00,  0.04]
 
       head, data = readdata(fnameI, dir=dir)
 
@@ -476,8 +488,8 @@ function dist_plot(pType='e')
 end
 
 function show_box_region()
-   dir = "/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia"
-   #dir = "/Users/hyzhou/"
+   #dir = "/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia"
+   dir = "/Users/hyzhou/"
    fnameE = "cut_particles0_region0_1_t00001640_n00020369.out"
    fnameI = "cut_particles1_region0_2_t00001640_n00020369.out"
 
@@ -501,15 +513,27 @@ function show_box_region()
    plt.set_cmap("seismic")
 
    region = Array{Float32,2}(undef,6,8)
+   #=
    region[:,1] = [-1.950, -1.945, -0.08, 0.08, -0.10, -0.06]
    region[:,2] = [-1.915, -1.910, -0.08, 0.08, -0.10, -0.06]
    region[:,3] = [-1.905, -1.900, -0.08, 0.08, -0.10, -0.06]
    region[:,4] = [-1.895, -1.890, -0.08, 0.08, -0.10, -0.06]
+   =#
+   region[:,1] = [-1.930, -1.925, -0.08, 0.08, -0.30, -0.26]
+   region[:,2] = [-1.930, -1.925, -0.08, 0.08, -0.20, -0.16]
+   region[:,3] = [-1.930, -1.925, -0.08, 0.08, -0.10, -0.06]
+   region[:,4] = [-1.930, -1.925, -0.08, 0.08,  0.00,  0.04]
 
+   #=
    region[:,5] = [-1.865, -1.855, -0.08, 0.08, -0.29, -0.25]
    region[:,6] = [-1.910, -1.900, -0.08, 0.08, 0.11, 0.15]
    region[:,7] = [-1.970, -1.960, -0.08, 0.08, -0.10, -0.06]
    region[:,8] = [-1.850, -1.840, -0.08, 0.08, -0.10, -0.06]
+   =#
+   region[:,5] = [-1.930, -1.920, -0.08, 0.08, -0.30, -0.26]
+   region[:,6] = [-1.930, -1.920, -0.08, 0.08, -0.20, -0.16]
+   region[:,7] = [-1.930, -1.920, -0.08, 0.08, -0.10, -0.06]
+   region[:,8] = [-1.930, -1.920, -0.08, 0.08,  0.00,  0.04]
 
    c = ax.contourf(Z,X,Ex./1e3, 100, norm=matplotlib.colors.DivergingNorm(0),
       vmin=-12e1, vmax=12e1)
@@ -634,6 +658,6 @@ xL, yL, zL = 0.008, 0.2, 0.03 # box length in x,y,z
 @time plotExCut(fnameField, region, xC,yC,zC,xL,yL,zL, dir=dir)
 =#
 
-#ax = dist_plot('i')
+ax = dist_plot('i')
 #ux, uy, uz = HF_velocity()
 show_box_region() # horizontal
