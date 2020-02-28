@@ -77,7 +77,7 @@ Plot the variable from SWMF output.
 Right now this can only deal with 2D plots or 3D cuts. Full 3D plots may be
 supported in the future.
 """
-function plotdata(data::Data, head::Dict, func::String; cut="",
+function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
    plotmode="contbar", plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1,
    density=1.0, cutPlaneIndex=1, multifigure=true, getrangeOnly=false, level=0,
    verbose=false)
@@ -598,7 +598,7 @@ end
 
 Get 2D plane cut data of 3D box data.
 """
-function cutdata(data::Data, head::Dict, var::String;
+function cutdata(data::Data, head::Dict, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], cut=' ', cutPlaneIndex=1)
 
    x,w = data.x, data.w
@@ -639,7 +639,7 @@ end
 
 2D plane cut contourf of 3D box data.
 """
-function cutplot(data::Data, head::Dict, var::String;
+function cutplot(data::Data, head::Dict, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
    plotinterval=0.1, density=1.0, cutPlaneIndex=1,level=20)
 
@@ -695,7 +695,7 @@ end
 Plot streamlines on 2D slices of 3D box data. Variable string must be separated
 with `;`. Tranposes aree needed because of `meshgrid` and `ndgrid` conversion.
 """
-function streamslice(data::Data, head::Dict, var::String;
+function streamslice(data::Data, head::Dict, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
    plotinterval=0.1, density=1.0, cutPlaneIndex=1, color="w")
 
@@ -762,7 +762,7 @@ end
 
 Wrapper over the plot function in matplotlib.
 """
-function plot(data::Data, head::Dict, var::String; kwargs...)
+function plot(data::Data, head::Dict, var::AbstractString; kwargs...)
    x,w = data.x, data.w
    VarIndex_ = findfirst(x->x==var,head[:wnames])
 
@@ -776,7 +776,7 @@ end
 
 Wrapper over the scatter function in matplotlib.
 """
-function scatter(data::Data, head::Dict, var::String; kwargs...)
+function scatter(data::Data, head::Dict, var::AbstractString; kwargs...)
    x,w = data.x, data.w
    VarIndex_ = findfirst(x->x==var,head[:wnames])
 
@@ -790,7 +790,7 @@ end
 
 Wrapper over the contour function in matplotlib.
 """
-function contour(data::Data, head::Dict, var::String, levels=0;
+function contour(data::Data, head::Dict, var::AbstractString, levels=0;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
    xi, yi, wi = getdata(data, head, var, plotrange, plotinterval)
@@ -809,7 +809,7 @@ end
 
 Wrapper over the contourf function in matplotlib.
 """
-function contourf(data::Data, head::Dict, var::String, levels=0;
+function contourf(data::Data, head::Dict, var::AbstractString, levels=0;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
    xi, yi, wi = getdata(data, head, var, plotrange, plotinterval)
@@ -828,9 +828,8 @@ end
 
 Wrapper over the tricontourf function in matplotlib.
 """
-function tricontourf(data::Data, head::Dict, var::String;
-   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1,
-   kwargs=Dict())
+function tricontourf(data::Data, head::Dict, var::AbstractString;
+   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
    x = data.x
    w = data.w
@@ -860,7 +859,7 @@ end
 
 Wrapper over the plot_trisurf function in matplotlib.
 """
-function plot_trisurf(data::Data, head::Dict, var::String;
+function plot_trisurf(data::Data, head::Dict, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], kwargs=Dict())
 
    x = data.x
@@ -891,7 +890,7 @@ end
 
 Wrapper over the plot_surface function in matplotlib.
 """
-function plot_surface(data::Data, head::Dict, var::String;
+function plot_surface(data::Data, head::Dict, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1,
    kwargs=Dict())
 
@@ -908,7 +907,7 @@ end
 Wrapper over the streamplot function in matplotlib. Streamplot does not have
 **kwargs in the API.
 """
-function streamplot(data::Data, head::Dict, var::String;
+function streamplot(data::Data, head::Dict, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, density=1.0, color="")
 
    x, w = data.x, data.w
@@ -1045,13 +1044,13 @@ Generate animations from data. This is basically calling plotdata function for
 multiple snapshots. The main issue here is to determine the colorbar/axis range
 in advance to avoid any jump in the movie.
 """
-function animatedata(filelist::FileList,func::String;
+function animatedata(filelist::FileList,func::AbstractString;
    imin=1, imax=1, cut="", plotmode="contbar", plotrange=[-Inf,Inf,-Inf,Inf],
    plotinterval=0.1, verbose=true)
 end
 
 
-function animate(i,filelist)
+function animate(i, filelist)
    clf()
    fhead, d, flist = readdata(filelist.name,verbose=false,npict=i+1)
    plotdata(d[1],fhead[1],"p",plotmode="contbar")
@@ -1060,7 +1059,7 @@ function animate(i,filelist)
 end
 
 
-function get_var(data::Data, head::Dict, var::String)
+function get_var(data::Data, head::Dict, var::AbstractString)
    VarIndex_ = findfirst(x->x==var,head[:wnames])
 
    ndim = head[:ndim]
@@ -1074,7 +1073,7 @@ function get_var(data::Data, head::Dict, var::String)
    w
 end
 
-function get_vars(data::Data, head::Dict, Names::Vector{String})
+function get_vars(data::Data, head::Dict, Names::Vector{AbstractString})
 
    dict = Dict()
    for name in Names
