@@ -10,7 +10,7 @@ using VisAna, PyPlot, PyCall, Glob, Printf
 include("constants.jl")
 
 """Series of contour plots from box output."""
-function plot_contour_from_box(filename::String, dir::String=".")
+function plot_contour_from_box(filename::String, dir=".")
 
    filehead, data, filelist = readdata(filename, dir=dir, verbose=false);
    npict = filelist[1].npictinfiles
@@ -36,7 +36,7 @@ function plot_contour_from_box(filename::String, dir::String=".")
 end
 
 """Series of contour plots from cuts."""
-function plot_contour_from_cuts(filename::String, dir::String=".")
+function plot_contour_from_cuts(filename::String, dir=".")
 
    filehead, data, filelist = readdata(filename, dir=dir);
    npict = filelist[1].npictinfiles
@@ -67,8 +67,7 @@ Calculate diamagnetic velocity from outputs.
 
 nType = 1 is Hall MHD, nType = 2 is PIC.
 """
-function get_diamagnetic_velocity(filename::String, filedir::String=".",
-   nType::Int=1)
+function get_diamagnetic_velocity(filename::String, filedir=".", nType=1)
 
    saveDir = "ycuts"
    mkdir(saveDir)
@@ -93,7 +92,7 @@ function get_diamagnetic_velocity(filename::String, filedir::String=".",
 
 end
 
-function processing(filehead::Dict, data::Data, saveDir::String, nType::Int=1)
+function processing(filehead::Dict, data::Data, saveDir::String, nType=1)
 
    np = pyimport("numpy")
 
@@ -153,7 +152,7 @@ function processing(filehead::Dict, data::Data, saveDir::String, nType::Int=1)
    cont_levels = range(0.0, 10000.0, length=50)
    c = ax.contourf(x[xrange,yMid,zrange], z[xrange,yMid,zrange], vMag[xrange,y\
 Mid,zrange], levels=cont_levels)
-   fig.colorbar(c, ax=ax, ticks=range(0.0, 10000.0, step=1000.0)) 
+   fig.colorbar(c, ax=ax, ticks=range(0.0, 10000.0, step=1000.0))
    xlabel("x"); ylabel("z")
    title(L"$\mathbf{B}\times \nabla P/(neB^2)$"*", t=$(i)")
 
@@ -164,7 +163,7 @@ Mid,zrange], levels=cont_levels)
    plt.savefig(saveDir*"/diamagnetic_$(i).png")
 end
 
-function vtk_auto_conversion(fnames::String, dir::String=".")
+function vtk_auto_conversion(fnames::String, dir=".")
 
    filenames = Vector{String}(undef,0)
    filesfound = glob(fnames, dir)

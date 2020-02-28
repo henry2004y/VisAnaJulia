@@ -21,7 +21,7 @@ Plot information from log file.
 - `plotmode::String`: (optional) type of plotting ["line","scatter"].
 - `plotrange::Vector`: (optional) range of plotting.
 """
-function plotlogdata(data::Data, head::Dict, func::String;
+function plotlogdata(data::Data, head::Dict, func::AbstractString;
    plotmode="line", plotrange=[-Inf,Inf] )
 
    vars     = split(func)

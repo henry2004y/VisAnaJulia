@@ -13,7 +13,7 @@ export test_dipole
 For a position `x`, `y` in units of planetary radius, return the strength of the
 dipole magnetic field in nT.
 """
-function b_mag(x::AbstractFloat, y::AbstractFloat)
+function b_mag(x, y)
 	r = @. √(x^2 + y^2)
 	cosy = y./r
 	B = @. 30400. * sqrt(1+3*cosy^2)/r^3
@@ -55,7 +55,7 @@ end
 For a starting X, Y point return x and y vectors that trace the dipole field
 line that passes through the given point.
 """
-function b_line(x::AbstractFloat, y::AbstractFloat; npoints=30)
+function b_line(x, y; npoints=30)
 	r = sqrt(x^2 + y^2)
 	try
 		theta = atan(x/y)

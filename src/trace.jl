@@ -38,15 +38,14 @@ end
 
 Check to see if we should break out of an integration.
 """
-function DoBreak(iloc::Int, jloc::Int, iSize::Int, jSize::Int)
+function DoBreak(iloc, jloc, iSize, jSize)
    ibreak = false
    if iloc ≥ iSize-1 || jloc ≥ jSize-1; ibreak = true end
    if iloc < 0 || jloc < 0; ibreak = true end
    return ibreak
 end
 
-function DoBreak(iloc::Int, jloc::Int, kloc::Int, iSize::Int, jSize::Int,
-   kSize::Int)
+function DoBreak(iloc, jloc, kloc, iSize, jSize, kSize)
    ibreak = false
    if iloc ≥ iSize-1 || jloc ≥ jSize-1 || kloc ≥ kSize-1; ibreak = true end
    if iloc < 0 || jloc < 0 || kloc < 0; ibreak = true end
@@ -54,17 +53,17 @@ function DoBreak(iloc::Int, jloc::Int, kloc::Int, iSize::Int, jSize::Int,
 end
 
 """Create unit vectors of field."""
-function make_unit(iSize::Int, jSize::Int, ux, uy)
+function make_unit(iSize, jSize, ux, uy)
    fx, fy = similar(ux), similar(uy)
    @inbounds for i = 1:iSize*jSize
       magnitude = sqrt(ux[i]^2 + uy[i]^2)
       fx[i] = ux[i] / magnitude
       fy[i] = uy[i] / magnitude
    end
-   return fx,fy
+   return fx, fy
 end
 
-function make_unit(iSize::Int, jSize::Int, kSize::Int, ux, uy, uz)
+function make_unit(iSize, jSize, kSize, ux, uy, uz)
    fx, fy, fz = similar(ux), similar(uy), similar(uz)
    @inbounds for i = 1:iSize*jSize*kSize
       magnitude = sqrt(ux[i]^2 + uy[i]^2 + uz[i]^2)
@@ -72,7 +71,7 @@ function make_unit(iSize::Int, jSize::Int, kSize::Int, ux, uy, uz)
       fy[i] = uy[i] / magnitude
       fx[i] = uz[i] / magntitude
    end
-   return fx,fy,fz
+   return fx, fy, fz
 end
 
 """
@@ -100,8 +99,8 @@ Simple 2D tracing using Euler's method. Super fast but not super accurate.
 - `ux::Array{Float64,2},uy::Array{Float64,2}`: field to trace through.
 - `x::Vector{Float64},y::Vector{Float64}`: x, y of result stream.
 """
-function Euler!(iSize::Int, jSize::Int, maxstep::Int, ds,
-   xstart, ystart, xGrid, yGrid, ux, uy, x, y)
+function Euler!(iSize, jSize, maxstep, ds, xstart, ystart, xGrid, yGrid, ux, uy,
+   x, y)
 
    # Get starting points in normalized/array coordinates
    dx = xGrid[2] - xGrid[1]
@@ -163,8 +162,8 @@ Simple 3D tracing using Euler's method.
 - `ux::Array{Float64,2},uy::Array{Float64,2},uz::Array{Float64,2}`: field to trace through.
 - `x::Vector{Float64},y::Vector{Float64},z::Vector{Float64}`: x, y, z of result stream.
 """
-function Euler!(iSize::Int, jSize::Int, kSize::Int, maxstep::Int, ds,
-   xstart, ystart, zstart, xGrid, yGrid, zGrid, ux, uy, uz, x, y, z)
+function Euler!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
+   xGrid, yGrid, zGrid, ux, uy, uz, x, y, z)
 
    # Get starting points in normalized/array coordinates
    dx = xGrid[2] - xGrid[1]
@@ -225,8 +224,8 @@ end
 Fast and reasonably accurate 2D tracing with 4th order Runge-Kutta method and
 constant step size `ds`.
 """
-function RK4!(iSize::Int, jSize::Int, maxstep::Int, ds,
-   xstart, ystart, xGrid, yGrid, ux, uy, x, y)
+function RK4!(iSize, jSize, maxstep, ds, xstart, ystart, xGrid, yGrid, ux, uy,
+   x, y)
 
    # Get starting points in normalized/array coordinates
    dx = xGrid[2] - xGrid[1]
@@ -313,8 +312,8 @@ end
 Fast and reasonably accurate 3D tracing with 4th order Runge-Kutta method and
 constant step size `ds`.
 """
-function RK4!(iSize::Int, jSize::Int, kSize::Int, maxstep::Int, ds,
-   xstart, ystart, zstart, xGrid, yGrid, zGrid, ux, uy, uz, x, y, z)
+function RK4!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
+   xGrid, yGrid, zGrid, ux, uy, uz, x, y, z)
 
    # Get starting points in normalized/array coordinates
    dx = xGrid[2] - xGrid[1]
