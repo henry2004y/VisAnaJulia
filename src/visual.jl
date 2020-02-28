@@ -77,7 +77,7 @@ Plot the variable from SWMF output.
 Right now this can only deal with 2D plots or 3D cuts. Full 3D plots may be
 supported in the future.
 """
-function plotdata(data::Data, head::Dict, func::String; cut::String="",
+function plotdata(data::Data, head::Dict, func::String; cut="",
    plotmode="contbar", plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1,
    density=1.0, cutPlaneIndex=1, multifigure=true, getrangeOnly=false, level=0,
    verbose=false)
