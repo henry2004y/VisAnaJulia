@@ -2,7 +2,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 02/03/2020
 
-using CSV, Dates, PyPlot, VisAna, Interpolations
+using SWMF, CSV, Dates, PyPlot, Interpolations
 
 #=
 ## Calculate differences & save to output file

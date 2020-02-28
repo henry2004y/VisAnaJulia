@@ -25,11 +25,11 @@ struct Index
    Bz_::Integer
    Pe_::Integer
    P_::Integer
-   B_::UnitRange{Int64}
-   U_::UnitRange{Int64}
+   B_::UnitRange{Integer}
+   U_::UnitRange{Integer}
 end
 
-"""Import satellite data. Require one line header presented."""
+"Import satellite data. Require one line header presented."
 function read_data(fname)
    f = readdlm(fname, ',', Float32, '\n'; header=true)
 
@@ -275,7 +275,7 @@ end
 Return the moving box average of the vector data `x` with box length 'n'.
 One-sided average on the left and right edge.
 """
-function smooth(x::Vector, n::Int=100)
+function smooth(x::Vector, n=100)
    nx = length(x)
    x̄ = zeros(eltype(x),length(x))
 

@@ -8,7 +8,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 02/06/2020
 
-using VisAna, PyPlot
+using SWMF, PyPlot
 
 # For precise colorbar control
 using PyCall
@@ -19,7 +19,7 @@ DN = matplotlib.colors.DivergingNorm
 
 #dir = "/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia"
 dir = "/Users/hyzhou"
-fnameField = "3d_var_region0_0_t00001640_n00020369.out"
+#fnameField = "3d_var_region0_0_t00001640_n00020369.out"
 #fnameField = "3d_var_region0_0_t00001520_n00004093.out"
 #fnameField = "3d_var_region0_0_t00001523_n00004732.out"
 #fnameField = "3d_var_region0_0_t00001524_n00004933.out"
@@ -34,7 +34,7 @@ fnameField = "3d_var_region0_0_t00001640_n00020369.out"
 #fnameField = "3d_var_region0_0_t00001840_n00045319.out"
 #fnameField = "3d_var_region0_0_t00001850_n00047357.out"
 #fnameField = "3d_var_region0_0_t00001900_n00049293.out"
-#fnameField = "3d_var_region0_0_t00001910_n00051301.out"
+fnameField = "3d_var_region0_0_t00001910_n00051301.out"
 
 head, data = readdata(fnameField, dir=dir)
 
