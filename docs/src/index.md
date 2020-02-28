@@ -7,9 +7,7 @@
 
 SWMF data reading, converting, visualizing and analyzing using Julia.
 
-This package is the inherited from its predecessor in IDL (developed by G.Toth) and Matlab (developed by H.Zhou).
-It can be combined with the VTK format converter [writeVTK](https://github.com/jipolanco/WriteVTK.jl) to generate files for Paraview and Tecplot.
-By default the file size will be reduced with compression level 6, but the actual compression ratio depends on the original data.
+This package is inherited from its predecessor in IDL (developed by G.Tóth) and Matlab (developed by H.Zhou). Currently instead of a real "package", this is more like a collection of scripts. The data loader is split into an stand-alone package [SWMF](https://github.com/henry2004y/SWMF).
 
 This package provides the following functionalities:
   * simulation data reader
@@ -19,10 +17,9 @@ This package provides the following functionalities:
   * data analysis in space physics
   * test particle tracing (WIP)
 
-The data analysis part includes spectral analysis, minimum variance analysis and
-many functions for aiding the interpretation of data.
+The data analysis part includes spectral analysis, minimum variance analysis and many functions for aiding the interpretation of data.
 
-The ultimate goal is to build a convenient tool of reading and analyzing simulation outputs which is easy to install and easy to use.
+The ultimate goal is to build a convenient tool of reading and analyzing simulation outputs which is easy to install, easy to use, and fast.
 
 !!! tip "Ready to use?"
     Feel free to contact the author for any help or collaboration!
@@ -45,6 +42,10 @@ Pages = [
 ]
 Depth = 1
 ```
+
+## Benchmark
+
+Compare the data loading speed for IDL, MATLAB, and Julia.
 
 ## Developers
 

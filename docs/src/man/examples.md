@@ -175,6 +175,10 @@ B = @. sqrt(v.Bx^2 + v.By^2 + v.Bz^2)
 ```
 
 ## Output format conversion
+
+Combining with [writeVTK](https://github.com/jipolanco/WriteVTK.jl), we can generate files for Paraview and Tecplot.
+By default the file size will be reduced with compression level 6, but the actual compression ratio depends on the original data.
+
 ASCII Tecplot file:
 ```
 filename = "3d_ascii.dat"
