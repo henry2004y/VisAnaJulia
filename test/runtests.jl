@@ -43,15 +43,13 @@ end
 end
 
 @testset "2D field tracing" begin
-   include("../src/trace.jl")
-
    # Test for the bilinear interpolation function
    x, y = 0.1, 0.2
    Q00, Q01, Q10, Q11 = 3.0, 5.0, 40.0, 60.0
    sol1 = 7.460
 
    println("Testing bilin_reg")
-   out = bilin_reg(x, y, Q00, Q01, Q10, Q11)
+   out = VisAna.bilin_reg(x, y, Q00, Q01, Q10, Q11)
    @test out ≈ sol1 atol=1e-5
 
    # Test cEuler 1
@@ -75,7 +73,7 @@ end
       uy[(i-1)*ny+j] = -1.0*ygrid[j]
    end
 
-   @time npoints = Euler!(nx, ny, maxstep, ds, 1.0, 10.0, xgrid, ygrid,
+   @time npoints = VisAna.Euler!(nx, ny, maxstep, ds, 1.0, 10.0, xgrid, ygrid,
  			 ux, uy, xt, yt)
 
    #= This will cause error if libtrace.so not in path!
@@ -90,7 +88,7 @@ end
    println("Our trace starts at ", round(xt[1],digits=2), " ", round(yt[1],digits=2))
    println("...and ends at ", round(xt[npoints],digits=2), " ",round(yt[npoints],digits=2))
 
-   @time npoints = RK4!(nx, ny, maxstep, ds, 1.0, 10.0, xgrid, ygrid,
+   @time npoints = VisAna.RK4!(nx, ny, maxstep, ds, 1.0, 10.0, xgrid, ygrid,
  		 ux, uy, xt, yt)
 
    #= This will cause error if libtrace.so not in path!
@@ -105,11 +103,11 @@ end
    println("Our trace starts at ", round(xt[1],digits=2), " ", round(yt[1],digits=2))
    println("...and ends at ", round(xt[npoints],digits=2), " ",round(yt[npoints],digits=2))
 
-   @test test_trace_asymptote()    # single precision
-   @test test_trace_asymptote(true)# double precision
+   @test VisAna.test_trace_asymptote()    # single precision
+   @test VisAna.test_trace_asymptote(true)# double precision
 
-   @test test_dipole()            # dipole field plotting in 2D
-   @test test_trace_dipole()      # dipole tracing in 2D
+   @test VisAna.test_dipole()            # dipole field plotting in 2D
+   @test VisAna.test_trace_dipole()      # dipole tracing in 2D
 
    # field tracing using dipole+background uniform field in BATSRUS
    filename = "y=0_var_1_t00000000_n00000000.out"
