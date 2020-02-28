@@ -17,6 +17,8 @@ In principle, I could also try some multi-block (VTM) type for data conversion.
 
 2D streamline tracing is almost finished. 3D streamline tracing is on the way. I need an adaptive step control integration scheme like rk45.
 
+In the future, the stream tracing should become a stand-alone package!
+
 ## Particle Tracing
 
 I have a plan of incorporating particle tracing into this module. WIP
@@ -36,7 +38,7 @@ Checkout [BinaryBuilder](https://juliapackaging.github.io/BinaryBuilder.jl/lates
 
 ## Interoperability with Python
 
-In the current version of PyCall and PyJulia, there is already direct support for accessing Julia struct objects (noted as `jlwrap`). 
+In the current version of PyCall and PyJulia, there is already direct support for accessing Julia struct objects (noted as `jlwrap`).
 
 As to avoid the cross-dependency hail on PyPlot, I split the original package into pure IO [SWMF](https://github.com/henry2004y/SWMF) and post-processing and plotting. This is also a nicer way of organizing larger code base.
 
