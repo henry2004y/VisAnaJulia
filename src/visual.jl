@@ -22,7 +22,7 @@ Plot information from log file.
 - `plotrange::Vector`: (optional) range of plotting.
 """
 function plotlogdata(data::Data, head::Dict, func::String;
-   plotmode::String="line", plotrange::Vector=[-Inf,Inf] )
+   plotmode="line", plotrange=[-Inf,Inf] )
 
    vars     = split(func)
    plotmode = split(plotmode)
