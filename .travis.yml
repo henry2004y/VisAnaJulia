@@ -21,7 +21,7 @@ notifications:
   email: false
 
 after_success:
-  - julia -e 'Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
   - julia -e 'using Pkg; Pkg.add("Documenter")'
   - julia -e 'using Pkg; ENV["DOCUMENTER_DEBUG"] = "true"; include("docs/make.jl")'
 
