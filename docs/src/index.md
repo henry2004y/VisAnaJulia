@@ -45,7 +45,8 @@ Depth = 1
 
 ## Benchmark
 
-Compare the data loading speed for IDL, MATLAB, and Julia.
+VisAna has by far the fastest data loading speed among IDL, MATLAB, and Julia.
+Check the [table](https://github.com/henry2004y/SWMF/blob/master/README.md#Benchmark) for details.
 
 ## Developers
 
