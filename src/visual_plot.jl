@@ -12,14 +12,14 @@ pyplot()
 # Build a recipe which acts on a custom type.
 # Notice that the function apply_recipe is returned.
 # The recipe macro is just a convenience to build apply_recipe definitions.
-@recipe function plotdata(data::Data, filehead::Dict, var::String;
+@recipe function plotdata(data::Data, var::String;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1)
 
-   ndim = filehead[:ndim]
+   ndim = data.head.ndim
 
    x,w = data.x, data.w
    VarIndex_ = findfirst(x->x==lowercase(var),
-      lowercase.(filehead[:wnames]))
+      lowercase.(data.head.wnames))
    isempty(VarIndex_) && error("$(var) not found in header variables!")
 
    if ndim == 1
@@ -29,7 +29,7 @@ pyplot()
          x, y
       end
    elseif ndim == 2
-      if filehead[:gencoord] # Generalized coordinates
+      if data.head.gencoord # Generalized coordinates
          X = vec(x[:,:,1])
          Y = vec(x[:,:,2])
          W = vec(w[:,:,VarIndex_])
@@ -88,4 +88,4 @@ pyplot()
 end
 
 # that was pretty easy!
-#plot(data[1], head[1], "p")
+#plot(data, "p")

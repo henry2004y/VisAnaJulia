@@ -36,25 +36,25 @@ function plotBSteady(flyby=8; filename="box_var_4_n00080000.out", DoSave=false,
    # Read simulation data
 
    npict = 1 # Remember to change this for different runs!
-   head, data = readdata(filename,
+   data = readdata(filename,
       dir="/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia",
       npict=npict)
 
    # Interpolate simulation data to observation data
-   nx, nw = head[1][:nx], head[1][:nw]
+   nx, nw = data.head.nx, data.head.nw
 
-   x = data[1].x[:,1,1,1]
-   y = data[1].x[1,:,1,2]
-   z = data[1].x[1,1,:,3]
+   x = data.x[:,1,1,1]
+   y = data.x[1,:,1,2]
+   z = data.x[1,1,:,3]
 
-   w = data[1].w
+   w = data.w
    # Find the correct index of variables
-   bx_ = findfirst(x->x=="bx", head[1][:wnames])
-   by_ = findfirst(x->x=="by", head[1][:wnames])
-   bz_ = findfirst(x->x=="bz", head[1][:wnames])
-   Bx = @view data[1].w[:,:,:,bx_]
-   By = @view data[1].w[:,:,:,by_]
-   Bz = @view data[1].w[:,:,:,bz_]
+   bx_ = findfirst(x->x=="bx", data.head.wnames)
+   by_ = findfirst(x->x=="by", data.head.wnames)
+   bz_ = findfirst(x->x=="bz", data.head.wnames)
+   Bx = @view data.w[:,:,:,bx_]
+   By = @view data.w[:,:,:,by_]
+   Bz = @view data.w[:,:,:,bz_]
 
    # Gridded interpolation
    knots = (x, y, z)
@@ -133,11 +133,11 @@ function plotBTimeAccurate(filename::String, flyby=8, firstpict=1, lastpict=1;
       tStart = DateTime(2000,5,20,10,0,12)
    end
 
-   head, data, list = readdata(filename, dir=SimDir)
+   data = readdata(filename, dir=SimDir)
 
    # Interpolate simulation data to observation data
-   nx, nw = head[1][:nx], head[1][:nw]
-   npict = list[1].npictinfiles
+   nx, nw = data.head.nx, data.head.nw
+   npict = data.list.npictinfiles
 
    firstpict > npict && @error "firstpict out of range!"
 
@@ -160,19 +160,19 @@ function plotBTimeAccurate(filename::String, flyby=8, firstpict=1, lastpict=1;
    tSim[kStart+npict-1:end] = t[kEnd:end]
 
    # Extract B field along the traj. before the starting time in one snapshot
-   head, data = readdata(filename, dir=SimDir, npict=firstpict)
+   data = readdata(filename, dir=SimDir, npict=firstpict)
 
    # Interpolate simulation data to observation data
    x = data[1].x[:,1,1,1]
    y = data[1].x[1,:,1,2]
    z = data[1].x[1,1,:,3]
 
-   bx_ = findfirst(x->x=="bx", head[1][:wnames])
-   by_ = findfirst(x->x=="by", head[1][:wnames])
-   bz_ = findfirst(x->x=="bz", head[1][:wnames])
-   Bx = @view data[1].w[:,:,:,bx_]
-   By = @view data[1].w[:,:,:,by_]
-   Bz = @view data[1].w[:,:,:,bz_]
+   bx_ = findfirst(x->x=="bx", data.head.wnames)
+   by_ = findfirst(x->x=="by", data.head.wnames)
+   bz_ = findfirst(x->x=="bz", data.head.wnames)
+   Bx = @view data.w[:,:,:,bx_]
+   By = @view data.w[:,:,:,by_]
+   Bz = @view data.w[:,:,:,bz_]
 
    # Gridded interpolation
    knots = (x, y, z)
@@ -188,15 +188,15 @@ function plotBTimeAccurate(filename::String, flyby=8, firstpict=1, lastpict=1;
    # Extract the magnetic field along the trajectory from multiple snapshot
    for ipict = 1:npict-1
       println("ipict=$(round(ipict,digits=2))")
-      head, data = readdata(filename, dir=SimDir, npict=firstpict+ipict)
+      data = readdata(filename, dir=SimDir, npict=firstpict+ipict)
       # Interpolate simulation data to observation data
-      x = data[1].x[:,1,1,1]
-      y = data[1].x[1,:,1,2]
-      z = data[1].x[1,1,:,3]
+      x = data.x[:,1,1,1]
+      y = data.x[1,:,1,2]
+      z = data.x[1,1,:,3]
 
-      Bx = @view data[1].w[:,:,:,bx_]
-      By = @view data[1].w[:,:,:,by_]
-      Bz = @view data[1].w[:,:,:,bz_]
+      Bx = @view data.w[:,:,:,bx_]
+      By = @view data.w[:,:,:,by_]
+      Bz = @view data.w[:,:,:,bz_]
 
       k = argmin( abs.(tSim[kStart+ipict] .- t) )
 

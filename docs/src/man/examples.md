@@ -8,89 +8,89 @@ A general `plotdata` function is provided for quick visualizations. In addition 
 
 - 1D binary
 ```
-plotdata(data[1], head[1], "p", plotmode="line")
-plotdata(data[1], head[1], "p", plotmode="linegrid")
+plotdata(data, "p", plotmode="line")
+plotdata(data, "p", plotmode="linegrid")
 ```
 
 - 2D Cartesian (structured)
 ```
-plotdata(data[1], head[1], "p bx;by", plotmode="contbar streamover")
-plotdata(data[1], head[1], "p bx;by", plotmode="contbar quiverover")
-plotdata(data[1], head[1], "p bx;by", plotmode="contbar streamover", density=2.0)
-plotdata(data[1], head[1], "p", plotmode="grid")
-plotdata(data[1], head[1], "p", plotmode="contbar", plotrange=[-50., 50., -1., 1.])
-plotdata(data[1], head[1], "p", plotmode="contbar")
-plotdata(data[1], head[1], "p", plotmode="contbarlog")
-plotdata(data[1], head[1], "p", plotmode="surfbar")
+plotdata(data, "p bx;by", plotmode="contbar streamover")
+plotdata(data, "p bx;by", plotmode="contbar quiverover")
+plotdata(data, "p bx;by", plotmode="contbar streamover", density=2.0)
+plotdata(data, "p", plotmode="grid")
+plotdata(data, "p", plotmode="contbar", plotrange=[-50., 50., -1., 1.])
+plotdata(data, "p", plotmode="contbar")
+plotdata(data, "p", plotmode="contbarlog")
+plotdata(data, "p", plotmode="surfbar")
 ```
 
 - 2D unstructured
 ```
-plotdata(data[1], head[1], "rho", plotmode="contbar")
-plotdata(data[1], head[1], "rho", plotmode="trimesh")
-plotdata(data[1], head[1], "rho", plotmode="tricont")
+plotdata(data, "rho", plotmode="contbar")
+plotdata(data, "rho", plotmode="trimesh")
+plotdata(data, "rho", plotmode="tricont")
 ```
 
 - 2D structured spherical coordinates
 ```
-plotdata(data[1], head[1], "rho", plotmode="contbar")
+plotdata(data, "rho", plotmode="contbar")
 ```
 
 - 3D box
 ```
-plotdata(data[1], head[1], "bx", plotmode="contbar", cut="y", cutPlaneIndex=1, level=20)
-plotdata(data[1], head[1], "bx", plotmode="contbar", cut="y", plotrange=[-1.4,-1.1,0.70,0.78])
+plotdata(data, "bx", plotmode="contbar", cut="y", cutPlaneIndex=1, level=20)
+plotdata(data, "bx", plotmode="contbar", cut="y", plotrange=[-1.4,-1.1,0.70,0.78])
 using PyPlot
 plt.axis("scaled")
 
 subplot(2,2,(1,3))
-cutplot(data[1],head[1],"Ex", cut='y', cutPlaneIndex=128, plotrange=plotrange)
+cutplot(data, "Ex", cut='y', cutPlaneIndex=128, plotrange=plotrange)
 ```
 
 ## Multiple dispatch for matplotlib functions
 - line plot
 ```
-plot(data[1], head[1], "p", linewidth=2, color="green")
-c = plot(data[1], head[1], "p")
+plot(data, "p", linewidth=2, color="green")
+c = plot(data, "p")
 plt.setp(c, linestyle="--", linewidth=2);
 ```
 
 - scatter plot
 ```
-scatter(data[1], head[1], "p")
+scatter(data, "p")
 ```
 
 - contour
 ```
 # 2D contour
-contour(data[1], head[1], "p")
+contour(data, "p")
 ```
 
 - filled contour
 ```
-contourf(data[1], head[1], "p")
-contourf(data[1], head[1], "p", levels, plotrange=[-10,10,-Inf,Inf], plotinterval=0.1)
+contourf(data, "p")
+contourf(data, "p", levels, plotrange=[-10,10,-Inf,Inf], plotinterval=0.1)
 ```
 
 - surface plot
 ```
-plot_surface(data[1], head[1], "p")
+plot_surface(data, "p")
 ```
 
 - triangle surface plot
 ```
-plot_trisurf(data[1], head[1], "p")
+plot_trisurf(data, "p")
 ```
 
 - triangle filled contour plot
 ```
-tricontourf(data[1], head[1], "p")
+tricontourf(data, "p")
 ```
 
 - streamline
 ```
-streamplot(data[1], head[1], "bx;bz")
-streamplot(data[1], head[1], "bx;bz", density=2.0, color="k", plotinterval=1.0, plotrange=[-10,10,-Inf,Inf])
+streamplot(data, "bx;bz")
+streamplot(data, "bx;bz", density=2.0, color="k", plotinterval=1.0, plotrange=[-10,10,-Inf,Inf])
 ```
 
 ## Streamline tracing
@@ -126,12 +126,12 @@ An example of tracing in a 2D cut and plot the field lines over contour:
 using VisAna, PyPlot
 
 filename = "y=0_var_1_t00000000_n00000000.out"
-head, data, list = VisAna.readdata(filename,dir="test")
+data = VisAna.readdata(filename,dir="test")
 
-bx = data[1].w[:,:,5]
-bz = data[1].w[:,:,7]
-x  = data[1].x[:,1,1]
-z  = data[1].x[1,:,2]
+bx = data.w[:,:,5]
+bz = data.w[:,:,7]
+x  = data.x[:,1,1]
+z  = data.x[1,:,2]
 
 seeds = select_seeds(x,z; nSeed=100) # randomly select the seeding points
 

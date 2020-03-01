@@ -46,6 +46,7 @@ Depth = 1
 ## Benchmark
 
 VisAna has by far the fastest data loading speed among IDL, MATLAB, and Julia.
+It has almost the same performance as [spacepy](https://github.com/spacepy/spacepy).
 Check the [table](https://github.com/henry2004y/SWMF/blob/master/README.md#Benchmark) for details.
 
 ## Developers

@@ -8,20 +8,20 @@ using VisAna, SWMF, PyPlot, Test
 
 @testset "plotting 1D ascii" begin
    filename = "1d__raw_2_t25.60000_n00000258.out"
-   head, data, list = readdata(filename, verbose=true)
-   plotdata(data[1],head[1],"p",plotmode="line")
+   data = readdata(filename, verbose=true)
+   plotdata(data, "p", plotmode="line")
    line = gca().lines[1]
-   @test line.get_xdata() ≈ data[1].x
-   @test line.get_ydata() ≈ data[1].w[:,10]
+   @test line.get_xdata() ≈ data.x
+   @test line.get_ydata() ≈ data.w[:,10]
 end
 
 @testset "plotting 2D structured binary" begin
    filename = "z=0_raw_1_t25.60000_n00000258.out"
-   head, data, list = readdata(filename)
-   plotdata(data[1],head[1],"p bx;by",plotmode="contbar streamover")
+   data = readdata(filename)
+   plotdata(data,"p bx;by",plotmode="contbar streamover")
    ax = gca()
    @test isa(ax, PyPlot.PyObject)
-   contourf(data[1],head[1],"p")
+   contourf(data,"p")
    ax = gca()
    @test isa(ax, PyPlot.PyObject)
 end
@@ -95,14 +95,14 @@ end
 
    # field tracing using dipole+background uniform field in BATSRUS
    filename = "y=0_var_1_t00000000_n00000000.out"
-   head, data = readdata(filename)
+   data = readdata(filename)
 
-   streamplot(data[1], head[1], "bx;bz")
+   streamplot(data, "bx;bz")
 
-   bx = data[1].w[:,:,5]
-   bz = data[1].w[:,:,7]
-   x  = data[1].x[:,1,1]
-   z  = data[1].x[1,:,2]
+   bx = data.w[:,:,5]
+   bz = data.w[:,:,7]
+   x  = data.x[:,1,1]
+   z  = data.x[1,:,2]
 
    #xstart = -120.0:10.0:10.
    #zstart = fill(10.0, size(xstart))

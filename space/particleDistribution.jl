@@ -52,19 +52,19 @@ function dist_select(fnameParticle, xC=-1.90, yC=0.0, zC=-0.1,
 
    particle = [Array{Float32}(undef, 3, 0) for _ in 1:nBox]
 
-   head, data = readdata(fnameParticle, dir=dir)
+   data = readdata(fnameParticle, dir=dir)
 
-   x = @view data[1].x[:,:,:,1]
-   y = @view data[1].x[:,:,:,2]
-   z = @view data[1].x[:,:,:,3]
+   x = @view data.x[:,:,:,1]
+   y = @view data.x[:,:,:,2]
+   z = @view data.x[:,:,:,3]
 
-   ux_ = findfirst(x->x=="ux", head[1][:wnames])
-   uy_ = findfirst(x->x=="uy", head[1][:wnames])
-   uz_ = findfirst(x->x=="uz", head[1][:wnames])
+   ux_ = findfirst(x->x=="ux", data.head.wnames)
+   uy_ = findfirst(x->x=="uy", data.head.wnames)
+   uz_ = findfirst(x->x=="uz", data.head.wnames)
 
-   ux = @view data[1].w[:,:,:,ux_]
-   uy = @view data[1].w[:,:,:,uy_]
-   uz = @view data[1].w[:,:,:,uz_]
+   ux = @view data.w[:,:,:,ux_]
+   uy = @view data.w[:,:,:,uy_]
+   uz = @view data.w[:,:,:,uz_]
 
    for ip = 1:length(x)
       for iR = 1:nBox
@@ -185,19 +185,19 @@ GetMeanField Get the average field direction in limited region.
 function GetMeanField(fnameField::String, limits; dir=".")
 
    # Get the average field direction in limited region
-   head, data = readdata(fnameField, dir=dir)
+   data = readdata(fnameField, dir=dir)
 
-   x = data[1].x[:,:,:,1]
-   y = data[1].x[:,:,:,2]
-   z = data[1].x[:,:,:,3]
+   x = data.x[:,:,:,1]
+   y = data.x[:,:,:,2]
+   z = data.x[:,:,:,3]
 
-   bx_ = findfirst(x->x=="Bx", head[1][:wnames])
-   by_ = findfirst(x->x=="By", head[1][:wnames])
-   bz_ = findfirst(x->x=="Bz", head[1][:wnames])
+   bx_ = findfirst(x->x=="Bx", data.head.wnames)
+   by_ = findfirst(x->x=="By", data.head.wnames)
+   bz_ = findfirst(x->x=="Bz", data.head.wnames)
 
-   Bx = @view data[1].w[:,:,:,bx_]
-   By = @view data[1].w[:,:,:,by_]
-   Bz = @view data[1].w[:,:,:,bz_]
+   Bx = @view data.w[:,:,:,bx_]
+   By = @view data.w[:,:,:,by_]
+   Bz = @view data.w[:,:,:,bz_]
 
    xnew, ynew, znew, BxNew, ByNew, BzNew = subvolume(x,y,z, Bx,By,Bz, limits)
 
@@ -218,23 +218,23 @@ function plotExCut(fnameField::String, region, xC, yC, zC, xL, yL, zL;
 
    plotrange = [xC-xL*16, xC+xL*16, zC-zL*5, zC+zL*5]
    # Sample region plot over contour
-   head, data = readdata(fnameField, dir=dir)
+   data = readdata(fnameField, dir=dir)
 
-   bx_ = findfirst(x->x=="Bx", head[1][:wnames])
-   bz_ = findfirst(x->x=="Bz", head[1][:wnames])
+   bx_ = findfirst(x->x=="Bx", data.head.wnames)
+   bz_ = findfirst(x->x=="Bz", data.head.wnames)
 
-   Bx = @view data[1].w[:,:,:,bx_]
-   Bz = @view data[1].w[:,:,:,bz_]
+   Bx = @view data.w[:,:,:,bx_]
+   Bz = @view data.w[:,:,:,bz_]
 
    subplot(3,4,(1,9))
-   cutplot(data[1],head[1],"Ex",cut='y',cutPlaneIndex=cutPlane,
+   cutplot(data, "Ex", cut='y', cutPlaneIndex=cutPlane,
       plotrange=plotrange)
    colorbar()
    axis("scaled")
    plt.set_cmap("RdBu_r")
    clim(-9e4,9e4)
 
-   streamslice(data[1],head[1],"Bx;Bz",cut='y',cutPlaneIndex=cutPlane,
+   streamslice(data, "Bx;Bz", cut='y', cutPlaneIndex=cutPlane,
       color="k", density=1.0, plotrange=plotrange)
 
    xlabel(L"x [R_G]", fontsize=fs)
@@ -294,19 +294,19 @@ function dist_plot(pType='e')
       region[:,3] = [-1.930, -1.925, -0.08, 0.08, -0.10, -0.06]
       region[:,4] = [-1.930, -1.925, -0.08, 0.08,  0.00,  0.04]
 
-      head, data = readdata(fnameE, dir=dir)
+      data = readdata(fnameE, dir=dir)
 
-      x = @view data[1].x[:,:,:,1]
-      y = @view data[1].x[:,:,:,2]
-      z = @view data[1].x[:,:,:,3]
+      x = @view data.x[:,:,:,1]
+      y = @view data.x[:,:,:,2]
+      z = @view data.x[:,:,:,3]
 
-      ux_ = findfirst(x->x=="ux", head[1][:wnames])
-      uy_ = findfirst(x->x=="uy", head[1][:wnames])
-      uz_ = findfirst(x->x=="uz", head[1][:wnames])
+      ux_ = findfirst(x->x=="ux", data.head.wnames)
+      uy_ = findfirst(x->x=="uy", data.head.wnames)
+      uz_ = findfirst(x->x=="uz", data.head.wnames)
 
-      ux = @view data[1].w[:,:,:,ux_]
-      uy = @view data[1].w[:,:,:,uy_]
-      uz = @view data[1].w[:,:,:,uz_]
+      ux = @view data.w[:,:,:,ux_]
+      uy = @view data.w[:,:,:,uy_]
+      uz = @view data.w[:,:,:,uz_]
 
       for ip = 1:length(x)
          for iR = 1:nBox
@@ -333,19 +333,19 @@ function dist_plot(pType='e')
       region[:,3] = [-1.930, -1.920, -0.08, 0.08, -0.10, -0.06]
       region[:,4] = [-1.930, -1.920, -0.08, 0.08,  0.00,  0.04]
 
-      head, data = readdata(fnameI, dir=dir)
+      data = readdata(fnameI, dir=dir)
 
-      x = @view data[1].x[:,:,:,1]
-      y = @view data[1].x[:,:,:,2]
-      z = @view data[1].x[:,:,:,3]
+      x = @view data.x[:,:,:,1]
+      y = @view data.x[:,:,:,2]
+      z = @view data.x[:,:,:,3]
 
-      ux_ = findfirst(x->x=="ux", head[1][:wnames])
-      uy_ = findfirst(x->x=="uy", head[1][:wnames])
-      uz_ = findfirst(x->x=="uz", head[1][:wnames])
+      ux_ = findfirst(x->x=="ux", data.head.wnames)
+      uy_ = findfirst(x->x=="uy", data.head.wnames)
+      uz_ = findfirst(x->x=="uz", data.head.wnames)
 
-      ux = @view data[1].w[:,:,:,ux_]
-      uy = @view data[1].w[:,:,:,uy_]
-      uz = @view data[1].w[:,:,:,uz_]
+      ux = @view data.w[:,:,:,ux_]
+      uy = @view data.w[:,:,:,uy_]
+      uz = @view data.w[:,:,:,uz_]
 
       for ip = 1:length(x)
          for iR = 1:nBox
@@ -499,13 +499,13 @@ function show_box_region()
    plotrange = [-2.0, -1.8, -0.35, 0.35]
    cutPlane = 129
 
-   head, data = readdata(fnameField, dir=dir)
+   data = readdata(fnameField, dir=dir)
 
-   X, Z, Bx = cutdata(data[1],head[1],"Bx",cut='y',cutPlaneIndex=cutPlane,
+   X, Z, Bx = cutdata(data, "Bx", cut='y',cutPlaneIndex=cutPlane,
       plotrange=plotrange)
-   X, Z, Bz = cutdata(data[1],head[1],"Bz",cut='y',cutPlaneIndex=cutPlane,
+   X, Z, Bz = cutdata(data, "Bz", cut='y',cutPlaneIndex=cutPlane,
       plotrange=plotrange)
-   X, Z, Ex = cutdata(data[1],head[1],"Ex",cut='y',cutPlaneIndex=cutPlane,
+   X, Z, Ex = cutdata(data, "Ex", cut='y',cutPlaneIndex=cutPlane,
       plotrange=plotrange)
 
    fig, ax = plt.subplots(1,1,figsize=(8.0,4.0))
@@ -605,19 +605,19 @@ function HF_velocity()
 
    fnameField = "3d_var_region0_0_"*fnameE[end-22:end]
 
-   head, data = readdata(fnameField, dir=dir)
+   data = readdata(fnameField, dir=dir)
 
-   x = data[1].x[:,:,:,1]
-   y = data[1].x[:,:,:,2]
-   z = data[1].x[:,:,:,3]
+   x = data.x[:,:,:,1]
+   y = data.x[:,:,:,2]
+   z = data.x[:,:,:,3]
 
-   ux_ = findfirst(x->x=="uxs1", lowercase.(head[1][:wnames]))
-   uy_ = findfirst(x->x=="uys1", lowercase.(head[1][:wnames]))
-   uz_ = findfirst(x->x=="uzs1", lowercase.(head[1][:wnames]))
+   ux_ = findfirst(x->x=="uxs1", lowercase.(data.head.wnames))
+   uy_ = findfirst(x->x=="uys1", lowercase.(data.head.wnames))
+   uz_ = findfirst(x->x=="uzs1", lowercase.(data.head.wnames))
 
-   Ux = @view data[1].w[:,:,:,ux_]
-   Uy = @view data[1].w[:,:,:,uy_]
-   Uz = @view data[1].w[:,:,:,uz_]
+   Ux = @view data.w[:,:,:,ux_]
+   Uy = @view data.w[:,:,:,uy_]
+   Uz = @view data.w[:,:,:,uz_]
 
    #region[:,5] = [-1.850, -1.840, -0.08, 0.08, -0.29, -0.25]
    #region[:,6] = [-1.910, -1.900, -0.08, 0.08, 0.11, 0.15]

@@ -38,10 +38,10 @@ fnameField = "3d_var_region0_0_t00001910_n00051301.out"
 
 head, data = readdata(fnameField, dir=dir)
 
-me = head[1][:eqpar][1]
-qe = head[1][:eqpar][2]
-mi = head[1][:eqpar][3]
-qi = head[1][:eqpar][4]
+me = data.head.eqpar[1]
+qe = data.head.eqpar[2]
+mi = data.head.eqpar[3]
+qi = data.head.eqpar[4]
 const kB = 1.38064852e-23 # [m^2 kg s^-2 K^-1]
 const vAlfven = 253. # reference Alfven velocity, [km/s]
 const B₀ = √((-10.)^2+(-6.)^2+(-86.)^2)
@@ -57,59 +57,59 @@ plotrange = [-2.05, -1.75, -0.5, 0.5]
 cI = 129 # plane cut index
 
 
-X, Z, ρe = cutdata(data[1],head[1],"rhoS0",cut='y',cutPlaneIndex=cI,
+X, Z, ρe = cutdata(data, "rhoS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, ρi = cutdata(data[1],head[1],"rhoS1",cut='y',cutPlaneIndex=cI,
+X, Z, ρi = cutdata(data, "rhoS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Bx = cutdata(data[1],head[1],"Bx",cut='y',cutPlaneIndex=cI,
+X, Z, Bx = cutdata(data, "Bx",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, By = cutdata(data[1],head[1],"By",cut='y',cutPlaneIndex=cI,
+X, Z, By = cutdata(data, "By",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Bz = cutdata(data[1],head[1],"Bz",cut='y',cutPlaneIndex=cI,
+X, Z, Bz = cutdata(data, "Bz",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Ex = cutdata(data[1],head[1],"Ex",cut='y',cutPlaneIndex=cI,
+X, Z, Ex = cutdata(data, "Ex",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Ey = cutdata(data[1],head[1],"Ey",cut='y',cutPlaneIndex=cI,
+X, Z, Ey = cutdata(data, "Ey",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Ez = cutdata(data[1],head[1],"Ez",cut='y',cutPlaneIndex=cI,
+X, Z, Ez = cutdata(data, "Ez",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Uxe= cutdata(data[1],head[1],"uxS0",cut='y',cutPlaneIndex=cI,
+X, Z, Uxe= cutdata(data, "uxS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Uye= cutdata(data[1],head[1],"uyS0",cut='y',cutPlaneIndex=cI,
+X, Z, Uye= cutdata(data, "uyS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Uze= cutdata(data[1],head[1],"uzS0",cut='y',cutPlaneIndex=cI,
+X, Z, Uze= cutdata(data, "uzS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Uxi= cutdata(data[1],head[1],"uxS1",cut='y',cutPlaneIndex=cI,
+X, Z, Uxi= cutdata(data, "uxS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Uyi= cutdata(data[1],head[1],"uyS1",cut='y',cutPlaneIndex=cI,
+X, Z, Uyi= cutdata(data, "uyS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Uzi= cutdata(data[1],head[1],"uzS1",cut='y',cutPlaneIndex=cI,
+X, Z, Uzi= cutdata(data, "uzS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
 
-X, Z, Pxxe = cutdata(data[1],head[1],"pXXS0",cut='y',cutPlaneIndex=cI,
+X, Z, Pxxe = cutdata(data, "pXXS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pyye = cutdata(data[1],head[1],"pYYS0",cut='y',cutPlaneIndex=cI,
+X, Z, Pyye = cutdata(data, "pYYS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pzze = cutdata(data[1],head[1],"pZZS0",cut='y',cutPlaneIndex=cI,
+X, Z, Pzze = cutdata(data, "pZZS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pxye = cutdata(data[1],head[1],"pXYS0",cut='y',cutPlaneIndex=cI,
+X, Z, Pxye = cutdata(data, "pXYS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pxze = cutdata(data[1],head[1],"pXZS0",cut='y',cutPlaneIndex=cI,
+X, Z, Pxze = cutdata(data, "pXZS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pyze = cutdata(data[1],head[1],"pYZS0",cut='y',cutPlaneIndex=cI,
+X, Z, Pyze = cutdata(data, "pYZS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
 #=
-X, Z, Pxxi = cutdata(data[1],head[1],"pXXS1",cut='y',cutPlaneIndex=cI,
+X, Z, Pxxi = cutdata(data, "pXXS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pyyi = cutdata(data[1],head[1],"pYYS1",cut='y',cutPlaneIndex=cI,
+X, Z, Pyyi = cutdata(data, "pYYS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pzzi = cutdata(data[1],head[1],"pZZS1",cut='y',cutPlaneIndex=cI,
+X, Z, Pzzi = cutdata(data, "pZZS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pxyi = cutdata(data[1],head[1],"pXYS1",cut='y',cutPlaneIndex=cI,
+X, Z, Pxyi = cutdata(data, "pXYS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pxzi = cutdata(data[1],head[1],"pXZS1",cut='y',cutPlaneIndex=cI,
+X, Z, Pxzi = cutdata(data, "pXZS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
-X, Z, Pyzi = cutdata(data[1],head[1],"pYZS1",cut='y',cutPlaneIndex=cI,
+X, Z, Pyzi = cutdata(data, "pYZS1",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
 =#
 

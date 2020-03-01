@@ -10,17 +10,16 @@ include("constants.jl")
 """Series of contour plots from box output."""
 function plot_contour_from_box(filename::String, dir=".")
 
-   filehead, data, filelist = readdata(filename, dir=dir, verbose=false);
-   npict = filelist[1].npictinfiles
+   data = readdata(filename, dir=dir, verbose=false);
+   npict = data.list.npictinfiles
 
    saveDir = "ycutsFromBox"
    mkdir(saveDir)
 
    for ipict = 1:npict
-      filehead, data, filelist = readdata(filename, npict=ipict, dir=dir,
-         verbose=false)
+      data = readdata(filename, npict=ipict, dir=dir)
 
-      plotdata(data[1],filehead[1],"by bx;bz",plotmode="contbar streamover",
+      plotdata(data, "by bx;bz",plotmode="contbar streamover",
          cut="y",cutPlaneIndex=3, density=1.5)
 
       fig = matplotlib.pyplot.gcf()
@@ -36,15 +35,15 @@ end
 """Series of contour plots from cuts."""
 function plot_contour_from_cuts(filename::String, dir=".")
 
-   filehead, data, filelist = readdata(filename, dir=dir);
-   npict = filelist[1].npictinfiles
+   data = readdata(filename, dir=dir)
+   npict = data.list.npictinfiles
    saveDir = "ycuts"
    mkdir(saveDir)
 
    for ipict = 1:npict
-      filehead, data, filelist = readdata(filename,npict=ipict,dir=dir)
+      data = readdata(filename,npict=ipict,dir=dir)
 
-      plotdata(data[1], filehead[1], "by bx;bz", plotmode="contbar streamover",
+      plotdata(data, "by bx;bz", plotmode="contbar streamover",
          plotrange=[1.0 1.8 -2.0 2.0], density=1.5)
 
       fig = matplotlib.pyplot.gcf()
@@ -71,26 +70,24 @@ function get_diamagnetic_velocity(filename::String, filedir=".", nType=1)
    mkdir(saveDir)
 
    if filename[end-3:end] == "outs"
-      filehead, data, filelist = readdata(filename, dir=filedir, verbose=false)
-      npict = filelist[1].npictinfiles
+      data = readdata(filename, dir=filedir, verbose=false)
+      npict = data.list.npictinfiles
       for i = 1:npict
-         filehead, data, filelist =
-            readdata(filename, dir=filedir, npict=i, verbose=false)
-         processing(filehead[1], data[1], saveDir, nType)
+         data = readdata(filename, dir=filedir, npict=i)
+         processing(data, saveDir, nType)
       end
    else
       filenames = glob(filename, filedir)
       npict = length(filenames)
       for i = 1:npict
-         filehead, data, filelist =
-            readdata(filenames[i], dir=filedir, verbose=false)
-         processing(filehead[1], data[1], saveDir, nType)
+         data = readdata(filenames[i], dir=filedir)
+         processing(data, saveDir, nType)
       end
    end
 
 end
 
-function processing(filehead::Dict, data::Data, saveDir::String, nType=1)
+function processing(data::Data, saveDir::String, nType=1)
 
    np = pyimport("numpy")
 
@@ -100,16 +97,16 @@ function processing(filehead::Dict, data::Data, saveDir::String, nType=1)
    w = data.w
 
    if nType == 1 # Hall MHD
-      ni_ = findfirst(isequal("Rho"), filehead[:wnames])
-      pi_ = findfirst(isequal("P"),   filehead[:wnames])
+      ni_ = findfirst(isequal("Rho"), data.head.wnames)
+      pi_ = findfirst(isequal("P"),   data.head.wnames)
    elseif nType == 2 # PIC
-      ni_ = findfirst(isequal("rhos1"), filehead[:wnames])
-      pi_ = findfirst(isequal("ps1"),   filehead[:wnames])
+      ni_ = findfirst(isequal("rhos1"), data.head.wnames)
+      pi_ = findfirst(isequal("ps1"),   data.head.wnames)
    end
 
-   bx_ = findfirst(isequal("Bx"),  filehead[:wnames])
-   by_ = findfirst(isequal("By"),  filehead[:wnames])
-   bz_ = findfirst(isequal("Bz"),  filehead[:wnames])
+   bx_ = findfirst(isequal("Bx"),  data.head.wnames)
+   by_ = findfirst(isequal("By"),  data.head.wnames)
+   bz_ = findfirst(isequal("Bz"),  data.head.wnames)
 
    ni = w[:,:,:,ni_] # [/cm^3]
    pi = w[:,:,:,pi_] # [nPa]
@@ -174,30 +171,30 @@ dir = "/Users/hyzhou/Ganymede/run_mercury_80s_newbox/GM";
 #vtk_auto_conversion(filename, dir)
 
 function y_by_cuts()
-   np = pyimport("numpy");
-   filename = "y*out";
-   filehead, data, filelist = readdata(filename,verbose=false);
+   np = pyimport("numpy")
+   filename = "y*out"
+   data = readdata(filename)
 
-   fig, ax = plt.subplots(1, 1);
-   var = "by"; plotinterval = 0.1;
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(filehead[1][:wnames]));
-   X = vec(data[1].x[:,:,1]);
-   Y = vec(data[1].x[:,:,2]);
-   W = vec(data[1].w[:,:,VarIndex_]);
+   fig, ax = plt.subplots(1, 1)
+   var = "by"; plotinterval = 0.1
+   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
+   X = vec(data.x[:,:,1])
+   Y = vec(data.x[:,:,2])
+   W = vec(data.w[:,:,VarIndex_])
 
    # Create grid values first.
-   xi = range(minimum(X), stop=maximum(X), step=plotinterval);
-   yi = range(minimum(Y), stop=maximum(Y), step=plotinterval);
+   xi = range(minimum(X), stop=maximum(X), step=plotinterval)
+   yi = range(minimum(Y), stop=maximum(Y), step=plotinterval)
    # Perform linear interpolation of the data (x,y) on grid(xi,yi)
-   triang = matplotlib.tri.Triangulation(X,Y);
-   interpolator = matplotlib.tri.LinearTriInterpolator(triang, W);
-   Xi, Yi = np.meshgrid(xi, yi);
-   wi = interpolator(Xi, Yi);
+   triang = matplotlib.tri.Triangulation(X,Y)
+   interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
+   Xi, Yi = np.meshgrid(xi, yi)
+   wi = interpolator(Xi, Yi)
 
-   c = contourf(xi,yi,wi,50);
-   fig.set_size_inches(6,6);
-   plt.axis("scaled");
-   colorbar(c, ax=ax,ticks=np.arange(-100.0, 0.0, 12.5));
+   c = contourf(xi,yi,wi,50)
+   fig.set_size_inches(6,6)
+   plt.axis("scaled")
+   colorbar(c, ax=ax,ticks=np.arange(-100.0, 0.0, 12.5))
    xlabel("x"); ylabel("z")
    title(L"By")
    plt.savefig("test.png")
@@ -205,13 +202,10 @@ end
 
 function plot_beta(filename::String)
 
-   filehead, data, filelist = readdata(filename,verbose=false);
+   data = readdata(filename)
 
    cutPlaneIndex = 65
    VarIndex_ = 18
-
-   filehead = filehead[1]
-   data = data[1]
 
    X = @view data.x[:,:,:,1]
    Y = @view data.x[:,:,:,2]
@@ -236,7 +230,7 @@ function plot_beta(filename::String)
    c = ax.contourf(cut1, cut2, W./PB)
    fig.colorbar(c,ax=ax)
    ax.axis("scaled")
-   title(filehead[:wnames][VarIndex_])
+   title(data.head.wnames[VarIndex_])
 
    xlabel("x"); ylabel("z")
 

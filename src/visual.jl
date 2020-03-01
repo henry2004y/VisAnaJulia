@@ -14,13 +14,12 @@ import PyPlot.plot, PyPlot.scatter, PyPlot.contour, PyPlot.contourf,
 
 Plot information from log file.
 # Input arguments
-- `data::Data`: original variable data.
-- `head::Dict`: file header information.
+- `data::Data`: output data.
 - `vars::String`: variables for plotting.
 - `plotmode::String`: (optional) type of plotting ["line","scatter"].
 - `plotrange::Vector`: (optional) range of plotting.
 """
-function plotlogdata(data::Data, head::Dict, func::AbstractString;
+function plotlogdata(data::Data, func::AbstractString;
    plotmode="line", plotrange=[-Inf,Inf] )
 
    vars     = split(func)
@@ -28,7 +27,7 @@ function plotlogdata(data::Data, head::Dict, func::AbstractString;
 
    for (ivar, var) in enumerate(vars)
       # find the index for variables
-      VarIndex_ = findfirst(x->x==var, head[:variables])
+      VarIndex_ = findfirst(x->x==var, data.head.variables)
 
       isnothing(VarIndex_) &&
       error("unknown plotting variable $(func[ivar])!")
@@ -40,8 +39,8 @@ function plotlogdata(data::Data, head::Dict, func::AbstractString;
       else
          error("unknown plot mode for plotlogdata!")
       end
-      xlabel(head[:variables][1])
-      ylabel(head[:variables][VarIndex_])
+      xlabel(data.head.variables[1])
+      ylabel(data.head.variables[VarIndex_])
       title("log file data")
    end
 
@@ -49,21 +48,19 @@ end
 
 
 """
-	plotdata(data, head, func, (...))
+	plotdata(data, func, (...))
 
 Plot the variable from SWMF output.
 
-`plotdata(data, head, "p", plotmode="contbar")`
+`plotdata(data, "p", plotmode="contbar")`
 
-`plotdata(data, head, "p", plotmode="grid")`
+`plotdata(data, "p", plotmode="grid")`
 
-`plotdata(data, head, func, plotmode="trimesh",plotrange=plotrange,
-   plotinterval=0.2)`
+`plotdata(data, func, plotmode="trimesh",plotrange=plotrange, plotinterval=0.2)`
 
 # Input arguments
-- `data::Data`: original variable data.
-- `head::Dict`: file header information.
-- `vars::String`: variables for plotting.
+- `data::Data`: output data.
+- `func::String`: variables for plotting.
 - `plotmode::String`: (optional) type of plotting ["cont","contbar"]...
 - `plotrange::Vector`: (optional) range of plotting.
 - `plotinterval`: (optional) interval for interpolation.
@@ -76,28 +73,26 @@ Plot the variable from SWMF output.
 Right now this can only deal with 2D plots or 3D cuts. Full 3D plots may be
 supported in the future.
 """
-function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
-   plotmode="contbar", plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1,
-   density=1.0, cutPlaneIndex=1, multifigure=true, getrangeOnly=false, level=0,
-   verbose=false)
+function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
+   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, cutPlaneIndex=1,
+   density=1.0, multifigure=true, getrangeOnly=false, level=0, verbose=false)
 
-   x,w = data.x, data.w
+   x, w = data.x, data.w
    plotmode = split(plotmode)
    vars     = split(func)
-   ndim     = head[:ndim]
+   ndim     = data.head.ndim
    nvar     = length(vars)
 
    if verbose || getrangeOnly
-      println("============ PLOTTING PARAMETERS ===============")
-      println("wnames = $(head[:wnames])")
-      println("================================================")
+      @info "============ PLOTTING PARAMETERS ==============="
+      @info "wnames = $(data.head.wnames)"
       wmin = Vector{Float64}(undef,nvar)
       wmax = Vector{Float64}(undef,nvar)
       # Display min & max for each variable
       for (ivar,var) in enumerate(vars)
          if occursin(";",var) continue end # skip the vars for streamline
          VarIndex_ = findfirst(x->x==lowercase(var),
-         lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
          if ndim == 1
             wmin[ivar] = minimum(w[:,VarIndex_])
             wmax[ivar] = maximum(w[:,VarIndex_])
@@ -119,7 +114,7 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
    if ndim == 1
       for (ivar,var) in enumerate(vars)
          VarIndex_ = findfirst(x->x==lowercase(var),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
          if ivar == 1 || multifigure fig, ax = subplots() else ax = gca() end
          if !occursin("scatter",plotmode[ivar])
             plot(x,w[:,VarIndex_])
@@ -131,7 +126,7 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
          end
          xlabel("x"); ylabel("$(var)")
          dim = [0.125, 0.013, 0.2, 0.045]
-         str = @sprintf "it=%d, time=%4.2f" head[:it] head[:time]
+         str = @sprintf "it=%d, time=%4.2f" data.head.it data.head.time
          at = matplotlib.offsetbox.AnchoredText(str,
          loc="lower left", prop=Dict("size"=>8), frameon=true,
          bbox_to_anchor=(0., 1.),
@@ -145,7 +140,7 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
          if ivar == 1 || multifigure fig, ax = subplots() else ax = gca() end
          if !occursin(";",var)
             VarIndex_ = findfirst(x->x==lowercase(var),
-               lowercase.(head[:wnames]))
+               lowercase.(data.head.wnames))
             isempty(VarIndex_) &&
             error("$(var) not found in file header variables!")
          end
@@ -153,14 +148,14 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
          if plotmode[ivar] ∈ ("surf","surfbar","surfbarlog","cont","contbar",
             "contlog","contbarlog")
 
-            xi, yi, wi = getdata(data, head, var, plotrange, plotinterval)
+            xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
             # More robust method needed!
             if plotmode[ivar] ∈ ["contbar", "contbarlog"]
 			   if level == 0
-                  c = contourf(xi, yi, wi)
+               c = contourf(xi, yi, wi)
 			   else
-                  c = contourf(xi, yi, wi, level)
+               c = contourf(xi, yi, wi, level)
 			   end
             elseif plotmode[ivar] ∈ ["cont", "contlog"]
                c = contour(xi, yi, wi)
@@ -171,7 +166,7 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
             occursin("bar", plotmode[ivar]) && colorbar()
             occursin("log", plotmode[ivar]) &&
             ( c.locator = matplotlib.ticker.LogLocator() )
-            title(head[:wnames][VarIndex_])
+            title(data.head.wnames[VarIndex_])
 
          elseif plotmode[ivar] ∈ ("trimesh","trisurf","tricont","tristream")
             X = vec(x[:,:,1])
@@ -199,16 +194,16 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
                error("not yet implemented!")
             end
 
-            title(head[:wnames][VarIndex_])
+            title(data.head.wnames[VarIndex_])
 
          elseif plotmode[ivar] ∈ ("stream","streamover")
             VarStream  = split(var,";")
             VarIndex1_ = findfirst(x->x==lowercase(VarStream[1]),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
             VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
 
-            if head[:gencoord] # Generalized coordinates
+            if data.head.gencoord # Generalized coordinates
                X, Y = vec(x[:,:,1]), vec(x[:,:,2])
                if any(isinf.(plotrange))
                   if plotrange[1] == -Inf plotrange[1] = minimum(X) end
@@ -270,9 +265,9 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
          elseif occursin("quiver", plotmode[ivar])
             VarQuiver  = split(var,";")
             VarIndex1_ = findfirst(x->x==lowercase(VarQuiver[1]),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
             VarIndex2_ = findfirst(x->x==lowercase(VarQuiver[2]),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
 
             X, Y = x[:,1,1], x[1,:,2]
             v1, v2 = w[:,:,VarIndex1_]', w[:,:,VarIndex2_]'
@@ -288,9 +283,9 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
             error("unknown plot mode: $(plotmode[ivar])")
          end
 
-         xlabel(head[:variables][1]); ylabel(head[:variables][2])
+         xlabel(data.head.variables[1]); ylabel(data.head.variables[2])
          dim = [0.125, 0.013, 0.2, 0.045]
-         str = @sprintf "it=%d, time=%4.2f" head[:it] head[:time]
+         str = @sprintf "it=%d, time=%4.2f" data.head.it data.head.time
          at = matplotlib.offsetbox.AnchoredText(str,
          loc="lower left", prop=Dict("size"=>8), frameon=true,
          bbox_to_anchor=(0., 1.),
@@ -309,7 +304,7 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
          if plotmode[ivar] ∈ ("surf","surfbar","surfbarlog","cont","contbar",
             "contlog","contbarlog")
             VarIndex_ = findfirst(x->x==lowercase(var),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
             isempty(VarIndex_) && error("$(var) not found in header variables!")
 
             if ivar == 1 || multifigure fig, ax = subplots() else ax = gca() end
@@ -332,9 +327,9 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
          elseif plotmode[ivar] ∈ ("stream","streamover")
             VarStream  = split(var,";")
             VarIndex1_ = findfirst(x->x==lowercase(VarStream[1]),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
             VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]),
-            lowercase.(head[:wnames]))
+            lowercase.(data.head.wnames))
             (isempty(VarIndex1_) || isempty(VarIndex2_)) &&
             error("$(VarStream) not found in header variables!")
 
@@ -372,7 +367,7 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
                c = ax.contourf(cut1, cut2, W, level)
             end
             fig.colorbar(c, ax=ax)
-            title(head[:wnames][VarIndex_])
+            title(data.head.wnames[VarIndex_])
 
          elseif plotmode[ivar] ∈ ("stream","streamover")
             # Surprisingly, some box outputs do not have equal spaces???
@@ -400,7 +395,7 @@ function plotdata(data::Data, head::Dict, func::AbstractString; cut="",
 
          ax = gca()
          dim = [0.125, 0.013, 0.2, 0.045]
-         str = @sprintf "it=%d, time=%4.2f" head[:it] head[:time]
+         str = @sprintf "it=%d, time=%4.2f" data.head.it data.head.time
          at = matplotlib.offsetbox.AnchoredText(str,
          loc="lower left", prop=Dict("size"=>8), frameon=true,
          bbox_to_anchor=(0., 1.),
@@ -414,17 +409,17 @@ end
 
 
 """
-	cutplot(data, head, var; plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
+	cutplot(data, var; plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
 		plotinterval=0.1, density=1.0, cutPlaneIndex=1,level=20)
 
 2D plane cut contourf of 3D box data.
 """
-function cutplot(data::Data, head::Dict, var::AbstractString;
+function cutplot(data::Data, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
    plotinterval=0.1, density=1.0, cutPlaneIndex=1,level=20)
 
-   x,w = data.x, data.w
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(head[:wnames]))
+   x, w = data.x, data.w
+   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
    isempty(VarIndex_) && error("$(var) not found in header variables!")
 
    X = @view x[:,:,:,1]
@@ -453,7 +448,7 @@ function cutplot(data::Data, head::Dict, var::AbstractString;
 
    c = contourf(cut1, cut2, W, level)
 
-   title(head[:wnames][VarIndex_])
+   title(data.head.wnames[VarIndex_])
 
    if cut == "x"
       xlabel("y"); ylabel("z")
@@ -468,23 +463,23 @@ end
 
 
 """
-	streamslice(data::Data, head::Dict, var::String;
+	streamslice(data::Data, var::String;
       plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
       plotinterval=0.1, density=1.0, cutPlaneIndex=1,color="w")
 
 Plot streamlines on 2D slices of 3D box data. Variable string must be separated
 with `;`. Tranposes aree needed because of `meshgrid` and `ndgrid` conversion.
 """
-function streamslice(data::Data, head::Dict, var::AbstractString;
+function streamslice(data::Data, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
    plotinterval=0.1, density=1.0, cutPlaneIndex=1, color="w")
 
    x,w = data.x, data.w
    VarStream  = split(var,";")
    VarIndex1_ = findfirst(x->x==lowercase(VarStream[1]),
-      lowercase.(head[:wnames]))
+      lowercase.(data.head.wnames))
    VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]),
-      lowercase.(head[:wnames]))
+      lowercase.(data.head.wnames))
    (isempty(VarIndex1_) || isempty(VarIndex2_)) &&
       @error "$(VarStream) not found in header variables!"
 
@@ -533,18 +528,18 @@ function streamslice(data::Data, head::Dict, var::AbstractString;
    elseif cut == 'z'
       xlabel("x"); ylabel("y")
    end
-
+   return s
 end
 
 
 """
-	plot(data, head, var; kwargs)
+	plot(data, var; kwargs)
 
 Wrapper over the plot function in matplotlib.
 """
-function plot(data::Data, head::Dict, var::AbstractString; kwargs...)
-   x,w = data.x, data.w
-   VarIndex_ = findfirst(x->x==var,head[:wnames])
+function plot(data::Data, var::AbstractString; kwargs...)
+   x, w = data.x, data.w
+   VarIndex_ = findfirst(x->x==var, data.head.wnames)
 
    c = plot(x, w[:,VarIndex_]; kwargs...)
 
@@ -552,13 +547,13 @@ function plot(data::Data, head::Dict, var::AbstractString; kwargs...)
 end
 
 """
-	scatter(data, head, var; kwargs)
+	scatter(data, var; kwargs)
 
 Wrapper over the scatter function in matplotlib.
 """
-function scatter(data::Data, head::Dict, var::AbstractString; kwargs...)
-   x,w = data.x, data.w
-   VarIndex_ = findfirst(x->x==var,head[:wnames])
+function scatter(data::Data, var::AbstractString; kwargs...)
+   x, w = data.x, data.w
+   VarIndex_ = findfirst(x->x==var, data.head.wnames)
 
    c = scatter(x, w[:,VarIndex_]; kwargs...)
 
@@ -566,14 +561,14 @@ function scatter(data::Data, head::Dict, var::AbstractString; kwargs...)
 end
 
 """
-	contour(data, head, var, levels=0; plotrange, plotinterval, kwargs)
+	contour(data,var, levels=0; plotrange, plotinterval, kwargs)
 
 Wrapper over the contour function in matplotlib.
 """
-function contour(data::Data, head::Dict, var::AbstractString, levels=0;
+function contour(data::Data, var::AbstractString, levels=0;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
-   xi, yi, wi = getdata(data, head, var, plotrange, plotinterval)
+   xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
    if levels != 0
       c = plt.contour(xi, yi, wi, levels; kwargs...)
@@ -585,14 +580,14 @@ function contour(data::Data, head::Dict, var::AbstractString, levels=0;
 end
 
 """
-	contourf(data, head, var, levels=0; plotrange, plotinterval, kwargs)
+	contourf(data var, levels=0; plotrange, plotinterval, kwargs)
 
 Wrapper over the contourf function in matplotlib.
 """
-function contourf(data::Data, head::Dict, var::AbstractString, levels=0;
+function contourf(data::Data, var::AbstractString, levels=0;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
-   xi, yi, wi = getdata(data, head, var, plotrange, plotinterval)
+   xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
    if levels != 0
       c = plt.contourf(xi, yi, wi, levels; kwargs...)
@@ -604,17 +599,16 @@ function contourf(data::Data, head::Dict, var::AbstractString, levels=0;
 end
 
 """
-	tricontourf(data, head, var; plotrange, plotinterval, kwargs)
+	tricontourf(data, var; plotrange, plotinterval, kwargs)
 
 Wrapper over the tricontourf function in matplotlib.
 """
-function tricontourf(data::Data, head::Dict, var::AbstractString;
+function tricontourf(data::Data, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
-   x = data.x
-   w = data.w
+   x, w = data.x, data.w
 
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(head[:wnames]))
+   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
    isempty(VarIndex_) && error("$(var) not found in header variables!")
 
    X = vec(x[:,:,1])
@@ -634,18 +628,17 @@ function tricontourf(data::Data, head::Dict, var::AbstractString;
 end
 
 """
-	plot_trisurf(data::Data, head::Dict, var::String;
+	plot_trisurf(data::Data, var::String;
 		plotrange::Vector{Float64}=[-Inf,Inf,-Inf,Inf], kwargs::Dict=Dict())
 
 Wrapper over the plot_trisurf function in matplotlib.
 """
-function plot_trisurf(data::Data, head::Dict, var::AbstractString;
+function plot_trisurf(data::Data, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], kwargs=Dict())
 
-   x = data.x
-   w = data.w
+   x, w = data.x, data.w
 
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(head[:wnames]))
+   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
    isempty(VarIndex_) && error("$(var) not found in header variables!")
 
    X = vec(x[:,:,1])
@@ -666,15 +659,14 @@ end
 
 
 """
-	plot_surface(data, head, var; plotrange, plotinterval, kwargs)
+	plot_surface(data, var; plotrange, plotinterval, kwargs)
 
 Wrapper over the plot_surface function in matplotlib.
 """
-function plot_surface(data::Data, head::Dict, var::AbstractString;
-   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1,
-   kwargs=Dict())
+function plot_surface(data::Data, var::AbstractString;
+   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
-   xi, yi, wi = getdata(data, head, var, plotrange, plotinterval)
+   xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
    c = plot_surface(xi, yi, wi; kwargs...)
 
@@ -682,21 +674,21 @@ function plot_surface(data::Data, head::Dict, var::AbstractString;
 end
 
 """
-	streamplot(data, head, var; plotrange, plotinterval)
+	streamplot(data, var; plotrange, plotinterval=0.1, density=1.0, color="")
 
 Wrapper over the streamplot function in matplotlib. Streamplot does not have
 **kwargs in the API.
 """
-function streamplot(data::Data, head::Dict, var::AbstractString;
+function streamplot(data::Data, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, density=1.0, color="")
 
    x, w = data.x, data.w
    VarStream  = split(var,";")
-   wnames = lowercase.(head[:wnames])
+   wnames = lowercase.(data.head.wnames)
    VarIndex1_ = findfirst(x->x==lowercase(VarStream[1]), wnames)
    VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]), wnames)
 
-   if head[:gencoord] # Generalized coordinates
+   if data.head.gencoord # Generalized coordinates
 	  X, Y = vec(x[:,:,1]), vec(x[:,:,2])
 	  if any(isinf.(plotrange))
 		 if plotrange[1] == -Inf plotrange[1] = minimum(X) end
@@ -759,14 +751,14 @@ function streamplot(data::Data, head::Dict, var::AbstractString;
 end
 
 """Prepare data for passing to plotting functions."""
-function getdata(data, head, var, plotrange, plotinterval)
-   x,w = data.x, data.w
-   ndim = head[:ndim]
+function getdata(data, var, plotrange, plotinterval)
+   x, w = data.x, data.w
+   ndim = data.head.ndim
 
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(head[:wnames]))
+   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
    isempty(VarIndex_) && error("$(var) not found in header variables!")
 
-   if head[:gencoord] # Generalized coordinates
+   if data.head.gencoord # Generalized coordinates
       X = vec(x[:,:,1])
       Y = vec(x[:,:,2])
       W = vec(w[:,:,VarIndex_])
@@ -816,17 +808,14 @@ function getdata(data, head, var, plotrange, plotinterval)
 end
 
 """
-	animatedata(filelist, func, (plotmode="contbar",
-      plotrange=[-Inf Inf -Inf Inf],
-      plotinterval=0.1))
+	animatedata()
 
 Generate animations from data. This is basically calling plotdata function for
 multiple snapshots. The main issue here is to determine the colorbar/axis range
 in advance to avoid any jump in the movie.
 """
-function animatedata(filelist::FileList,func::AbstractString;
-   imin=1, imax=1, cut="", plotmode="contbar", plotrange=[-Inf,Inf,-Inf,Inf],
-   plotinterval=0.1, verbose=true)
+function animatedata()
+
 end
 
 

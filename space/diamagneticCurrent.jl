@@ -1,12 +1,5 @@
 using PyCall, PyPlot#, ScatteredInterpolation
 
-#=
-include("VisAna.jl")
-using .VisAna
-filename = "3d.dat"
-filehead, data, filelist = readdata(filename,verbose=false);
-=#
-
 function get_diamagnetic_current(filehead::Dict, data::Array{T,2}) where
    T<:AbstractFloat
 
@@ -97,7 +90,7 @@ function get_diamagnetic_current(filehead::Dict, data::Array{T,2}) where
 
 end
 
-#get_diamagnetic_current(filehead[1], data)
+#get_diamagnetic_current(data.head., data)
 
 using Glob
 
@@ -122,21 +115,21 @@ filenames = glob(filename, filedir)
 for i = 80:100#length(filenames)
    fname = filenames[i]
    dir, name = splitdir(fname)
-   filehead, data, filelist = readdata(name,dir=dir,verbose=false);
-   @views x = data[1].x[:,:,:,1]
-   @views y = data[1].x[:,:,:,2]
-   @views z = data[1].x[:,:,:,3]
-   w = data[1].w
-   
-   ne_ = findfirst(isequal("rhoS0"), filehead[1][:wnames])
-   ni_ = findfirst(isequal("rhoS1"), filehead[1][:wnames])
-   pi_ = findfirst(isequal("pS1"),   filehead[1][:wnames])
-   pe_ = findfirst(isequal("pS0"),   filehead[1][:wnames])
+   data = readdata(name,dir=dir,verbose=false);
+   @views x = data.x[:,:,:,1]
+   @views y = data.x[:,:,:,2]
+   @views z = data.x[:,:,:,3]
+   w = data.w
 
-   bx_ = findfirst(isequal("Bx"),    filehead[1][:wnames])
-   by_ = findfirst(isequal("By"),    filehead[1][:wnames])
-   bz_ = findfirst(isequal("Bz"),    filehead[1][:wnames])
-   
+   ne_ = findfirst(isequal("rhoS0"), data.head.wnames])
+   ni_ = findfirst(isequal("rhoS1"), data.head.wnames])
+   pi_ = findfirst(isequal("pS1"),   data.head.wnames)
+   pe_ = findfirst(isequal("pS0"),   data.head.wnames)
+
+   bx_ = findfirst(isequal("Bx"),    data.head.wnames)
+   by_ = findfirst(isequal("By"),    data.head.wnames)
+   bz_ = findfirst(isequal("Bz"),    data.head.wnames)
+
 
    #ne = w[:,:,:,ne_]
    ni = w[:,:,:,ni_] / 14 *1e6  # [/m^3]
@@ -203,9 +196,9 @@ filenames = glob(filename, filedir)
 for i = 80:100#length(filenames)
    fname = filenames[i]
    dir, name = splitdir(fname)
-   filehead, data, filelist = readdata(name,dir=dir,verbose=false);
+   data = readdata(name,dir=dir,verbose=false);
 
-   plotdata(data[1],filehead[1],"p bx;bz",plotmode="contbar streamover", plotrange=[-2.2,-1.5,-1.,1.],
+   plotdata(data,"p bx;bz",plotmode="contbar streamover", plotrange=[-2.2,-1.5,-1.,1.],
    	density=1.5, plotinterval=0.05)
    plt.axis("equal")
 
@@ -229,23 +222,23 @@ filedir = "/Users/hyzhou/Ganymede/run_mercury_80s/GM"
 filenames = glob(filename, filedir)
 
 dir, name = splitdir(filenames[1])
-filehead, data, filelist = readdata(name,dir=dir,verbose=false)
-npict = filelist[1].npictinfiles
+data = readdata(name,dir=dir,verbose=false)
+npict = data.list.npictinfiles
 
 for ipict = 1:npict
-   filehead, data, filelist = readdata(name,npict=ipict,dir=dir,verbose=false)
-   @views x = data[1].x[:,:,:,1]
-   @views y = data[1].x[:,:,:,2]
-   @views z = data[1].x[:,:,:,3]
-   w = data[1].w
-   
-   ni_ = findfirst(isequal("Rho"),   filehead[1][:wnames])
-   pi_ = findfirst(isequal("P"),   filehead[1][:wnames])
+   data = readdata(name,npict=ipict,dir=dir,verbose=false)
+   @views x = data.x[:,:,:,1]
+   @views y = data.x[:,:,:,2]
+   @views z = data.x[:,:,:,3]
+   w = data.w
 
-   bx_ = findfirst(isequal("Bx"),    filehead[1][:wnames])
-   by_ = findfirst(isequal("By"),    filehead[1][:wnames])
-   bz_ = findfirst(isequal("Bz"),    filehead[1][:wnames])
-   
+   ni_ = findfirst(isequal("Rho"), data.head.wnames)
+   pi_ = findfirst(isequal("P"),  data.head.wnames)
+
+   bx_ = findfirst(isequal("Bx"), data.head.wnames)
+   by_ = findfirst(isequal("By"), data.head.wnames)
+   bz_ = findfirst(isequal("Bz"), data.head.wnames)
+
 
    #ne = w[:,:,:,ne_]
    ni = w[:,:,:,ni_] / 14 *1e6  # [/m^3]
@@ -304,18 +297,18 @@ filedir = "/Users/hyzhou/Ganymede/run_mercury_80s/GM"
 filenames = glob(filename, filedir)
 
 dir, name = splitdir(filenames[1])
-filehead, data, filelist = readdata(name,dir=dir,verbose=false)
-npict = filelist[1].npictinfiles
+data = readdata(name,dir=dir,verbose=false)
+npict = data.list.npictinfiles
 
 for ipict = 1:npict
-   filehead, data, filelist = readdata(name,npict=ipict,dir=dir,verbose=false)
-   
-   plotdata(data[1],filehead[1],"p bx;bz",plotmode="contbar streamover",cut="y")
-   
+   data= readdata(name,npict=ipict,dir=dir,verbose=false)
+
+   plotdata(data,"p bx;bz",plotmode="contbar streamover",cut="y")
+
 
    clf()
 
-   
+
    plt.clim(0,8000000) # This creates the same color for values above
 
 
@@ -342,14 +335,14 @@ end
        gradPMag[i,j,k] = sqrt(gradP[1,i,j,k]^2 + gradP[2,i,j,k]^2 +
        			gradP[3,i,j,k]^2)
    end
-   
+
    figure()
    contourf(x[:,yMid,:],z[:,yMid,:],gradPMag[:,yMid,:],50)
    colorbar()
 
-   ex_ = findfirst(isequal("Ex"),    filehead[1][:wnames])
-   ey_ = findfirst(isequal("Ey"),    filehead[1][:wnames])
-   ez_ = findfirst(isequal("Ez"),    filehead[1][:wnames])
+   ex_ = findfirst(isequal("Ex"),    data.head.wnames)
+   ey_ = findfirst(isequal("Ey"),    data.head.wnames)
+   ez_ = findfirst(isequal("Ez"),    data.head.wnames)
 
    Ex = @view w[:,:,:,ex_]
    Ey = @view w[:,:,:,ey_]
