@@ -350,7 +350,7 @@ uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [[SWMF]]
 deps = ["Glob", "Printf", "WriteVTK"]
-git-tree-sha1 = "50c2516ff7e8318e2ec98476b922392d472b6a2d"
+git-tree-sha1 = "fab1e3433b27caf5e3c3cbe7f085d201568c21e4"
 repo-rev = "master"
 repo-url = "https://github.com/henry2004y/SWMF.git"
 uuid = "e74ebddf-6ac1-4047-a0e5-c32c99e57753"
