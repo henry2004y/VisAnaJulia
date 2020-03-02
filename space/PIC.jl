@@ -19,7 +19,7 @@ DN = matplotlib.colors.DivergingNorm
 
 #dir = "/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia"
 dir = "/Users/hyzhou"
-#fnameField = "3d_var_region0_0_t00001640_n00020369.out"
+fnameField = "3d_var_region0_0_t00001640_n00020369.out"
 #fnameField = "3d_var_region0_0_t00001520_n00004093.out"
 #fnameField = "3d_var_region0_0_t00001523_n00004732.out"
 #fnameField = "3d_var_region0_0_t00001524_n00004933.out"
@@ -34,9 +34,9 @@ dir = "/Users/hyzhou"
 #fnameField = "3d_var_region0_0_t00001840_n00045319.out"
 #fnameField = "3d_var_region0_0_t00001850_n00047357.out"
 #fnameField = "3d_var_region0_0_t00001900_n00049293.out"
-fnameField = "3d_var_region0_0_t00001910_n00051301.out"
+#fnameField = "3d_var_region0_0_t00001910_n00051301.out"
 
-head, data = readdata(fnameField, dir=dir)
+data = readdata(fnameField, dir=dir)
 
 me = data.head.eqpar[1]
 qe = data.head.eqpar[2]
@@ -248,10 +248,19 @@ c[15] = ax[15].contourf(Z,X, (Ey.+Uzi.*Bx.-Uxi.*Bz)./E₀, levels, norm=DN(0),
 c[16] = ax[16].contourf(Z,X, (Ey.+Uze.*Bx.-Uxe.*Bz)./E₀, levels, norm=DN(0),
    vmin=-vm[16], vmax=vm[16])
 
-# non-gyrotropy index Dng (for electron, not for electron+ion!)
-Dng = @. 2*√(Pxye^2 + Pxze^2 + Pyze^2) / (Pxxe + Pyye + Pzze)
+# non-gyrotropy index Dng (for electron, not for electron+ion!) [Aunai 2013]
+#Dng = @. 2*√(Pxye*Pxye + Pxze*Pxze + Pyze*Pyze) / (Pxxe + Pyye + Pzze)
+#c[17] = ax[17].contourf(Z,X, Dng, levels, cmap="jet")
 
-c[17] = ax[17].contourf(Z,X,Dng, levels, cmap="jet")
+# [Swisdak 2016]
+I₁ = @. Pxxe + Pyye + Pzze
+I₂ = @. Pxxe*Pyye + Pxxe*Pzze + Pyye*Pzze - Pxye*Pxye - Pyze*Pyze - Pxze*Pxze
+B² = @. Bx*Bx + By*By + Bz*Bz
+Ppar = @. (Bx*Bx*Pxxe + By*By*Pyye + Bz*Bz*Pzze +
+	2*(Bx*By*Pxye + Bx*Bz*Pxze + By*Bz*Pyze))/B²
+Q = @. 1 - 4I₂/((I₁ - Ppar)*(I₁ + 3Ppar))
+
+c[17] = ax[17].contourf(Z,X, Q, levels, cmap="jet")
 
 # Dissipation measure De
 Dₑ = @. (Jx*(Ex + Uye*Bz - Uze*By) +
