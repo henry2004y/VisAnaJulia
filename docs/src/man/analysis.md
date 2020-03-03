@@ -19,7 +19,7 @@ where
 
 However, Marc Swisdak later demonstrated in his [paper](https://doi.org/10.1002/2015GL066980) that a better measure from positive semi-definite matrix analysis should be
 ```math
-Q = 1- 4I_2/(I_1 - P_\parallel)(I_1 + 3P_\parallel)
+Q = 1- 4\frac{I_2}{(I_1 - P_\parallel)(I_1 + 3P_\parallel)}
 ```
 where ``I_1=P_{xx}+P_{yy}+P_{zz}`` is the trace and ``I_2=P_{xx}P_{yy}+P_{xx}P_{zz}+P_{yy}P_{zz}-(P_{xy}P_{yx}+P_{xz}P_{zx}+P_{yz}P_{zy})`` is the principle minor, both of which are invariants under coordinate rotation. (The third invariant is the determinant.) This indeed peak near the center of X-line while is enhanced along the separatrices, which is better than ``D_{ng}`` in the sense that the latter may not peak at the diffusion region.
 
