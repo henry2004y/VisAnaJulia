@@ -15,13 +15,9 @@ which only considers the non-gyrotropy in the plane perpendicular to the magneti
 
 [Another measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population proposed by researchers can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
 ```math
-D_{ng} = \frac{2\sqrt{\sum_{i,j}N_{i,j}^2}}{Tr(\overleftrightarrow{P_s})} 
+D_{ng} = \frac{2\sqrt{\sum_{i,j, i\neq j}P_{ij}^2}}{\sum_{i=1,3}P_{ii}^2} 
 ```
-where
-```math
-\overleftrightarrow{P_s} = \overleftrightarrow{G} + \overleftrightarrow{N},
-```
-``\overleftrightarrow{G}`` is the gyrotropic term and ``\overleftrightarrow{N}`` is the nongyrotropic term. Note that this is frame dependent and population specific.
+Note that this is frame independent and population specific.
 
 However, Marc Swisdak later demonstrated in his [paper](https://doi.org/10.1002/2015GL066980) that a better measure from positive semi-definite matrix analysis should be
 ```math
