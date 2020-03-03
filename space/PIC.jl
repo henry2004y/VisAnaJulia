@@ -129,7 +129,7 @@ Jy = @. qi*ρi/mi*Uyi+qe*ρe/me*Uye
 Jz = @. qi*ρi/mi*Uzi+qe*ρe/me*Uze
 
 # Normalized quantities
-fig, ax = plt.subplots(9,2,figsize=(8.4,8.7))
+fig, ax = plt.subplots(10,2,figsize=(8.00,9.00))
 c = Vector{PyObject}(undef,length(ax))
 axin = Vector{PyObject}(undef,length(ax))
 for i in 1:length(ax)
@@ -148,17 +148,17 @@ end
 # Set plotting parameters
 levels = 40
 plt.set_cmap("seismic")
-vPos, vPos2 = (0.4, 0.8), (0.28,0.8)
-#vPos, vPos2 = (0.8, 0.8), (0.65,0.8)
-lPos = (-0.1, 0.94)
-yPos = (-0.22,0.33)
+vPos, vPos2 = (0.4, 0.76), (0.28,0.78)
+#vPos, vPos2 = (0.80, 0.75), (0.62,0.77)
+lPos = (-0.12, 0.94)
+yPos = (-0.24, 0.33)
 
 labels = [L"B_z", L"B_y", L"E_x", L"v_{iy}", L"v_{iz}", L"v_{ex}", L"v_{ey}",
 	L"v_{ez}", L"\rho_i", L"J_x", L"J_y", L"J_z", L"(E+v_i\times B)_x",
 	L"(E+v_e \times B)_x", L"(E+v_i\times B)_y", L"(E+v_e\times B)_y",
-	L"D_{ng}", L"D_e"]
+	L"A\o", L"D_{ng}", L"\sqrt{Q}", L"D_e"]
 
-vm = ones(18)
+vm = ones(20)
 const ϵ = 0.05 # allow room for extreme colors
 vm[1] = max(abs.(extrema(Bz./B₀))...)+ϵ
 vm[2] = max(abs.(extrema(By./B₀))...)+ϵ
@@ -221,7 +221,7 @@ c[7] = ax[7].contourf(Z,X,Uye./vAlfven,levels, norm=DN(0), vmin=-vm[7], vmax=vm[
 c[8] = ax[8].contourf(Z,X,Uze./vAlfven,levels, norm=DN(0), vmin=-vm[8], vmax=vm[8])
 
 # ρi
-c[9] = ax[9].contourf(Z,X,ρi./ρ₀,levels, cmap="jet")
+c[9] = ax[9].contourf(Z,X,ρi./ρ₀,levels, cmap="inferno")
 
 # Jx
 c[10] = ax[10].contourf(Z,X,Jx./J₀,levels, norm=DN(0), vmin=-vm[10], vmax=vm[10])
@@ -248,22 +248,33 @@ c[15] = ax[15].contourf(Z,X, (Ey.+Uzi.*Bx.-Uxi.*Bz)./E₀, levels, norm=DN(0),
 c[16] = ax[16].contourf(Z,X, (Ey.+Uze.*Bx.-Uxe.*Bz)./E₀, levels, norm=DN(0),
    vmin=-vm[16], vmax=vm[16])
 
-# agyrotropy measure [Scudder 2008]
-#A =
+# agyrotropy measure A 8[Scudder 2008]
+B² = @. Bx*Bx + By*By + Bz*Bz
+Nxx = @. (By*By*Pzze - 2*By*Bz*Pyze + Bz*Bz*Pyye )/B²
+Nxy = @. (-By*Bx*Pzze + By*Bz*Pxze + Bz*Bx*Pyze - Bz*Bz*Pxye)/B²
+Nxz = @. (By*Bx*Pyze - By*By*Pxze - Bz*Bx*Pyye + Bz*By*Pxye)/B²
+Nyy = @. (Bx*Bx*Pzze - 2*Bx*Bz*Pxze + Bz*Bz*Pxxe)/B²
+Nyz = @. (-Bx*Bx*Pyze + Bx*By*Pxze + Bz*Bx*Pxye - Bz*By*Pxxe)/B²
+Nzz = @. (Bx*Bx*Pyye - 2*Bx*By*Pxye + By*By*Pxxe)/B²
+α = @. Nxx + Nyy + Nzz
+β = @. -(Nxy*Nxy + Nxz*Nxz + Nyz*Nyz - Nxx*Nyy - Nxx*Nzz - Nyy*Nzz)
+A = @. 2*√(α*α - 4β)/α
 
-# non-gyrotropy index Dng (for electron, not for electron+ion!) [Aunai 2013]
-#Dng = @. 2*√(Pxye*Pxye + Pxze*Pxze + Pyze*Pyze) / (Pxxe + Pyye + Pzze)
-#c[17] = ax[17].contourf(Z,X, Dng, levels, cmap="jet")
+c[17] = ax[17].contourf(Z,X, A, levels, cmap="inferno")
 
-# [Swisdak 2016]
+# non-gyrotropy measure Dng (for electron, not for electron+ion!) [Aunai 2013]
+Dng = @. 2*√(Pxye*Pxye + Pxze*Pxze + Pyze*Pyze) / (Pxxe + Pyye + Pzze)
+c[18] = ax[18].contourf(Z,X, Dng, levels, cmap="inferno")
+
+# non-gyrotropy measure Q [Swisdak 2016]
 I₁ = @. Pxxe + Pyye + Pzze
 I₂ = @. Pxxe*Pyye + Pxxe*Pzze + Pyye*Pzze - Pxye*Pxye - Pyze*Pyze - Pxze*Pxze
-B² = @. Bx*Bx + By*By + Bz*Bz
+
 Ppar = @. (Bx*Bx*Pxxe + By*By*Pyye + Bz*Bz*Pzze +
 	2*(Bx*By*Pxye + Bx*Bz*Pxze + By*Bz*Pyze))/B²
-Q = @. 1 - 4I₂/((I₁ - Ppar)*(I₁ + 3Ppar))
+Qsqr = @. √(1 - 4I₂/((I₁ - Ppar)*(I₁ + 3Ppar)))
 
-c[17] = ax[17].contourf(Z,X, Q, levels, cmap="jet")
+c[19] = ax[19].contourf(Z,X, Qsqr, levels, cmap="inferno")
 
 # Dissipation measure De
 Dₑ = @. (Jx*(Ex + Uye*Bz - Uze*By) +
@@ -271,17 +282,18 @@ Dₑ = @. (Jx*(Ex + Uye*Bz - Uze*By) +
 		Jz*(Ez + Uxe*By - Uye*Bx) -
 		(ρi/mi - ρe/me)*(Uxe*Ex + Uye*Ey + Uze*Ez)) / (J₀*B₀*vAlfven)
 
-vm[18] = max(abs.(Dₑ)...)+ϵ
+vm[20] = max(abs.(Dₑ)...)+ϵ
 
-c[18] = ax[18].contourf(Z,X,Dₑ, levels, norm=DN(0), vmin=-vm[18], vmax=vm[18])
+c[20] = ax[20].contourf(Z,X, Dₑ, levels, norm=DN(0), vmin=-vm[20], vmax=vm[20])
 
 for i in 1:length(ax)
    #.ax.locator_params(nbins=5) does not work together with norm(0)!
    cb = colorbar(c[i], cax=axin[i])
    cb.ax.tick_params(labelsize=5)
    #cb.ax.locator_params(nbins=5)
-   if i in (1,9,17) #(1,4,17)
-	   ax[i].annotate(labels[i], xy=vPos, xycoords="axes fraction",color="w")
+   if i in (1,9,17,18,19) #(1,9,17,18,19)
+      ax[i].annotate(labels[i], xy=vPos, xycoords="axes fraction", color="w",
+         weight="bold")
    elseif i in (13,14,15,16)
       ax[i].annotate(labels[i], xy=vPos2, xycoords="axes fraction")
    else
@@ -291,7 +303,7 @@ for i in 1:length(ax)
    i ≤ length(ax)/2 &&
    ax[i].annotate(L"x [R_G]", xy=yPos, xycoords="axes fraction",rotation=90)
    i % (length(ax)/2) == 0 && ax[i].set_xlabel(L"z [R_G]")
-   if i < length(ax)-1
+   if i < length(ax)-3
       [ax[i].plot(zl[j],xl[j],"-",color="k",lw=0.4) for j in 1:length(xstart)]
    end
    ax[i].contour(Z,X,Bz,[0.],colors="k",linestyles="dotted",linewidths=1.)
@@ -333,14 +345,14 @@ Tperp = @. √(P22e^2 + P33e^2)./ρe.*me
 
 figure()
 ax1 = subplot(211)
-contourf(Z,X, Tpar./T₀, levels, cmap="viridis"); colorbar()
+contourf(Z,X, Tpar./T₀, levels, cmap="inferno"); colorbar()
 clim([0.0,6.0])
 contour(Z,X,Bz,[0.],colors="k",linestyles="dotted",linewidths=1.)
 ax1.invert_yaxis()
 title(L"T_e\parallel")
 ax1.axes.xaxis.set_ticklabels([])
 ax2 = subplot(212)
-contourf(Z,X, Tperp./T₀, levels, cmap="viridis"); colorbar()
+contourf(Z,X, Tperp./T₀, levels, cmap="inferno"); colorbar()
 clim([0.0,6.0])
 contour(Z,X,Bz,[0.],colors="k",linestyles="dotted",linewidths=1.)
 ax2.invert_yaxis()
