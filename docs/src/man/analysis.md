@@ -7,15 +7,21 @@ Magnetic reconnection occurs in a small diffusion region around the X-line but i
 - non-gyrotropic behavior
 - electron distribution functions
 
-[A measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
+[one measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population proposed by researchers can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
 ```math
-D_{ng} = \frac{2\sqrt{\sum_{i,j}N_{i,j}^2}}{Tr(\overleftrightarrow{P_s})}
+D_{ng} = \frac{2\sqrt{\sum_{i,j}N_{i,j}^2}}{Tr(\overleftrightarrow{P_s})} 
 ```
 where
 ```math
 \overleftrightarrow{P_s} = \overleftrightarrow{G} + \overleftrightarrow{N},
 ```
 ``\overleftrightarrow{G}`` is the gyrotropic term and ``\overleftrightarrow{N}`` is the nongyrotropic term. Note that this is frame dependent and population specific.
+
+However, Marc Swisdak later demonstrated in his [paper](https://doi.org/10.1002/2015GL066980) that a better measure from positive semi-definite matrix analysis should be
+```math
+Q = 1- 4I_2/(I_1 - P_\parallel)(I_1 + 3P_\parallel)
+```
+where ``I_1=P_{xx}+P_{yy}+P_{zz}`` is the trace and ``I_2=P_{xx}P_{yy}+P_{xx}P_{zz}+P_{yy}P_{zz}-(P_{xy}P_{yx}+P_{xz}P_{zx}+P_{yz}P_{zy})`` is the principle minor, both of which are invariants under coordinate rotation. (The third invariant is the determinant.) This indeed peak near the center of X-line while is enhanced along the separatrices, which is better than ``D_{ng}`` in the sense that the latter may not peak at the diffusion region.
 
 It has been found from PIC simulations that especially in asymmetric reconnection, ``E_M^\ast\neq 0`` where ``\mathbf{E}^\ast=\mathbf{E}+\mathbf{V}_e\times\mathbf{B}`` is not a good enough indicator. Following [the principle ideas of finding a measure](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.106.195003#fulltext):
 - dissipation should be related to non-ideal energy conversion;
