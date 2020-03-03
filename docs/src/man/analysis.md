@@ -7,7 +7,13 @@ Magnetic reconnection occurs in a small diffusion region around the X-line but i
 - non-gyrotropic behavior
 - electron distribution functions
 
-[One measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population proposed by researchers can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
+The first proposed [non-gyrotropy measure](https://doi.org/10.1029/2008JA013035) by Jack Scudder and William Daughton is
+```math
+AØ_e = 2\frac{|P_{\perp1} - P_{\perp2}|}{P_{\perp1} + P_{\perp2}}
+```
+which only considers the non-gyrotropy in the plane perpendicular to the magnetic field.
+
+[Another measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population proposed by researchers can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
 ```math
 D_{ng} = \frac{2\sqrt{\sum_{i,j}N_{i,j}^2}}{Tr(\overleftrightarrow{P_s})} 
 ```
