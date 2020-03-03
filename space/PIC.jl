@@ -248,6 +248,9 @@ c[15] = ax[15].contourf(Z,X, (Ey.+Uzi.*Bx.-Uxi.*Bz)./E₀, levels, norm=DN(0),
 c[16] = ax[16].contourf(Z,X, (Ey.+Uze.*Bx.-Uxe.*Bz)./E₀, levels, norm=DN(0),
    vmin=-vm[16], vmax=vm[16])
 
+# agyrotropy measure [Scudder 2008]
+#A =
+
 # non-gyrotropy index Dng (for electron, not for electron+ion!) [Aunai 2013]
 #Dng = @. 2*√(Pxye*Pxye + Pxze*Pxze + Pyze*Pyze) / (Pxxe + Pyye + Pzze)
 #c[17] = ax[17].contourf(Z,X, Dng, levels, cmap="jet")
