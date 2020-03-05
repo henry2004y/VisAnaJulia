@@ -7,15 +7,23 @@ Magnetic reconnection occurs in a small diffusion region around the X-line but i
 - non-gyrotropic behavior
 - electron distribution functions
 
-[A measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
+The first proposed [non-gyrotropy measure](https://doi.org/10.1029/2008JA013035) by Jack Scudder and William Daughton is
 ```math
-D_{ng} = \frac{2\sqrt{\sum_{i,j}N_{i,j}^2}}{Tr(\overleftrightarrow{P_s})}
+AØ_e = 2\frac{|P_{\perp1} - P_{\perp2}|}{P_{\perp1} + P_{\perp2}}
 ```
-where
+which only considers the non-gyrotropy in the plane perpendicular to the magnetic field.
+
+[Another measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population proposed by researchers can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
 ```math
-\overleftrightarrow{P_s} = \overleftrightarrow{G} + \overleftrightarrow{N},
+D_{ng} = \frac{2\sqrt{\sum_{i,j, i\neq j}P_{ij}^2}}{\sum_{i=1,3}P_{ii}^2} 
 ```
-``\overleftrightarrow{G}`` is the gyrotropic term and ``\overleftrightarrow{N}`` is the nongyrotropic term. Note that this is frame dependent and population specific.
+Note that this is frame independent and population specific.
+
+However, Marc Swisdak later demonstrated in his [paper](https://doi.org/10.1002/2015GL066980) that a better measure from positive semi-definite matrix analysis should be
+```math
+Q = \frac{P_{12}^2 + P_{23}^2 + P_{31}^2}{P_\perp^2 + 2P_\perp P_\parallel} = 1- 4\frac{I_2}{(I_1 - P_\parallel)(I_1 + 3P_\parallel)}
+```
+where ``I_1=P_{xx}+P_{yy}+P_{zz}`` is the trace and ``I_2=P_{xx}P_{yy}+P_{xx}P_{zz}+P_{yy}P_{zz}-(P_{xy}P_{yx}+P_{xz}P_{zx}+P_{yz}P_{zy})`` is the principle minor, both of which are invariants under coordinate rotation. (The third invariant is the determinant.) This indeed peak near the center of X-line while is enhanced along the separatrices, which is better than ``D_{ng}`` in the sense that the latter may not peak at the diffusion region.
 
 It has been found from PIC simulations that especially in asymmetric reconnection, ``E_M^\ast\neq 0`` where ``\mathbf{E}^\ast=\mathbf{E}+\mathbf{V}_e\times\mathbf{B}`` is not a good enough indicator. Following [the principle ideas of finding a measure](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.106.195003#fulltext):
 - dissipation should be related to non-ideal energy conversion;
@@ -28,7 +36,7 @@ D_e = \gamma_e\big[\mathbf{J}\cdot(\mathbf{E}+\mathbf{V}_e\times\mathbf{B}) - (n
 ```
 which is a Lorentz-invariant scalar representing the energy conversion rate in the frame of electron bulk motion. In the nonrelativistic limit, one can simplify the equation by setting ``\gamma_e\rightarrow 1``. This can be easily confirmed by multiplying ``\mathbf{j}^\prime=qn_i\mathbf{V}_i=\mathbf{j}-\rho_c\mathbf{V}_e`` and ``\mathbf{E}^\prime = \mathbf{E}+\mathbf{V}\times\mathbf{B}``.
 
-This is another good indicator of the electron diffusion region, although slightly enhanced along the separatrices as well.
+This is another good indicator of the electron diffusion region, although it is slightly enhanced along the separatrices as well.
 
 [An alternative and complementary approach](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2016GL069034) is to identify diffusion region candidates by a combination of representative properties. In practice for reconnection with no guide field for instance, the overlapped region of ``B_L=0`` and ``E_N`` peak, where some researchers call 'shoulder', is already good enough for the identification.
 
