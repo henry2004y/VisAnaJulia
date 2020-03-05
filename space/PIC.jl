@@ -176,12 +176,7 @@ vm[13] = max(abs.(extrema((Ex.+Uyi.*Bz.-Uzi.*By)./E₀))...)+ϵ
 vm[14] = max(abs.(extrema((Ex.+Uye.*Bz.-Uze.*By)./E₀))...)+ϵ
 vm[15] = max(abs.(extrema((Ey.+Uzi.*Bx.-Uxi.*Bz)./E₀))...)+ϵ
 vm[16] = max(abs.(extrema((Ey.+Uze.*Bx.-Uxe.*Bz)./E₀))...)+ϵ
-#=
-zstart = collect(range(z[10],stop=z[end-10],length=10))
-xstart = fill(-1.92,size(zstart))
-append!(zstart, collect(range(-0.3,0.4,length=3)))
-append!(xstart, fill(-1.82,3))
-=#
+
 seeds = select_seeds(x[10:end-10],z[10:end-10]; nSeed=5)
 xstart, zstart = seeds[1,:], seeds[2,:]
 append!(xstart, [-1.9, -1.9, -1.95, -1.97, -1.95, -1.9, -1.95, -1.95, -1.95])
