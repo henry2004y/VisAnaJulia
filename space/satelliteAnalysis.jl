@@ -404,7 +404,7 @@ function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
    #println("Average magnetic energy = ",mean(Eb))
 
    if DoPlot
-      figure(figsize=(10.0,2.5))
+      figure(figsize=(12.0,3.5))
       plt.rc("font", family="serif", size=12)
       gs = gridspec.GridSpec(3, 1)
       gs.update(wspace=0.0, hspace=0.0) # set the spacing between axes.
@@ -412,8 +412,9 @@ function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
       plot(ΔUx ./ VA, label=L"\Delta U_x / V_A")
       plot(ΔBx ./ B, label=L"\Delta B_x / B_0")
       plt.axhline(y=0.0, color="k", linestyle="--", alpha=0.5)
-      xlim(0,1200)
-      legend(loc=(0.35,-0.1), ncol=2, frameon=false)
+      xlim(100,1200)
+      #legend(loc=(0.36,-0.06), ncol=2, frameon=false)
+      legend(loc=(0.00,0.6), ncol=2, frameon=false)
       f1.axes.xaxis.set_ticklabels([])
       f1.minorticks_on()
       f1.tick_params(which="both",top=true, right=true)
@@ -425,8 +426,9 @@ function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
       plot(ΔUy ./ VA, label=L"\Delta U_y / V_A")
       plot(ΔBy ./ B, label=L"\Delta B_y / B_0")
       plt.axhline(y=0.0, color="k", linestyle="--", alpha=0.5)
-      xlim(0,1200)
-      legend(loc=(0.35,-0.1), ncol=2, frameon=false)
+      xlim(100,1200)
+      #legend(loc=(0.36,-0.06), ncol=2, frameon=false)
+      legend(loc=(0.00,0.6), ncol=2, frameon=false)
       f2.axes.xaxis.set_ticklabels([])
       f2.minorticks_on()
       f2.tick_params(which="both",top=true, right=true)
@@ -438,9 +440,13 @@ function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
       plot(ΔUz ./ VA, label=L"\Delta U_z / V_A")
       plot(ΔBz ./ B, label=L"\Delta B_z / B_0")
       plt.axhline(y=0.0, color="k", linestyle="--", alpha=0.5)
-      xlim(0,1200)
-      legend(loc=(0.35,-0.1), ncol=2, frameon=false)
-      xlabel("simulation time [s]")
+      xlim(100,1200)
+      #legend(loc=(0.36,-0.06), ncol=2, frameon=false)
+      legend(loc=(0.00,0.06), ncol=2, frameon=false)
+
+      #xlabel("simulation time [s]", x=0.5, y=0.5)
+      plt.annotate("simulation time [s]", xy=(0.43, -0.36),
+         xycoords="axes fraction")
       f3.minorticks_on()
       f3.tick_params(which="both",top=true, right=true)
       f3.tick_params(which="both", direction="in")
@@ -454,11 +460,12 @@ function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
          titletext = "Hall MHD, Location: "*
             string(data[nShift+1,11:end])[8:end]*L"R_G"
       end
-      suptitle(titletext)
+      suptitle(titletext, x=0.5, y=0.94)
+      f1.annotate("($('a'+iPlot-1))", xy=(0.0, 1.1), xycoords="axes fraction")
    end
 
    if DoPlot
-      figure(figsize=(10.0,2.5))
+      figure(figsize=(12.0,2.5))
       plt.rc("font", family="serif", size=12)
       plot(ΔB, alpha=0.95, label=L"\Delta B")
       plot(Δρ, alpha=0.95, label=L"\Delta \rho")
@@ -513,10 +520,10 @@ end
 #multi_satellite_contour("satellites_y0_PIC.txt", DoSubtractMean=true, DoSave=false)
 #multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true, DoSave=false)
 
-nShift = 173
+nShift = 185
 #static_location_plot("satellites_Hall.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", nShift)
-wave_plot(nShift; DoPlot=true, filename="satellites_PIC.txt", iPlot=4,
+wave_plot(nShift; DoPlot=true, filename="satellites_Hall.txt", iPlot=1,
    verbose=true)
 #fnew = check_wave_type()
 #check_wave_type()
