@@ -38,3 +38,36 @@ function smooth(x::Vector, n=100)
 
    return x̄
 end
+
+
+"""
+	smooth(x, n)
+
+Return the moving box average of the array data `x` with box length 'n'.
+One-sided average on the left and right edge.
+"""
+function smooth(x::Array{T,3}, n=100) where T <: AbstractFloat
+   nx = size(x)[3]
+   if nx < n
+      println("fewer snapshots than nSmooth, changing nS to nx-1")
+      n = nx-1
+   end
+   x̄ = zeros(eltype(x),size(x))
+
+   # left points
+   for i = 1:n
+      x̄[:,:,i] = mean(x[:,:,1:(i+n)]; dims=3)
+   end
+
+   # middle points
+   for i = n+1:nx-n
+      x̄[:,:,i] = mean(x[:,:,(i-n):(i+n)]; dims=3)
+   end
+
+   # right points
+   for i = nx-n+1:nx
+      x̄[:,:,i] = mean(x[:,:,(i-n):end]; dims=3)
+   end
+
+   return x̄
+end
