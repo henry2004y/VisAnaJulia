@@ -1,12 +1,13 @@
 module Ganymede
 
-export μ₀, amu, upstream_value, γ
+export Rg, μ₀, amu, upstream_value, γ
 export Index, getIndex
 
+const Rg = 2634000.0 # radius, [m]
 const μ₀ = 4π*1e-7 # Vacuum permeability, [H/m]
 const amu = 1.66054e-27 # [kg]
 # Rho Ux Uy Uz Bx By Bz Pe P, NaN for compensating the No index in the 1st col.
-const upstream_value = [NaN, 56., 140., 0., 0., -10., -6., -86., 0.2, 3.4]
+const upstream_value = [56., 140., 0., 0., -10., -6., -86., 0.2, 3.4]
 const γ = 5/3 # adiabatic index
 
 struct Index
@@ -24,14 +25,14 @@ struct Index
 end
 
 function getIndex(header::Vector{AbstractString})
-   Rho_= findfirst(x->x=="Rho", header) + 1
-   P_  = findfirst(x->x=="P", header) + 1
-   Pe_ = findfirst(x->x=="Pe", header) + 1
-   Bx_ = findfirst(x->x=="Bx", header) + 1
+   Rho_= findfirst(x->x=="Rho", header)
+   P_  = findfirst(x->x=="P", header)
+   Pe_ = findfirst(x->x=="Pe", header)
+   Bx_ = findfirst(x->x=="Bx", header)
    By_ = Bx_ + 1
    Bz_ = Bx_ + 2
    B_  = Bx_:(Bx_+2)
-   Ux_ = findfirst(x->x=="Ux", header) + 1
+   Ux_ = findfirst(x->x=="Ux", header)
    Uy_ = Ux_ + 1
    Uz_ = Ux_ + 2
    U_  = Ux_:(Ux_+2)

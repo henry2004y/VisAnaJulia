@@ -44,8 +44,8 @@ function static_location_plot(filename="satellites_PIC.txt",
 
    id = getIndex(header)
    Rho_, Ux_, Uy_, Uz_, Bx_, By_, Bz_, Pe_, P_, U_, B_ =
-   id.Rho_, id.Ux_, id.Uy_, id.Uz_, id.Bx_, id.By_, id.Bz_, id.Pe_, id.P_,
-   id.U_, id.B_
+   id.Rho_+1, id.Ux_+1, id.Uy_+1, id.Uz_+1, id.Bx_+1, id.By_+1, id.Bz_+1,
+   id.Pe_+1, id.P_+1, id.U_.+1, id.B_.+1
 
    # magnetic pressure, [nPa]
    PB = sum(data[index_ .+ nShift,B_].^2; dims=2) ./ (2*μ₀) ./ (1e9)
@@ -62,7 +62,7 @@ function static_location_plot(filename="satellites_PIC.txt",
 
    plot(data[index_ .+ nShift,Rho_], label=L"\rho\ [amu/cc]")
    xlim(0,1200)
-   plt.axhline(y=upstream_value[Rho_], color="k", linestyle="--", alpha=0.5)
+   plt.axhline(y=upstream_value[Rho_-1], color="k", linestyle="--", alpha=0.5)
    grid(true)
    f1.axes.xaxis.set_ticklabels([])
    legend(loc="lower left", bbox_to_anchor=(0.0, 0.8), ncol=4, frameon=false)
@@ -75,7 +75,7 @@ function static_location_plot(filename="satellites_PIC.txt",
    xlim(0,1200)
    ylim(0,maximum(Pd[60:end])+0.02)
    legend(loc="lower left", bbox_to_anchor=(0.0, 0.8), ncol=4, frameon=false)
-   plt.axhline(y=upstream_value[P_], color="k", linestyle="--", alpha=0.5)
+   plt.axhline(y=upstream_value[P_-1], color="k", linestyle="--", alpha=0.5)
    grid(true)
    f2.axes.xaxis.set_ticklabels([])
 
@@ -86,9 +86,9 @@ function static_location_plot(filename="satellites_PIC.txt",
    xlim(0,1200)
    #ylim(-100,200)#ylim(-70,180)
    legend(loc="lower left", bbox_to_anchor=(0.0, 0.8), ncol=3, frameon=false)
-   plt.axhline(y=upstream_value[Ux_], color="k", linestyle="--", alpha=0.5)
-   plt.axhline(y=upstream_value[Uy_], color="k", linestyle="--", alpha=0.5)
-   plt.axhline(y=upstream_value[Uz_], color="k", linestyle="--", alpha=0.5)
+   plt.axhline(y=upstream_value[Ux_-1], color="k", linestyle="--", alpha=0.5)
+   plt.axhline(y=upstream_value[Uy_-1], color="k", linestyle="--", alpha=0.5)
+   plt.axhline(y=upstream_value[Uz_-1], color="k", linestyle="--", alpha=0.5)
    grid(true)
    f3.axes.xaxis.set_ticklabels([])
 
@@ -98,8 +98,8 @@ function static_location_plot(filename="satellites_PIC.txt",
    plot(data[index_ .+ nShift,Bz_], alpha=0.7, label="Bz  [nT]")
    xlim(0,1200)
    legend(loc="lower left", bbox_to_anchor=(0.0, 0.8), ncol=3, frameon=false)
-   plt.axhline(y=upstream_value[Bx_], color="k", linestyle="--", alpha=0.5)
-   plt.axhline(y=upstream_value[By_], color="k", linestyle="--", alpha=0.5)
+   plt.axhline(y=upstream_value[Bx_-1], color="k", linestyle="--", alpha=0.5)
+   plt.axhline(y=upstream_value[By_-1], color="k", linestyle="--", alpha=0.5)
    #plt.axhline(y=upstream_value[Bz_], color="k", linestyle="--", alpha=0.5)
    grid(true)
    xlabel("simulation time [s]")
@@ -132,7 +132,7 @@ function multi_satellite_plot(filename="satellites_PIC.txt",
    for iplot in 1:6
       plt.subplot(3,2,iplot)
       plot(data[index_ .+ shift[iplot],var_])
-      plt.axhline(y=upstream_value[var_], color="r", linestyle="--", alpha=0.5)
+      plt.axhline(y=upstream_value[var_-1], color="r",linestyle="--", alpha=0.5)
       plt.title(string(satelliteLoc[iplot,:])[8:end])
       grid(true)
       f1 = plt.gca()
@@ -190,10 +190,9 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
          c[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
       end
 
-      cmean = mean(c, dims=1)
-
       figure(figsize=(4,8))
       if DoSubtractMean
+         cmean = mean(c, dims=1)
          if plane == 'y'
             contourf(data[Int.(satelliteNo),end], 1:length(index_), c .- cmean, vplot)
          elseif plane == 'z'
@@ -212,8 +211,8 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
       end
       ylabel("simulation time [s]")
       plt.set_cmap("plasma")
-      #colorbar()
-      colorbar(boundaries=vplot, ticks=vdisp)
+      colorbar()
+      #colorbar(boundaries=vplot, ticks=vdisp)
       title(var)
       tight_layout()
 
@@ -517,14 +516,14 @@ end
 #static_location_plot("satellites_PIC.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", 185)
 #multi_satellite_plot()
-#multi_satellite_contour("satellites_y0_PIC.txt", DoSubtractMean=true, DoSave=false)
-#multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true, DoSave=false)
+multi_satellite_contour("satellites_y0_Hall.txt", DoSubtractMean=true)
+#multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true)
 
 nShift = 185
 #static_location_plot("satellites_Hall.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", nShift)
-wave_plot(nShift; DoPlot=true, filename="satellites_Hall.txt", iPlot=1,
-   verbose=true)
+#wave_plot(nShift; DoPlot=true, filename="satellites_Hall.txt", iPlot=1,
+#   verbose=true)
 #fnew = check_wave_type()
 #check_wave_type()
 
