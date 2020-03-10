@@ -234,6 +234,94 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
 end
 
 
+function satellite_p_contour(filename="satellites_y0_PIC.txt",
+   dir="/Users/hyzhou/Documents/Computer/ParaView/data/";
+   DoSubtractMean = true, nLead=10, nTrail=10)
+
+   header, data, satelliteNo = read_data(dir*filename)
+
+   # Remove the leading and trailing satellites
+   satelliteNo = satelliteNo[1+nLead:end-nTrail]
+
+   index_ = findall(x->x==0.0f0, data[:,1])
+
+   c = Array{Float32, 2}(undef, length(index_), length(satelliteNo))
+
+   #crange = (-5.0,9.5)
+   #clength= 40
+   #vdisp = range(crange..., length=11)
+   #vplot = range(crange..., length=clength)
+
+   # Subtract the average
+   var_ = 10
+
+   for i in 1:length(satelliteNo)
+      c[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
+   end
+   cmean = mean(c, dims=1)
+   σ = std(c[:,59])
+
+   t = 1:length(index_)
+   #=
+   fig, ax = subplots(figsize=(8,3))
+   plot(t,c[:,59].-cmean[59])
+   fill_between(t, 0, 1, where=c[:,59].-cmean[59] .> 1.2σ,
+      color="green", alpha=0.5, transform=ax.get_xaxis_transform())
+   title("ΔP at z=0.5")
+   tight_layout()
+   =#
+
+   figure(figsize=(4,8))
+
+   if DoSubtractMean
+      #contourf(data[Int.(satelliteNo),end], 1:length(index_), c .- cmean, vplot)
+      contourf(data[Int.(satelliteNo),end], t, c .- cmean, 50)
+      #contourf(c .- cmean)
+   else
+      contourf(data[Int.(satelliteNo),end], t,c,50)
+   end
+
+   peakUp_index = Int[]
+   peakDn_index = Int[]
+   for i = 1:size(c)[1]
+      if c[i,59] - cmean[59] > 1.2σ
+         if isempty(peakUp_index)
+            append!(peakUp_index, i)
+         elseif i - peakUp_index[end] > 20
+            append!(peakUp_index, i)
+         end
+      end
+
+      if c[i,8] - cmean[8] > 1.2σ
+         if isempty(peakDn_index)
+            append!(peakDn_index, i)
+         elseif i - peakDn_index[end] > 20
+            append!(peakDn_index, i)
+         end
+      end
+   end
+
+   @info "number of FTE = $(length(peakUp_index)+length(peakDn_index))"
+
+   zUp = fill(data[Int.(satelliteNo),end][59], size(peakUp_index))
+   zDn = fill(data[Int.(satelliteNo),end][8], size(peakDn_index))
+   plot(zUp, peakUp_index, linestyle="", marker="P",
+      markerfacecolor="y", markeredgecolor="None")
+
+   plot(zDn, peakDn_index, linestyle="", marker="P",
+      markerfacecolor="g", markeredgecolor="None")
+
+   xlabel(L"z\ [R_G]")
+   ylabel("simulation time [s]")
+   plt.set_cmap("plasma")
+   colorbar()
+   #colorbar(boundaries=vplot, ticks=vdisp)
+   title(L"\Delta P_t\ [nPa]")
+   tight_layout()
+
+end
+
+
 """
 	wave_plot(nShift; DoPlot=false, filename, dir, iPlot=1, verbose)
 
@@ -516,8 +604,10 @@ end
 #static_location_plot("satellites_PIC.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", 185)
 #multi_satellite_plot()
-multi_satellite_contour("satellites_y0_Hall.txt", DoSubtractMean=true)
+#multi_satellite_contour("satellites_y0_PIC.txt", DoSubtractMean=true)
 #multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true)
+
+satellite_p_contour("satellites_y0_Hall.txt")
 
 nShift = 185
 #static_location_plot("satellites_Hall.txt",

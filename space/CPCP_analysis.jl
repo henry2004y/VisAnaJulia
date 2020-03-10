@@ -61,7 +61,14 @@ plt.rc("font", family="serif", size=12)
 ax[1].plot(data_hall[:,1], e_hall, label="Hall MHD")
 ax[1].plot(data_pic[:,1].+300, e_pic, alpha=0.8, label="MHD-EPIC")
 ax[1].plot(data_hall[:,1], hall_mean, "C0--", linewidth=0.8, label="Hall mean")
+ax[1].plot(-20.0:-1.0, fill(e_hall_mean, 20), "C0--", linewidth=0.8)
+ax[1].errorbar(data_hall[1,1]-20., e_hall_mean, yerr=e_hall_std, ecolor="C0",
+   capsize=3)
 ax[1].plot(data_pic[:,1].+300, pic_mean, "C1--", linewidth=0.8, label="PIC mean")
+ax[1].plot(data_pic[end,1]+300:data_pic[end,1]+319, fill(e_pic_mean, 20), "C1--",
+   linewidth=0.8)
+ax[1].errorbar(data_pic[end,1]+320., e_pic_mean, yerr=e_pic_std, ecolor="C1",
+   capsize=3)
 
 ax[1].set_xlim(-50.,1550.)
 ax[1].set_xlabel("simulation time [s]")
@@ -82,8 +89,12 @@ tight_layout()
 
 # FTE
 #tFTE_PIC = [30., 125., 377., 433., 468., 653., 717., 1017.] .+ 315.
-tFTE_PIC = [28., 123., 377., 433., 469., 653., 717., 1015.] .+ 15.
+tFTE_PIC = [34., 128., 260., 353., 382., 438., 474., 658., 705.,
+   722., 1020., 1115., 1180.] .+ 10.
+#append!(tFTE_PIC, [307., 401., 546., 612., 983., ]) .+ 10.
 tFTE_Hall = [210., 352., 564., 636., 687., 755., 886., 1066., 1087.] .+ 15.
+append!(tFTE_Hall, [116., 156., 385., 416., 450., 488., 515., 782., 930.,
+   998.] .+ 15.0)
 
 for t in tFTE_PIC
    #ax[1].axvline(x=t, linestyle="-.")
