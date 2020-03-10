@@ -176,7 +176,7 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
 
    c = Array{Float32, 2}(undef, length(index_), length(satelliteNo))
 
-   crange = (-5.0,9.5)
+   crange = (-9.5,9.5)
    clength= 40
    vdisp = range(crange..., length=11)
    vplot = range(crange..., length=clength)
@@ -210,9 +210,9 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
          xlabel(L"y\ [R_G]")
       end
       ylabel("simulation time [s]")
-      plt.set_cmap("plasma")
-      colorbar()
-      #colorbar(boundaries=vplot, ticks=vdisp)
+      plt.set_cmap("seismic")
+      #colorbar()
+      colorbar(boundaries=vplot, ticks=vdisp)
       title(var)
       tight_layout()
 
@@ -235,8 +235,8 @@ end
 
 
 function satellite_p_contour(filename="satellites_y0_PIC.txt",
-   dir="/Users/hyzhou/Documents/Computer/ParaView/data/";
-   DoSubtractMean = true, nLead=10, nTrail=10)
+   dir="/Users/hyzhou/Documents/Computer/ParaView/data/"; plane='y',
+   DoSubtractMean = true, nLead=10, nTrail=10, No=1)
 
    header, data, satelliteNo = read_data(dir*filename)
 
@@ -247,10 +247,10 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
 
    c = Array{Float32, 2}(undef, length(index_), length(satelliteNo))
 
-   #crange = (-5.0,9.5)
-   #clength= 40
-   #vdisp = range(crange..., length=11)
-   #vplot = range(crange..., length=clength)
+   crange = (-9.5,9.5)
+   clength= 40
+   vdisp = range(crange..., length=11)
+   vplot = range(crange..., length=clength)
 
    # Subtract the average
    var_ = 10
@@ -259,7 +259,6 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
       c[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
    end
    cmean = mean(c, dims=1)
-   σ = std(c[:,59])
 
    t = 1:length(index_)
    #=
@@ -271,54 +270,87 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
    tight_layout()
    =#
 
-   figure(figsize=(4,8))
+   DN = matplotlib.colors.DivergingNorm
+
+   fig, ax = subplots(figsize=(3.5,6))
+   plt.rc("font", family="serif", size=14)
 
    if DoSubtractMean
-      #contourf(data[Int.(satelliteNo),end], 1:length(index_), c .- cmean, vplot)
-      contourf(data[Int.(satelliteNo),end], t, c .- cmean, 50)
-      #contourf(c .- cmean)
+      if plane == 'y'
+         contourf(data[Int.(satelliteNo),end], t, c .- cmean, norm=DN(0), vplot)
+      elseif plane == 'z'
+         contourf(data[Int.(satelliteNo),end-1], 1:length(index_), c .- cmean,
+         vplot, extend="both")
+      end
+
    else
       contourf(data[Int.(satelliteNo),end], t,c,50)
    end
 
-   peakUp_index = Int[]
-   peakDn_index = Int[]
-   for i = 1:size(c)[1]
-      if c[i,59] - cmean[59] > 1.2σ
-         if isempty(peakUp_index)
-            append!(peakUp_index, i)
-         elseif i - peakUp_index[end] > 20
-            append!(peakUp_index, i)
+   if plane == 'y'
+      peakUp_index = Int[]
+      peakDn_index = Int[]
+      σUp = std(c[:,59])
+      σDn = std(c[:,8])
+      tGap = 10 # peaks must be differed by a time range to be picked
+      for i = 1:size(c)[1]
+         if c[i,59] - cmean[59] > 1.2σUp
+            if isempty(peakUp_index)
+               append!(peakUp_index, i)
+            elseif i - peakUp_index[end] > tGap
+               append!(peakUp_index, i)
+            end
+         end
+
+         if c[i,8] - cmean[8] > 1.2σDn
+            if isempty(peakDn_index)
+               append!(peakDn_index, i)
+            elseif i - peakDn_index[end] > tGap
+               append!(peakDn_index, i)
+            end
          end
       end
 
-      if c[i,8] - cmean[8] > 1.2σ
-         if isempty(peakDn_index)
-            append!(peakDn_index, i)
-         elseif i - peakDn_index[end] > 20
-            append!(peakDn_index, i)
-         end
-      end
+      @info "number of FTE = $(length(peakUp_index)+length(peakDn_index))"
+
+      zUp = fill(data[Int.(satelliteNo),end][59], size(peakUp_index))
+      zDn = fill(data[Int.(satelliteNo),end][8], size(peakDn_index))
+      plot(zUp, peakUp_index, linestyle="", marker="P", markersize=6,
+      markerfacecolor="gray", markeredgecolor="None")
+
+      plot(zDn, peakDn_index, linestyle="", marker="P", markersize=6,
+      markerfacecolor="k", markeredgecolor="None")
+
+      xlabel(L"z\ [R_G]")
+   elseif plane == 'z'
+      xlabel(L"y\ [R_G]")
    end
 
-   @info "number of FTE = $(length(peakUp_index)+length(peakDn_index))"
+   plt.set_cmap("seismic")
+   # create an axes on the right side of ax. The width of cax will be 5%
+   # of ax and the padding between cax and ax will be fixed at 0.05 inch.
+   axes_grid1 = pyimport("mpl_toolkits.axes_grid1")
+   divider = axes_grid1.make_axes_locatable(ax)
+   cax = divider.append_axes("right", size="5%", pad=0.05)
 
-   zUp = fill(data[Int.(satelliteNo),end][59], size(peakUp_index))
-   zDn = fill(data[Int.(satelliteNo),end][8], size(peakDn_index))
-   plot(zUp, peakUp_index, linestyle="", marker="P",
-      markerfacecolor="y", markeredgecolor="None")
+   plt.colorbar(cax=cax, boundaries=vplot, ticks=vdisp)
+   ax.set_title(L"\Delta P_t\ [nPa]")
 
-   plot(zDn, peakDn_index, linestyle="", marker="P",
-      markerfacecolor="g", markeredgecolor="None")
+   ax.annotate("($('a'+No-1))", xy=(-0.16, 1.0), xycoords="axes fraction")
 
-   xlabel(L"z\ [R_G]")
-   ylabel("simulation time [s]")
-   plt.set_cmap("plasma")
-   colorbar()
-   #colorbar(boundaries=vplot, ticks=vdisp)
-   title(L"\Delta P_t\ [nPa]")
+   if occursin("pic",lowercase(filename))
+      ax.set_ylabel("MHD-EPIC, simulation time [s]")
+   else
+      ax.set_ylabel("Hall MHD, simulation time [s]")
+   end
+
    tight_layout()
 
+   if plane == 'y'
+      return peakUp_index
+   else
+      return nothing
+   end
 end
 
 
@@ -607,9 +639,9 @@ end
 #multi_satellite_contour("satellites_y0_PIC.txt", DoSubtractMean=true)
 #multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true)
 
-satellite_p_contour("satellites_y0_Hall.txt")
+#peak_hall = satellite_p_contour("satellites_y0_Hall.txt"; No=1, plane='y')
 
-nShift = 185
+#nShift = 185
 #static_location_plot("satellites_Hall.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", nShift)
 #wave_plot(nShift; DoPlot=true, filename="satellites_Hall.txt", iPlot=1,

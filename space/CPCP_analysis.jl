@@ -56,7 +56,7 @@ pic_mean = fill(e_pic_mean, size(e_pic))
 
 ##
 fig, ax = plt.subplots(2,1,figsize=(10.0,5.5))
-plt.rc("font", family="serif", size=12)
+plt.rc("font", family = "serif", size = 13)
 
 ax[1].plot(data_hall[:,1], e_hall, label="Hall MHD")
 ax[1].plot(data_pic[:,1].+300, e_pic, alpha=0.8, label="MHD-EPIC")
@@ -71,53 +71,48 @@ ax[1].errorbar(data_pic[end,1]+320., e_pic_mean, yerr=e_pic_std, ecolor="C1",
    capsize=3)
 
 ax[1].set_xlim(-50.,1550.)
-ax[1].set_xlabel("simulation time [s]")
+ax[1].set_xlabel("Simulation time [s]")
 ax[1].set_ylabel("Reconnection efficiency")
-ax[1].legend(loc="lower left", bbox_to_anchor=(0.07, 0.82), ncol=4,
+ax[1].legend(loc="lower left", bbox_to_anchor=(0.07, 0.80), ncol=4,
    frameon=false)
-
+#=
 ax[1].annotate("Hall mean = $(round(e_hall_mean, digits=2))\n"*
    "Hall std = $(round(e_hall_std, digits=2))\n"*
    "PIC mean = $(round(e_pic_mean, digits=2))\n"*
    "PIC std = $(round(e_pic_std, digits=2))",
    xy=(1270, 0.535), xycoords="data")
-
+=#
 ax[1].minorticks_on()
 ax[1].tick_params(which="both", direction="in")
 ax[1].annotate("(a)", xy=(-0.03, 1.0), xycoords="axes fraction", fontsize=14)
 tight_layout()
 
 # FTE
-#tFTE_PIC = [30., 125., 377., 433., 468., 653., 717., 1017.] .+ 315.
-tFTE_PIC = [34., 128., 260., 353., 382., 438., 474., 658., 705.,
-   722., 1020., 1115., 1180.] .+ 10.
-#append!(tFTE_PIC, [307., 401., 546., 612., 983., ]) .+ 10.
-tFTE_Hall = [210., 352., 564., 636., 687., 755., 886., 1066., 1087.] .+ 15.
-append!(tFTE_Hall, [116., 156., 385., 416., 450., 488., 515., 782., 930.,
-   998.] .+ 15.0)
+peak_pic = [34, 128, 230, 278, 347, 385, 434, 473, 656, 716, 727,
+1016, 1083, 1116, 1151, 1182] .+ 10
 
-for t in tFTE_PIC
-   #ax[1].axvline(x=t, linestyle="-.")
-   ax[1].plot(t+300., e_pic[floor(Int,t)], linestyle="", marker="o",
+peak_hall = [112, 153, 210, 352, 385, 412, 450, 462, 488, 515, 564, 636,
+686, 755, 780, 797, 886, 930, 998, 1066, 1087, 1160] .+ 15
+
+for t in peak_pic
+   ax[1].plot(t+300, e_pic[t], linestyle="", marker="o",
       markerfacecolor="r", markeredgecolor="None")
 end
 
-for (i,t) in enumerate(tFTE_Hall)
-   #ax[1].axvline(x=t, linestyle="-.")
-   if i < 3
-      ax[1].plot(t, e_hall[floor(Int,t)], linestyle="", marker="o",
+for t in peak_hall
+   if t < 600
+      ax[1].plot(t, e_hall[t], linestyle="", marker="o",
          markerfacecolor="k", markeredgecolor="None")
-   else
-      ax[1].plot(t, e_hall[floor(Int,t-3)], linestyle="", marker="o",
+   else # there are 3 missing frames in the Hall outputs around 900s
+      ax[1].plot(t, e_hall[t-3], linestyle="", marker="o",
          markerfacecolor="k", markeredgecolor="None")
    end
 end
 
-#=
-condition = tFTE[2] .> data_pic[:,1].+300 .> tFTE[1]
-ax[1].fill_between(data_pic[:,1].+300, 0.31, 0.67, where=condition,
-   color="green", alpha=0.5, transform=ax[1].get_xaxis_transform())
-=#
+#include("satelliteAnalysis.jl")
+#peak_hall = satellite_p_contour("satellites_y0_Hall.txt"; No=1, plane='y')
+#peak_pic  = satellite_p_contour("satellites_y0_PIC.txt"; No=2, plane='y')
+
 ##
 #fig = figure(figsize=(10.0,3.7))
 #plt.rc("font", family="serif", size=12)
@@ -126,8 +121,8 @@ ax[2].plot(1 ./ Ypic.freq[2:end], Ypic.power[2:end], label="MHD-EPIC")
 ax[2].set_xlabel("Periods [s]")
 ax[2].set_ylabel("Power")
 ax[2].grid("on")
-plt.yscale("log")
-plt.xscale("log")
+#plt.yscale("log")
+#plt.xscale("log")
 ax[2].legend()
 ax[2].tick_params(which="both", direction="in")
 ax[2].annotate("(b)", xy=(-0.03, 1.0), xycoords="axes fraction", fontsize=14)
