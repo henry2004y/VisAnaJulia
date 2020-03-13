@@ -38,14 +38,15 @@ end
 
 Check to see if we should break out of an integration.
 """
-function DoBreak(iloc, jloc, iSize, jSize)
+function DoBreak(iloc::T, jloc::T, iSize::T, jSize::T) where {T<:Integer}
    ibreak = false
    if iloc ≥ iSize-1 || jloc ≥ jSize-1; ibreak = true end
    if iloc < 0 || jloc < 0; ibreak = true end
    return ibreak
 end
 
-function DoBreak(iloc, jloc, kloc, iSize, jSize, kSize)
+function DoBreak(iloc::T, jloc::T, kloc::T, iSize::T, jSize::T, kSize::T) where
+   {T<:Integer}
    ibreak = false
    if iloc ≥ iSize-1 || jloc ≥ jSize-1 || kloc ≥ kSize-1; ibreak = true end
    if iloc < 0 || jloc < 0 || kloc < 0; ibreak = true end
@@ -53,7 +54,7 @@ function DoBreak(iloc, jloc, kloc, iSize, jSize, kSize)
 end
 
 """Create unit vectors of field."""
-function make_unit(iSize, jSize, ux, uy)
+function make_unit(iSize::T, jSize::T, ux, uy) where {T<:Integer}
    fx, fy = similar(ux), similar(uy)
    @inbounds for i = 1:iSize*jSize
       magnitude = sqrt(ux[i]^2 + uy[i]^2)
@@ -63,7 +64,7 @@ function make_unit(iSize, jSize, ux, uy)
    return fx, fy
 end
 
-function make_unit(iSize, jSize, kSize, ux, uy, uz)
+function make_unit(iSize::T, jSize::T, kSize::T, ux, uy, uz) where {T<:Integer}
    fx, fy, fz = similar(ux), similar(uy), similar(uz)
    @inbounds for i = 1:iSize*jSize*kSize
       magnitude = sqrt(ux[i]^2 + uy[i]^2 + uz[i]^2)
