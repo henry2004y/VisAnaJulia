@@ -27,6 +27,10 @@ I have a plan of incorporating particle tracing into this module. WIP
 
 For the plotting, streamline tracing and particle tracing, a common problem is the grid and related interpolation process. I am envisioning a more general approach to deal with block-based and unstructured grid to provide fundamental support for all of these.
 
+## Animation
+
+This is a big headache for me right now.
+
 ##
 
 A real open-source project is a collaborated work not only from a bunch of people, but also a group of languages. In Julia, this can be achieved with the help of the [Package manager](https://julialang.github.io/Pkg.jl/dev/).
@@ -100,5 +104,6 @@ As for the GUI development, GTK seems to be an ideal candidate.
 - [ ] Allow dot syntax to get dictionary contents (Base.convert?)
 - [ ] Binary library support
 - [ ] Macros for quickly looking at data (GUI is the ideal solution!)
-- [ ] Magnetic field line plots from simulation
-- [ ] Particle phase space distribution plots
+- [x] Magnetic field line plots from simulation
+- [x] Particle phase space distribution plots
+- [ ] Animation
