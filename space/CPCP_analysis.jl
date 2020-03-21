@@ -1,8 +1,6 @@
 using FFTW, PyPlot, DelimitedFiles
 using DSP, Statistics
 
-#include("/Users/hyzhou/Documents/Computer/Julia/FFT/savitskyGolay.jl")
-
 if !isdefined(Main, :Ganymede)
    include("Ganymede.jl")
    using .Ganymede: Rg, upstream_value
@@ -31,15 +29,20 @@ Potential_bk = Δy * cos(TiltedAngle) * Rg *
    Uxbk*1e3 * abs(Bzbk*cos(TiltedAngle)+Bybk*sin(TiltedAngle))*1e-9 *
    1e-3 # [kV]
 
-Fs = 1           # Sampling frequency
-T = 1/Fs         # Sampling period
-L = 1197         # Length of signal
-t = (0:L-1)*T    # Time vector
+data_hall = readdlm(dir*"CPCP_hall.txt", comments=true)
+data_pic  = readdlm(dir*"CPCP_pic.txt", comments=true)
 
-data_hall = readdlm(dir*"CPCP_hall.txt")
-data_pic  = readdlm(dir*"CPCP_pic.txt")
+if size(data_hall) != size(data_pic)
+   @warn "Hall ($(size(data_hall)[1])) and MHD-EPIC ($(size(data_pic)[1])) " *
+   "have different snapshots!"
+end
 
-# find the missing data and pad to them!!!
+Fs = 1                 # Sampling frequency
+T = 1/Fs               # Sampling period
+L = size(data_hall)[1] # Length of signal
+t = (0:L-1)*T          # Time vector
+
+#missingtime = setdiff(0:1200,data_hall[:,1]) # Check missing frames
 
 Yhall = welch_pgram(data_hall[:,2], 180, 100; onesided=true, fs=Fs)
 Ypic = welch_pgram(data_pic[:,2], 200, 100; onesided=true, fs=Fs)
