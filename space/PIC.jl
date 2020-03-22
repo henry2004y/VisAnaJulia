@@ -1,10 +1,4 @@
-# Plotting PIC variables from box outputs.
-#
-# E: [μV/m]
-# B: [nT]
-# V: [km/s]
-# ρ: [amu/cc]
-# P: [nPa]
+# Plotting PIC variables from box outputs in normalized units.
 #
 # Hongyang Zhou, hyzhou@umich.edu 02/06/2020
 
@@ -21,20 +15,6 @@ DN = matplotlib.colors.DivergingNorm
 dir = "/Users/hyzhou"
 fnameField = "3d_var_region0_0_t00001640_n00020369.out"
 #fnameField = "3d_var_region0_0_t00001520_n00004093.out"
-#fnameField = "3d_var_region0_0_t00001523_n00004732.out"
-#fnameField = "3d_var_region0_0_t00001524_n00004933.out"
-#fnameField = "3d_var_region0_0_t00001525_n00005126.out"
-#fnameField = "3d_var_region0_0_t00001527_n00005528.out"
-#fnameField = "3d_var_region0_0_t00001740_n00032921.out"
-#fnameField = "3d_var_region0_0_t00001750_n00035011.out"
-#fnameField = "3d_var_region0_0_t00001800_n00037224.out"
-#fnameField = "3d_var_region0_0_t00001810_n00039298.out"
-#fnameField = "3d_var_region0_0_t00001820_n00041392.out"
-#fnameField = "3d_var_region0_0_t00001830_n00043324.out"
-#fnameField = "3d_var_region0_0_t00001840_n00045319.out"
-#fnameField = "3d_var_region0_0_t00001850_n00047357.out"
-#fnameField = "3d_var_region0_0_t00001900_n00049293.out"
-#fnameField = "3d_var_region0_0_t00001910_n00051301.out"
 
 data = readdata(fnameField, dir=dir)
 
@@ -43,11 +23,12 @@ qe = data.head.eqpar[2]
 mi = data.head.eqpar[3]
 qi = data.head.eqpar[4]
 const kB = 1.38064852e-23 # [m^2 kg s^-2 K^-1]
+const q = 1.6021765e-19 # [C]
 const vAlfven = 253. # reference Alfven velocity, [km/s]
 const B₀ = √((-10.)^2+(-6.)^2+(-86.)^2)
 const E₀ = vAlfven*B₀ # [μV/m]
 const ρ₀ = 56.0     # [amu/cc]
-const J₀ = 4.0*vAlfven
+const J₀ = 4.0*vAlfven # Actual normalization unit: q*4.0*vAlfven
 #const T₀ = vAlfven^2
 const T₀ = 0.2/4 # Pe/n₀
 
@@ -56,6 +37,12 @@ plotrange = [-2.05, -1.75, -0.5, 0.5]
 #plotrange=[-Inf, Inf, -Inf, Inf]
 cI = 129 # plane cut index
 
+##
+# ρ: [amu/cc]
+# B: [nT]
+# E: [μV/m]
+# V: [km/s]
+# P: [nPa]
 
 X, Z, ρe = cutdata(data, "rhoS0",cut='y',cutPlaneIndex=cI,
 	plotrange=plotrange)
@@ -119,7 +106,7 @@ z  = Z[1,:]
 # [A/m^2]
 #Jy = @. (qi*ρi*Uyi+qe*ρe*Uye)*1e3/mp*1e6
 #Jz = @. (qi*ρi*Uzi+qe*ρe*Uze)*1e3/mp*1e6
-const q = 1.6021765e-19 # [C]
+
 # [/cc] --> [/mc], [km] --> [m]
 #Jx = @. (qi*ρi/mi*Uxi+qe*ρe/me*Uxe)*1e9*q
 #Jy = @. (qi*ρi/mi*Uyi+qe*ρe/me*Uye)*1e9*q
