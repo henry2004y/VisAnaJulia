@@ -15,7 +15,7 @@ which only considers the non-gyrotropy in the plane perpendicular to the magneti
 
 [Another measure of non-gyrotropy](https://aip.scitation.org/doi/full/10.1063/1.4820953) ``D_{ng}`` of a specific population proposed by researchers can be think of a ratio between off-diagonal terms and diagonal terms of the pressure tensor:
 ```math
-D_{ng} = \frac{2\sqrt{\sum_{i,j, i\neq j}P_{ij}^2}}{\sum_{i=1,3}P_{ii}^2} 
+D_{ng} = \frac{2\sqrt{\sum_{i,j, i\neq j}P_{ij}^2}}{\sum_{i=1,3}P_{ii}^2}
 ```
 Note that this is frame independent and population specific.
 
@@ -148,6 +148,14 @@ The "+" is for fast waves and "−" for slow waves, and ``v_S`` is the sound spe
 \delta \mathbf{v} = -\frac{v_A^2 \cos{\theta}}{B_0 v_p}\delta\mathbf{B} + \frac{v_A^2 \sin{\theta}\delta B}{B_0 (v_p - v_s^2/v_p)}\frac{\mathbf{k}}{k}
 ```
 Thus generally the Alfvén wave is identified by the correlations between velocity and magnetic field perturbations, and the fast and slow waves are identified by the negative (for slow waves) or positive (for fast waves) correlations between either density and magnetic field perturbation or thermal pressure and magnetic pressure perturbation.
+
+The second equation above can also be expressed in terms of magnetic and thermal pressure pertubations:
+```math
+\delta P_B = \frac{\mathbf{B}_0 \cdot \mathbf{B}}{\mu_0}
+=\frac{V_A^2}{V_S^2}\left(1-\frac{k^2 V_S^{2} \cos^2\theta}{\omega^2}\right)\delta P_t
+```
+
+See the [lecture notes](https://farside.ph.utexas.edu/teaching/plasma/lectures1/node65.html) for more details.
 
 For the magnetosonic waves, consider using ``\delta \mathbf{E}`` and ``\delta \mathbf{B}`` for identifying speed. The slopes of the curves ``\delta E∕\delta B`` correspond to the wave propagation speed in the spacecraft frame.
 
