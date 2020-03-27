@@ -13,16 +13,6 @@ In principle, I could also try some multi-block (VTM) type for data conversion.
 - Because of the embarrassing parallelism nature of postprocessing, it is quite easy to take advantage of parallel approaches to process the data.
 - The built-in streamline function of Matplotlib is not proper for scientifically visualizing field information. The solution is to trace field lines with ODEs and plot the line series, similar to what has been done by [Spacepy](https://github.com/spacepy/spacepy/blob/master/spacepy/pybats/trace2d.py).
 
-## Streamline Tracing
-
-2D streamline tracing is almost finished. 3D streamline tracing is on the way. I need an adaptive step control integration scheme like rk45.
-
-In the future, the stream tracing should become a stand-alone package!
-
-## Particle Tracing
-
-I have a plan of incorporating particle tracing into this module. WIP
-
 ## Support for more complicated grid structures
 
 For the plotting, streamline tracing and particle tracing, a common problem is the grid and related interpolation process. I am envisioning a more general approach to deal with block-based and unstructured grid to provide fundamental support for all of these.

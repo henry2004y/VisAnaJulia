@@ -38,6 +38,7 @@ Pages = [
     "man/functions.md",
     "man/types.md",
     "man/analysis.md"
+    "man/trace.md"
     "man/testparticle.md"
 ]
 Depth = 1
