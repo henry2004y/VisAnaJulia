@@ -22,13 +22,22 @@ Some questions during the process:
 
 First make it work, then make it better and fast.
 
+A package called `UnstructuredGrids.jl` already exists.
+
 I found an approach called Pollock method.
 
 I need an adaptive step control integration scheme like rk45.
 
-There is an implementation of streamline tracing in Matlab called tristream.
+### Matlab
 
-There is another implementation in yt library:
+There is an implementation of streamline tracing in Matlab called tristream. It requires nodal data.
+
+Inside the function, there is an intrinsic function called `pointLocation`, which returns the index of cell where the point locates.
+
+### yt
+
+There is another implementation in yt library, which has many similarities to the one I borrowed from SpacePy.
+
 Streamlining through a volume is useful for a variety of analysis tasks. By specifying a set of starting positions, the user is returned a set of 3D positions that can, in turn, be used to visualize the 3D path of the streamlines. Additionally, individual streamlines can be converted into `YTStreamline` objects, and queried for all the available fields along the streamline.
 
 The implementation of streamlining in yt is described below.
@@ -50,6 +59,17 @@ The implementation of streamlining in yt is described below.
       2. During the intermediate steps of each RK4 step, if the position is updated to outside the current brick, interrupt the integration and locate a new brick at the intermediate position.
 
 3. The set of streamline positions are stored in the `Streamlines` object.
+
+### VTK Implementation
+
+In the VTK library, there is a class called `vtkPointLocator`. It is a spatial search object to quickly locate points in 3D. `vtkPointLocator` works by dividing a specified region of space into a regular array of "rectangular" buckets, and then keeping a list of points that lie in each bucket. Typical operation involves giving a position in 3D and finding the closest point. It supports both nodal data and cell data.
+
+`vtkPointLocator` has two distinct methods of interaction. In the first method, you supply it with a dataset, and it operates on the points in the dataset. In the second method, you supply it with an array of points, and the object operates on the array.
+
+!!! note
+    Many other types of spatial locators have been developed such as octrees and kd-trees. These are often more efficient for the operations described here.
+
+
 
 ## Particle Tracing
 
