@@ -5,6 +5,14 @@ In the future, the stream tracing should become a stand-alone package!
 
 ## Streamline Tracing
 
+First make it work, then make it better and fast.
+
+I found an approach called Pollock method.
+
+I need an adaptive step control integration scheme like rk45.
+
+### Tracing on Unstructured Grid
+
 Given an unstructured grid with node points and connectivity, how should you do the streamline tracing?
 
 Brute force algorithm:
@@ -20,13 +28,23 @@ Some questions during the process:
 * How to improve the search speed?
 * How to improve accuracy?
 
-First make it work, then make it better and fast.
+A package called `UnstructuredGrids.jl` already exists. I take advantage of this package and quickly build a 2D stream tracer on unstructured 2D grid.
 
-A package called `UnstructuredGrids.jl` already exists.
+My first implementation follows a very simple scheme:
+1. find cell index for the starting points
+2. find corresponding cell value
+3. find the crossing edge and intersection point
+4. find the neighbor who shares the edge
+5. repeat 1-4 until you either hit the boundary, exceed `MaxIteration`, or
+exceed `MaxLength`.
 
-I found an approach called Pollock method.
+Actually, this may not be as bad as you think in terms of accuracy. Finite volume method uses one value per cell to represent the solution space, therefore it is just cheating to use higher order method for stream tracing.
 
-I need an adaptive step control integration scheme like rk45.
+An example is shown for the 2D streamline tracing in the unstructured triangular mesh for the famous airfoil problem. The blue lines are the analytic stream functions derived from incompressible Euler equations which are calculated numerically. Three colored lines are displayed with dots representing the footprint inside each cell.
+
+![](../images/trace_streamline_2Dunstructured.png)
+
+An extension to 3D is possible, and is WIP.
 
 ### Matlab
 
