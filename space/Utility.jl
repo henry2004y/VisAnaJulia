@@ -12,12 +12,12 @@ end
 
 
 """
-	smooth(x, n=100)
+	sma(x, n=100)
 
 Return the moving box average of the vector data `x` with box length 'n'.
 One-sided average on the left and right edge.
 """
-function smooth(x::Vector, n=100)
+function sma(x::Vector, n=100)
    nx = length(x)
    x̄ = zeros(eltype(x),length(x))
 
@@ -41,15 +41,15 @@ end
 
 
 """
-	smooth(x, n)
+	sma(x, n)
 
 Return the moving box average of the array data `x` with box length 'n'.
 One-sided average on the left and right edge.
 """
-function smooth(x::Array{T,3}, n=100) where T <: AbstractFloat
+function sma(x::Array{T,3}, n=100) where T <: AbstractFloat
    nx = size(x)[3]
    if nx < n
-      println("fewer snapshots than nSmooth, changing nS to nx-1")
+      println("fewer snapshots than nsma, changing nS to nx-1")
       n = nx-1
    end
    x̄ = zeros(eltype(x),size(x))
@@ -70,4 +70,16 @@ function smooth(x::Array{T,3}, n=100) where T <: AbstractFloat
    end
 
    return x̄
+end
+
+
+"""
+	ema(x, n=5)
+
+Return the exponentially moving box average of the vector data `x` with box
+length 'n'.
+Check https://github.com/JuliaQuant/MarketTechnicals.jl/blob/master/src/movingaverages.jl
+"""
+function ema(x::Vector, n=5)
+   @warn "To be implemented!"
 end

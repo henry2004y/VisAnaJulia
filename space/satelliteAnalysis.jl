@@ -294,7 +294,7 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
       σDn = std(c[:,8])
       tGap = 10 # peaks must be differed by a time range to be picked
       for i = 1:size(c)[1]
-         if c[i,59] - cmean[59] > 1.2σUp
+         if c[i,59] - cmean[59] > 1.5σUp
             if isempty(peakUp_index)
                append!(peakUp_index, i)
             elseif i - peakUp_index[end] > tGap
@@ -302,7 +302,7 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
             end
          end
 
-         if c[i,8] - cmean[8] > 1.2σDn
+         if c[i,8] - cmean[8] > 1.5σDn
             if isempty(peakDn_index)
                append!(peakDn_index, i)
             elseif i - peakDn_index[end] > tGap
@@ -347,7 +347,7 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
    tight_layout()
 
    if plane == 'y'
-      return peakUp_index
+      return peakUp_index, peakDn_index
    else
       return nothing
    end
@@ -393,16 +393,16 @@ function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
    B = @. √(Bx^2 + By^2 + Bz^2)
 
    # Subtract the background
-   ρ̄ = smooth(ρ)
-   P̄ = smooth(P)
-   P̄e= smooth(Pe)
-   Ūx= smooth(Ux)
-   Ūy= smooth(Uy)
-   Ūz= smooth(Uz)
-   B̄x= smooth(Bx)
-   B̄y= smooth(By)
-   B̄z= smooth(Bz)
-   B̄ = smooth(B)
+   ρ̄ = sma(ρ)
+   P̄ = sma(P)
+   P̄e= sma(Pe)
+   Ūx= sma(Ux)
+   Ūy= sma(Uy)
+   Ūz= sma(Uz)
+   B̄x= sma(Bx)
+   B̄y= sma(By)
+   B̄z= sma(Bz)
+   B̄ = sma(B)
 
    Δρ = ρ .- ρ̄
    ΔUx= Ux .- Ūx
@@ -639,7 +639,7 @@ end
 #multi_satellite_contour("satellites_y0_PIC.txt", DoSubtractMean=true)
 #multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true)
 
-#peak_hall = satellite_p_contour("satellites_y0_Hall.txt"; No=1, plane='y')
+peakUp, peakDn = satellite_p_contour("satellites_y0_PIC.txt"; No=1, plane='y')
 
 #nShift = 185
 #static_location_plot("satellites_Hall.txt",
