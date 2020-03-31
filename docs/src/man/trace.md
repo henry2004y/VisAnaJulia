@@ -18,9 +18,9 @@ Given an unstructured grid with node points and connectivity, how should you do 
 Brute force algorithm:
 1. find the grid cell you are currently in;
 2. move along the vector direction until you hit the boundary of that cell;
-3. find the neighbour who shares the same edge;
+3. find the neighbour who shares the same edge and the intersection point;
 4. use the vector direction in the next cell and move along that direction;
-5. repeat 2-4 until you hit the preset stopping criteria.
+5. repeat 2-4 until you reach any of the stopping criteria: hit the boundary, exceed `MaxIteration`, or exceed `MaxLength`.
 
 Some questions during the process:
 * How to find the neighbouring cell?
@@ -28,15 +28,7 @@ Some questions during the process:
 * How to improve the search speed?
 * How to improve accuracy?
 
-A package called `UnstructuredGrids.jl` already exists. I take advantage of this package and quickly build a 2D stream tracer on unstructured 2D grid.
-
-My first implementation follows a very simple scheme:
-1. find cell index for the starting points
-2. find corresponding cell value
-3. find the crossing edge and intersection point
-4. find the neighbor who shares the edge
-5. repeat 1-4 until you either hit the boundary, exceed `MaxIteration`, or
-exceed `MaxLength`.
+A package called `UnstructuredGrids.jl` already exists. I take advantage of this package and quickly build a 2D stream tracer on unstructured 2D grid based on the brute force algorithm.
 
 Actually, this may not be as bad as you think in terms of accuracy. Finite volume method uses one value per cell to represent the solution space, therefore it is just cheating to use higher order method for stream tracing.
 
