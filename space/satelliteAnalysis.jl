@@ -38,7 +38,7 @@ function static_location_plot(filename="satellites_PIC.txt",
 
    @assert nShift≥0 "nShift must be non-negative!"
 
-   header, data, satelliteNo = read_data(dir*filename)
+   header, data, satelliteNo = read_satellite_data(dir*filename)
 
    index_ = findall(x->x==satelliteNo[1], data[:,1])
 
@@ -117,7 +117,7 @@ One variable `var` plotted at 6 locations.
 function multi_satellite_plot(filename="satellites_PIC.txt",
    dir="/Users/hyzhou/Documents/Computer/ParaView/data/", var="Rho")
 
-   header, data, satelliteNo = read_data(dir*filename)
+   header, data, satelliteNo = read_satellite_data(dir*filename)
 
    var_ = findfirst(x->x==var, header) + 1
 
@@ -167,7 +167,7 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
    dir="/Users/hyzhou/Documents/Computer/ParaView/data/"; plane='y',
    DoSave=false, DoSubtractMean = true, nLead=10, nTrail=10)
 
-   header, data, satelliteNo = read_data(dir*filename)
+   header, data, satelliteNo = read_satellite_data(dir*filename)
 
    # Remove the leading and trailing satellites
    satelliteNo = satelliteNo[1+nLead:end-nTrail]
@@ -238,37 +238,35 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
    dir="/Users/hyzhou/Documents/Computer/ParaView/data/"; plane='y',
    DoSubtractMean = true, nLead=10, nTrail=10, No=1)
 
-   header, data, satelliteNo = read_data(dir*filename)
+   header, data, satelliteNo = read_satellite_data(dir*filename)
 
    # Remove the leading and trailing satellites
    satelliteNo = satelliteNo[1+nLead:end-nTrail]
 
    index_ = findall(x->x==0.0f0, data[:,1])
 
-   c = Array{Float32, 2}(undef, length(index_), length(satelliteNo))
+   p = Array{Float32, 2}(undef, length(index_), length(satelliteNo))
+   pmean = similar(p)
 
    crange = (-9.5,9.5)
    clength= 40
    vdisp = range(crange..., length=11)
    vplot = range(crange..., length=clength)
 
-   # Subtract the average
-   var_ = 10
+   var_ = 10 # index for pressure
 
    for i in 1:length(satelliteNo)
-      c[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
+      p[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
+      pmean[:,i] = sma(p[:,i],100) # box average over +-100s for each location
    end
-   cmean = mean(c, dims=1)
 
    t = 1:length(index_)
-   #=
-   fig, ax = subplots(figsize=(8,3))
-   plot(t,c[:,59].-cmean[59])
-   fill_between(t, 0, 1, where=c[:,59].-cmean[59] .> 1.2σ,
-      color="green", alpha=0.5, transform=ax.get_xaxis_transform())
-   title("ΔP at z=0.5")
-   tight_layout()
-   =#
+
+   if plane == 'y'
+      z = data[Int.(satelliteNo),end]
+   elseif plane == 'z'
+      y = data[Int.(satelliteNo),end-1]
+   end
 
    DN = matplotlib.colors.DivergingNorm
 
@@ -277,10 +275,12 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
 
    if DoSubtractMean
       if plane == 'y'
-         contourf(data[Int.(satelliteNo),end], t, c .- cmean, norm=DN(0), vplot)
+         z = data[Int.(satelliteNo),end]
+         contourf(z, t, p .- pmean, norm=DN(0), vplot)
       elseif plane == 'z'
-         contourf(data[Int.(satelliteNo),end-1], 1:length(index_), c .- cmean,
-         vplot, extend="both")
+         y = data[Int.(satelliteNo),end-1]
+         contourf(y, 1:length(index_), p .- pmean, norm=DN(0), vplot,
+         extend="both")
       end
 
    else
@@ -288,13 +288,22 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
    end
 
    if plane == 'y'
+      #zpickUp_ = [index for (index, value) in enumerate(z) if value > 0.2]
+      #zUpMean = mean((p.-pmean)[:,zpickUp_], dims=2)
+
+      #zpickDn_ = [index for (index, value) in enumerate(z) if value < -0.2]
+      #zDnMean = mean((p.-pmean)[:,zpickDn_], dims=2)
+
       peakUp_index = Int[]
       peakDn_index = Int[]
-      σUp = std(c[:,59])
-      σDn = std(c[:,8])
+      σUp = std(p[:,59]) # at z=0.5
+      σDn = std(p[:,8]) # at z=-0.5
       tGap = 10 # peaks must be differed by a time range to be picked
-      for i = 1:size(c)[1]
-         if c[i,59] - cmean[59] > 1.5σUp
+      pmean = mean(p, dims=1) # Averaged pressure at each location over time
+
+      for i = 1:size(p,1)
+         if p[i,59] - pmean[59] > 1.4σUp
+         #if zUpMean[i] > 1.5σUp
             if isempty(peakUp_index)
                append!(peakUp_index, i)
             elseif i - peakUp_index[end] > tGap
@@ -302,7 +311,8 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
             end
          end
 
-         if c[i,8] - cmean[8] > 1.5σDn
+         if p[i,8] - pmean[8] > 1.4σDn
+         #if zDnMean[i] > 1.5σDn
             if isempty(peakDn_index)
                append!(peakDn_index, i)
             elseif i - peakDn_index[end] > tGap
@@ -353,6 +363,96 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
    end
 end
 
+"""
+	satellite_p_contour_test
+
+Test on different methods of obtaining the FTEs.
+"""
+function satellite_p_contour_test(filename="satellites_y0_PIC.txt",
+   dir="/Users/hyzhou/Documents/Computer/ParaView/data/"; plane='y',
+   DoSubtractMean = true, nLead=10, nTrail=10, No=1)
+
+   header, data, satelliteNo = read_satellite_data(dir*filename)
+
+   # Remove the leading and trailing satellites
+   satelliteNo = satelliteNo[1+nLead:end-nTrail]
+   # Starting index for the first satellite
+   index_ = findall(x->x==0.0f0, data[:,1])
+   # Pressure at each time for each satellite location
+   p = Array{Float32, 2}(undef, length(index_), length(satelliteNo))
+   #pmean = similar(p)
+
+   crange = (-9.5,9.5)
+   clength= 40
+   vdisp = range(crange..., length=11)
+   vplot = range(crange..., length=clength)
+
+   # Subtract the average
+   var_ = 10
+
+   for i in 1:length(satelliteNo)
+      p[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
+      #pmean[:,i] = sma(p[:,i],100) # box average over +-100s for each location
+   end
+   pmean = mean(p, dims=1) # Averaged pressure at each location over time
+
+   z = data[Int.(satelliteNo),end] # z coordinates of satellites
+
+   zpickUp_ = [index for (index, value) in enumerate(z) if value > 0.2]
+   zUpMean = mean((p.-pmean)[:,zpickUp_], dims=2)
+
+   zpickDn_ = [index for (index, value) in enumerate(z) if value < -0.2]
+   zDnMean = mean((p.-pmean)[:,zpickDn_], dims=2)
+
+   peakUp_index = Int[]
+   peakDn_index = Int[]
+   σUp = std(p[:,59]) # may be changed
+   σDn = std(p[:,8])  # may be changed
+   tGap = 10 # peaks must be differed by a time range to be picked
+   for i = 1:length(index_)
+      #if c[i,59] - cmean[59] > 1.5σUp
+      if zUpMean[i] > 1.5σUp
+         if isempty(peakUp_index)
+            append!(peakUp_index, i)
+         elseif i - peakUp_index[end] > tGap
+            append!(peakUp_index, i)
+         end
+      end
+
+      #if c[i,8] - cmean[8] > 1.5σDn
+      if zDnMean[i] > 1.5σDn
+         if isempty(peakDn_index)
+            append!(peakDn_index, i)
+         elseif i - peakDn_index[end] > tGap
+            append!(peakDn_index, i)
+         end
+      end
+   end
+
+   zMean = 0.5.*(zUpMean.+zDnMean)
+   figure()
+   plot(zMean)
+   tight_layout()
+   #[plt.axvline(x=i, color="black", linestyle="--") for i in peakUp_index]
+
+   #figure()
+   #plot(zDnMean)
+   #[plt.axvline(x=i, color="black", linestyle="--") for i in peakDn_index]
+
+   t = 1:length(index_)
+   Δp = p[:,59].-pmean[59]
+
+   fig, ax = subplots(figsize=(8,3))
+   plot(t,Δp)
+   fill_between(t, 0, 1, where=Δp .> 1.2σUp,
+      color="green", alpha=0.5, transform=ax.get_xaxis_transform())
+   title("ΔP at z=0.5")
+   tight_layout()
+
+   #return zMean
+   return Δp
+end
+
 
 """
 	wave_plot(nShift; DoPlot=false, filename, dir, iPlot=1, verbose)
@@ -370,7 +470,7 @@ Static satellite wave analysis.
 function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
    dir="/Users/hyzhou/Documents/Computer/ParaView/data/", iPlot=1, verbose=true)
 
-   header, data, satelliteNo = read_data(dir*filename)
+   header, data, satelliteNo = read_satellite_data(dir*filename)
 
    index_ = findall(x->x==satelliteNo[1], data[:,1])
 
@@ -609,7 +709,7 @@ function check_wave_type(filename="satellites_PIC.txt",
    # X, Y, Z, rAlfven, rFastSlow
    fnew = Array{Float32,2}(undef, nS, 5)
 
-   header, data, satelliteNo = read_data(dir*filename)
+   header, data, satelliteNo = read_satellite_data(dir*filename)
 
    if nS != length(satelliteNo)
       error("Number of satellites not right! Check the input files!")
@@ -633,15 +733,20 @@ function check_wave_type(filename="satellites_PIC.txt",
    return fnew
 end
 
+## Execution
 #static_location_plot("satellites_PIC.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", 185)
 #multi_satellite_plot()
 #multi_satellite_contour("satellites_y0_PIC.txt", DoSubtractMean=true)
 #multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true)
 
-peakUp, peakDn = satellite_p_contour("satellites_y0_PIC.txt"; No=1, plane='y')
+#peakUp, peakDn = satellite_p_contour("satellites_y0_Hall.txt"; No=1, plane='y')
+#satellite_p_contour("satellites_boundary_PIC.txt"; No=4, plane='z')
 
-#nShift = 185
+pMeanHall = satellite_p_contour_test("satellites_y0_Hall.txt"; No=1)
+pMeanPIC = satellite_p_contour_test("satellites_y0_PIC.txt"; No=1)
+
+#nShift = 130
 #static_location_plot("satellites_Hall.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", nShift)
 #wave_plot(nShift; DoPlot=true, filename="satellites_Hall.txt", iPlot=1,
