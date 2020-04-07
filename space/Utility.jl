@@ -1,5 +1,5 @@
 "Import satellite data. Require one line header presented."
-function read_data(fname)
+function read_satellite_data(fname)
    f = readdlm(fname, ',', Float32, '\n'; header=true)
 
    header = f[2][1:end-1]
@@ -43,8 +43,12 @@ end
 """
 	sma(x, n)
 
-Return the moving box average of the array data `x` with box length 'n'.
+Return the moving box average of the 3D array data `x` with box length 'n'.
 One-sided average on the left and right edge.
+This is so confusing:
+1. what about arbitrary dimensions?
+2. how to choose which dimension to do smoothing?
+Probably going to change in the next version, with meta-programming!
 """
 function sma(x::Array{T,3}, n=100) where T <: AbstractFloat
    nx = size(x)[3]
