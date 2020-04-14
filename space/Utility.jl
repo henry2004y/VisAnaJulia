@@ -10,6 +10,11 @@ function read_satellite_data(fname)
    return header, data, satelliteNo
 end
 
+"Convert magnitude to decibels."
+function mag2db(y)
+   ydb = 10. * log10.(y)
+end
+
 
 """
 	sma(x, n=100)

@@ -1,16 +1,12 @@
 # Commonly used constants
 
-const q = 1.6021765e-19 #[C]
-const dx = 1/100 #[Rg]
-const Rg = 2634000. #[m], Ganymede's radius
-const Rm = 2444000. #[m], Mercury's radius
+const q  = 1.6021765e-19    # electron charge, [C]
+const me = 9.10938356e-31   # electron mass, [kg]
+const mp = 1.6726219e-27    # proton mass, [kg]
+const amu= 1.66054e-27      # Atomic Mass Unit, 1/12 of C12, [kg]
+const ϵ0 = 8.8542e-12       # vacuum permittivity, [F/m]
+const c  = 3e8              # speed of light, [m/s]
+const μ₀ = 4π*1e-7          # Vacuum permeability, [H/m]
 
-const ionElectronMassRatio = 100 # ion-electron mass ratio in PIC simulation
-const ionMass = 14 # single fluid ion mass in Ganymede's simulation
-
-const me = 9.10938356e-31 #[kg]
-const mp = 1.6726219e-27  #[kg]
-
-const c = 3e8 #[m/s]
-const Rₑ = 6.38e6 #[m]
-const μ = 4*π*1e-7  # Vacuum permeability, [V*s/(A*m)]
+const Rₑ = 6.38e6           # Earth radius, [m]
+const Rm = 2444000.         # Mercury's radius, [m]

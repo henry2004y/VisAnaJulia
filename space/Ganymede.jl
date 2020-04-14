@@ -1,14 +1,24 @@
 module Ganymede
 
+include("constants.jl")
+
 export Rg, μ₀, amu, upstream_value, γ
 export Index, getIndex
 
-const Rg = 2634000.0 # radius, [m]
-const μ₀ = 4π*1e-7 # Vacuum permeability, [H/m]
-const amu = 1.66054e-27 # [kg]
+const ionElectronMassRatio = 100 # ion-electron mass ratio in PIC simulation
+const ionMass = 14 # single fluid ion mass in Ganymede's simulation
+const Rg = 2634000. # Ganymede's radius, [m]
+const dx = 1/100 # grid resolution for stream tracing, [Rg]
 # Rho Ux Uy Uz Bx By Bz Pe P, NaN for compensating the No index in the 1st col.
 const upstream_value = [56., 140., 0., 0., -10., -6., -86., 0.2, 3.4]
 const γ = 5/3 # adiabatic index
+
+const Z = 1 # Charge state
+const ni = 4e6 # upstream ion number density for G8 flyby, [amu/m^3]
+const ω_pi = √(ni*q^2/(ϵ0*ionMass*mp))*Z # ion plasma frequency, [rad/s]
+
+# ion inertial length at Ganymede's upstream, [Rg]
+const dᵢ = c / (√(ni*q^2/(ϵ0*ionMass*mp))*Z) / Rg
 
 struct Index
    Rho_::Integer
