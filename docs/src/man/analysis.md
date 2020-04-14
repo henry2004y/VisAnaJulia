@@ -46,7 +46,12 @@ This is another good indicator of the electron diffusion region, although it is 
 
 ### Periodogram
 
-This is a group of techniques to determine the periodicity of data. Julia has implementations in the [DSP](https://juliadsp.github.io/DSP.jl/stable/contents/) package. Here we introduce the usage by looking at practical examples.
+This is a group of techniques to determine the periodicity of data. Essentially it is the same as Fourier transform, but with the inverse of frequency as the x axis. Julia has implementations in the [DSP](https://juliadsp.github.io/DSP.jl/stable/contents/) package. Here we introduce the usage by looking at practical examples.
+
+!!! note
+    Be careful of any smoothing you apply to the raw data. It is very easy to forget about the tricks you use in analyzing raw data and come up with a biased conclusion.
+
+A [Savitzky-Golay filter](https://github.com/BBN-Q/Qlab.jl/blob/master/src/SavitzkyGolay.jl) can be used to smooth data before applying any further analysis. The idea is to use local polynomial approximations to replace the original data.
 
 ### Spectrogram
 
