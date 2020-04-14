@@ -4,19 +4,14 @@
 # In DifferentialEquations, there are so called Ensemble simulations for many
 # particles in parallel. Make use of that when going to many test particles.
 
+using DifferentialEquations
+using LinearAlgebra: norm,  ×
 using PyPlot
 #using Plots
-using DifferentialEquations
-using LinearAlgebra # vector norm function, cross product
-using Statistics # mean function
+#using Statistics: mean
 
 # Physical constants in SI units
-const c = 3e8 #[m/s]
-const q = 1.60217662e-19 #[C]
-const mᵢ = 1.6726219e-27 #[kg]
-const mₑ = 9.10938356e-31 #[kg]
-const Rₑ = 6.38e6 #[m]
-const μ = 4*π*1e-7  # Vacuum permeability, [V*s/(A*m)]
+include("constants.jl")
 
 "Momentum equation for updating particle motion from EM force."
 function derivatives!(dy::Vector{Float64},y::Vector{Float64},p::Vector{Any},
@@ -30,7 +25,7 @@ end
 function bfield(rIn::Vector{Float64},M::Vector{Float64})
    x,y,z = rIn
    r = sqrt(x^2 + y^2 + z^2)
-   Coef = μ/(4*π*r^5)
+   Coef = μ₀/(4*π*r^5)
 
    B = [3*x^2-r^2 3*x*y 3*x*z;
         3*y*x 3*y^2-r^2 3*y*z;
