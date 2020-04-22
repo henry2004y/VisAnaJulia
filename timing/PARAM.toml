@@ -1,0 +1,14 @@
+# Input parameters for SWMF timing plots..
+
+title = "SWMF timing parameters"
+
+[Param]
+timeType  = 2    # 1 for func, 2 for others
+testsuite = "pleiades"
+testcase  = "ganymede"
+dateStart = "2019-01-01"
+dateEnd   = "2019-05-09"
+dateGap   = 1
+DoDebug   = false
+verbose   = true
+DoCheckResult = false
