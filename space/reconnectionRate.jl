@@ -31,7 +31,7 @@ dirPICSurface = "/Users/hyzhou/Documents/Computer/ParaView/scripts/ReconnectionR
 
 ##
 # Get upstream theoretical maximum potential drop
-Δy = 5.64 # [Rg]
+Δy = 4.1 # or 5.64 [Rg], from z=2 cut estimation
 
 # Take clock angle in yz plane into consideration, 179 [kV]
 Potential_bk = Δy * cos(TiltedAngle) * Rg *
@@ -60,52 +60,53 @@ t = (0:L-1)*T          # Time vector
 e_hall = data_hall[:,2] ./ Potential_bk
 e_pic  = data_pic[:,2] ./ Potential_bk
 
-e_hall_mean = mean(e_hall[101:end])
-e_hall_std = std(e_hall[101:end])
-e_pic_mean = mean(e_pic)
-e_pic_std = std(e_pic)
+r_hall_mean = mean(data_hall[101:end,2])
+r_hall_std = std(data_hall[101:end,2])
+r_pic_mean = mean(data_pic[:,2])
+r_pic_std = std(data_pic[:,2])
 
-hall_mean = fill(e_hall_mean, size(e_hall))
-pic_mean = fill(e_pic_mean, size(e_pic))
+hall_mean = fill(r_hall_mean, size(e_hall))
+pic_mean = fill(r_pic_mean, size(e_pic))
 
 ##
-fig, ax = plt.subplots(3,1,figsize=(10.0,7.0))
+fig, ax = plt.subplots(3,1,figsize=(10.0,8.0))
 plt.rc("font", family = "serif", size = 13)
 
-ax[1].plot(data_hall[:,1], e_hall, label="Hall MHD")
+ax[1].plot(data_hall[:,1], data_hall[:,2], label="Hall MHD")
 ax[1].plot(data_hall[:,1], hall_mean, "k--", linewidth=0.8, label="Hall mean")
-ax[1].plot(data_hall[end,1]:data_hall[end,1]+19, fill(e_hall_mean, 20), "C0--",
+ax[1].plot(data_hall[end,1]:data_hall[end,1]+19, fill(r_hall_mean, 20), "k--",
    linewidth=0.8)
-ax[1].errorbar(data_hall[end,1]+20., e_hall_mean, yerr=e_hall_std, ecolor="C0",
+ax[1].errorbar(data_hall[end,1]+20., r_hall_mean, yerr=r_hall_std, ecolor="C0",
    capsize=3)
 
 ax[1].set_xlim(-10.,1230.)
-ax[1].set_ylim(0.2,0.75)
+ax[1].set_ylim(30,135)
 ax[1].set_xlabel("Simulation time [s]")
-ax[1].set_ylabel("Reconnection efficiency")
+ax[1].set_ylabel("Reconnection rate [kV]")
 ax[1].legend(loc="lower left", bbox_to_anchor=(0.07, 0.9), ncol=2,
    frameon=false)
 
 ax[1].minorticks_on()
 ax[1].tick_params(which="both", direction="in")
-ax[1].annotate("(a)", xy=(-0.03, 1.0), xycoords="axes fraction", fontsize=14)
+ax[1].annotate("(a)", xy=(-0.03, 1.01), xycoords="axes fraction", fontsize=14)
 
-ax[2].plot(data_pic[:,1], e_pic, "C1", alpha=1.0, label="MHD-EPIC")
+ax[2].plot(data_pic[:,1], data_pic[:,2], "C1", alpha=1.0, label="MHD-EPIC")
 ax[2].plot(data_pic[:,1], pic_mean, "k--", linewidth=0.8, label="MHD-EPIC mean")
-ax[2].plot(data_pic[end,1]:data_pic[end,1]+19, fill(e_pic_mean, 20), "C1--",
+ax[2].plot(data_pic[end,1]:data_pic[end,1]+19, fill(r_pic_mean, 20), "k--",
    linewidth=0.8)
-ax[2].errorbar(data_pic[end,1]+20, e_pic_mean, yerr=e_pic_std, ecolor="C1",
+ax[2].errorbar(data_pic[end,1]+20, r_pic_mean, yerr=r_pic_std, ecolor="C1",
    capsize=3)
 
 ax[2].set_xlim(-10.,1230.)
+ax[2].set_ylim(35,130)
 ax[2].set_xlabel("Simulation time [s]")
-ax[2].set_ylabel("Reconnection efficiency")
+ax[2].set_ylabel("Reconnection rate [kV]")
 ax[2].legend(loc="lower left", bbox_to_anchor=(0.07, 0.9), ncol=2,
       frameon=false)
 
 ax[2].minorticks_on()
 ax[2].tick_params(which="both", direction="in")
-ax[2].annotate("(b)", xy=(-0.03, 1.0), xycoords="axes fraction", fontsize=14)
+ax[2].annotate("(b)", xy=(-0.03, 1.01), xycoords="axes fraction", fontsize=14)
 
 # FTE
 #=
@@ -244,8 +245,8 @@ fig.savefig(
    dpi=150.0)
 
 @info "Hall CPCP"
-println("mean = ", mean(data_hall[:,2]), " ", e_hall_mean)
-println("std  = ", std(data_hall[:,2]), " ", e_hall_std)
+println("mean = ", mean(data_hall[:,2]), " ", r_hall_mean/Potential_bk)
+println("std  = ", std(data_hall[:,2]), " ", r_hall_std/Potential_bk)
 @info "PIC CPCP"
-println("mean = ", mean(data_pic[:,2]), " ", e_pic_mean)
-println("std  = ", std(data_pic[:,2]), " ", e_pic_std)
+println("mean = ", mean(data_pic[:,2]), " ", r_pic_mean/Potential_bk)
+println("std  = ", std(data_pic[:,2]), " ", r_pic_std/Potential_bk)
