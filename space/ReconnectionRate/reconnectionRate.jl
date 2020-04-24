@@ -12,11 +12,11 @@ using FFTW, PyPlot, DelimitedFiles
 using DSP, Statistics
 
 if !isdefined(Main, :Ganymede)
-   include("Ganymede.jl")
+   include("../Ganymede.jl")
    using .Ganymede: Rg, upstream_value
 end
 
-include("Utility.jl")
+include("../Utility.jl")
 
 # Background
 # G8 B= -10 -6 -86 [nT], U=140 0 0 [km/s]
@@ -239,11 +239,11 @@ ax[3].minorticks_on()
 ax[3].tick_params(which="both", direction="in")
 ax[3].annotate("(c)", xy=(-0.03, 1.0), xycoords="axes fraction", fontsize=14)
 tight_layout()
-
+#=
 fig.savefig(
    "/Users/hyzhou/Documents/research/paper/Ganymede2/test figure/ReconnectionEfficiency_FFT_surfaceIntegral.png",
    dpi=150.0)
-
+=#
 @info "Hall CPCP"
 println("mean = ", mean(data_hall[:,2]), " ", r_hall_mean/Potential_bk)
 println("std  = ", std(data_hall[:,2]), " ", r_hall_std/Potential_bk)

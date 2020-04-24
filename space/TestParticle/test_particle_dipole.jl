@@ -11,7 +11,7 @@ using PyPlot
 #using Statistics: mean
 
 # Physical constants in SI units
-include("constants.jl")
+include("../constants.jl")
 
 "Momentum equation for updating particle motion from EM force."
 function derivatives!(dy::Vector{Float64},y::Vector{Float64},p::Vector{Any},

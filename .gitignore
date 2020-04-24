@@ -9,5 +9,6 @@
 *.avi
 *.vts
 *.tec
+*.zip
 *~
 docs/build/

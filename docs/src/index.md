@@ -40,6 +40,7 @@ Pages = [
     "man/analysis.md"
     "man/trace.md"
     "man/testparticle.md"
+    "man/text.md"
 ]
 Depth = 1
 ```

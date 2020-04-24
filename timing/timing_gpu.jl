@@ -1,6 +1,8 @@
-# Timings from BATSRUS GPU attempts.
+# Timings for the skeleton BATSRUS for porting to GPU with OpenACC.
 # 4 subplots, each of block size 8^3, 16^3, 32^3, and 64^3.
-# Each subplot contains a bar plot.
+# Each subplot contains a bar plot, with nBlock as x axis, timing as y axis,
+# and different columns represent nWork.
+# Column have two colors, blue represent CPU, and orange represent GPU.
 #
 # Hongyang Zhou, hyzhou@umich.edu 04/22/2020
 
@@ -12,6 +14,8 @@ t1 = df[df.nCell.==8,:]
 t2 = df[df.nCell.==16,:]
 t3 = df[df.nCell.==32,:]
 t4 = df[df.nCell.==64,:]
+
+t1_cpu = t1[t1.type.=="CPU",:]
 
 # set width of bar
 const barWidth = 0.3

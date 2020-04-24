@@ -1,0 +1,2 @@
+ LD_LIBRARY_PATH=/home1/apps/swr/19.0.6/lib:$LD_LIBRARY_PATH \
+ LD_PRELOAD=/home1/apps/swr/19.0.6/lib/libGL.so.1 ibrun -n 1 pvbatch $*
