@@ -10,7 +10,7 @@ For more details, please check the [document][VisAna-doc].
 
 ## Prerequisites
 
-Julia 1.0+
+Julia 1.4+
 
 ## Installation
 ```
@@ -36,10 +36,12 @@ This package provides the following functionalities:
   * data analysis in space physics
   * test particle tracking
 
+The basic functionalities are splitted into a [standalone package](https://github.com/henry2004y/SWMF).
 The data analysis part includes spectral analysis, minimum variance analysis and
 many functions for aiding the interpretation of data.
 
 See [here](docs/src/man/guide.md) for some development thoughts.
+In the future, each part will become a standalone package, and VisAna will only be a container.
 
 ## Author
 
