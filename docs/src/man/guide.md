@@ -1,8 +1,8 @@
 # Guide
 
-Demos are provided for calling Matlab/Python directly from Julia for debugging and testing. This part will later be separated out for potential Python and Matlab users. Currently the plotting and interpolation needed during plotting are done in Python. For instance, the 3D scatterred interpolation is done via `Interpolate` in Scipy. Hopefully these additional dependencies will be cut down.
+Demos are provided for calling Matlab/Python directly from Julia for debugging and testing. This part will later be separated out for potential Python and Matlab users. Currently the plotting and interpolation needed during plotting are done in Python. For instance, the 3D scattered interpolation is done via `Interpolate` in Scipy. Hopefully these additional dependencies will be cut down.
 
-The VTK files does not have timestep information. To allow for further time series processing in Paraview, a script `create_pvd.jl` is provided for generating the pvd container.
+The VTK files does not have timestep information. To allow for further time series processing in Paraview, a script `create_pvd.jl` is provided for generating the `pvd` container.
 
 In principle, I could also try some multi-block (VTM) type for data conversion.
 
@@ -35,6 +35,11 @@ Checkout [BinaryBuilder](https://juliapackaging.github.io/BinaryBuilder.jl/lates
 In the current version of PyCall and PyJulia, there is already direct support for accessing Julia struct objects (noted as `jlwrap`).
 
 As to avoid the cross-dependency hail on PyPlot, I split the original package into pure IO [SWMF](https://github.com/henry2004y/SWMF) and post-processing and plotting. This is also a nicer way of organizing larger code base.
+
+## Structuring of packages
+
+Currently VisAna is more of a collection of scripts, instead of a true package.
+I am planning to build individual packages for each feature, so that others can make more use of what they want specifically.
 
 ## Issues
 
@@ -97,3 +102,4 @@ As for the GUI development, GTK seems to be an ideal candidate.
 - [x] Magnetic field line plots from simulation
 - [x] Particle phase space distribution plots
 - [ ] Animation
+- [ ] Make more separate small packages instead of one giant collection
