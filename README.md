@@ -15,8 +15,10 @@ Julia 1.4+
 ## Installation
 ```
 using Pkg
+Pkg.add(PackageSpec(url="https://github.com/henry2004y/SWMF", rev="master"))
 Pkg.add(PackageSpec(url="https://github.com/henry2004y/VisAnaJulia", rev="master"))
 ```
+Currently Julia does not have a clear way of letting one unregistered package depending on another unregistered package without first add the other package. See the [issue](https://github.com/JuliaLang/Pkg.jl/issues/492) for details. This can be fixed once I register the [SWMF.jl](https://github.com/henry2004y/SWMF.jl) package.
 
 ## Usage
 ```
