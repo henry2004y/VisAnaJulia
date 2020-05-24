@@ -79,7 +79,7 @@ function b_line(x, y; npoints=30)
 	return x_out, y_out
 end
 
-"""A quick test of the dipole field functions."""
+"A quick test of the dipole field functions."
 function test_dipole()
 
    x = -100.0:5.0:101.0
