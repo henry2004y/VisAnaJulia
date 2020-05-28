@@ -7,6 +7,10 @@ function read_satellite_data(fname)
 
    satelliteNo = unique(data[:,1]) # number of static satellites
 
+   if minimum(satelliteNo) > 0.1
+      @error "Some thing is wrong with the input data!"
+   end
+
    return header, data, satelliteNo
 end
 
