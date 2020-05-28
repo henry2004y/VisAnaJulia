@@ -162,6 +162,8 @@ location and time.
 - `DoSubtractMean::Bool`: Subtract the average state for each variable.
 - `nLead::Int`: the number of points removing from the start.
 - `nTrail::Int`: the number of points removing from the end.
+
+Issue: nLead must be ≥ 1, which should not be the case!
 """
 function multi_satellite_contour(filename="satellites_PIC.txt",
    dir="/Users/hyzhou/Documents/Computer/ParaView/data/"; plane='y',
@@ -173,6 +175,10 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
    satelliteNo = satelliteNo[1+nLead:end-nTrail]
 
    index_ = findall(x->x==0.0f0, data[:,1])
+
+   if length(index_) ≤ 2
+      @error "number of snapshots must be equal or larger than 2!"
+   end
 
    c = Array{Float32, 2}(undef, length(index_), length(satelliteNo))
 
@@ -743,8 +749,8 @@ end
 #peakUp, peakDn = satellite_p_contour("satellites_y0_Hall.txt"; No=1, plane='y')
 #satellite_p_contour("satellites_boundary_PIC.txt"; No=4, plane='z')
 
-pMeanHall = satellite_p_contour_test("satellites_y0_Hall.txt"; No=1)
-pMeanPIC = satellite_p_contour_test("satellites_y0_PIC.txt"; No=1)
+#pMeanHall = satellite_p_contour_test("satellites_y0_Hall.txt"; No=1)
+#pMeanPIC = satellite_p_contour_test("satellites_y0_PIC.txt"; No=1)
 
 #nShift = 130
 #static_location_plot("satellites_Hall.txt",
