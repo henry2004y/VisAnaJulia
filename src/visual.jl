@@ -5,9 +5,8 @@ using PyPlot
 export plotdata, plotlogdata, animatedata, plot, scatter, contour, contourf,
 	   plot_surface, tricontourf, plot_trisurf, streamplot, streamslice, cutplot
 
-import PyPlot.plot, PyPlot.scatter, PyPlot.contour, PyPlot.contourf,
-       PyPlot.plot_surface, PyPlot.tricontourf, PyPlot.plot_trisurf,
-       PyPlot.streamplot
+import PyPlot: plot, scatter, contour, contourf, plot_surface, tricontourf,
+	   plot_trisurf, streamplot
 
 """
 	plotlogdata(data, head, vars, (plotmode="line", plotrange=[-Inf,Inf]))
