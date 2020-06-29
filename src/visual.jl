@@ -580,7 +580,7 @@ function contour(data::Data, var::AbstractString, levels=0;
 end
 
 """
-	contourf(data var, levels=0; plotrange, plotinterval, kwargs)
+	contourf(data, var, levels=0; plotrange, plotinterval, kwargs)
 
 Wrapper over the contourf function in matplotlib.
 """

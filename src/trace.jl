@@ -53,7 +53,7 @@ function DoBreak(iloc::T, jloc::T, kloc::T, iSize::T, jSize::T, kSize::T) where
    return ibreak
 end
 
-"""Create unit vectors of field."""
+"Create unit vectors of field."
 function make_unit(iSize::T, jSize::T, ux, uy) where {T<:Integer}
    fx, fy = similar(ux), similar(uy)
    @inbounds for i = 1:iSize*jSize
@@ -90,6 +90,7 @@ grid_interp!(x, y, field, xloc, yloc, xsize, ysize) =
 
 """
 	Euler!(iSize,jSize, maxstep, ds, xstart,ystart, xGrid,yGrid, ux,uy, x,y)
+
 Simple 2D tracing using Euler's method. Super fast but not super accurate.
 # Arguments
 - `iSize::Int,jSize::Int`: grid size.
@@ -153,6 +154,7 @@ end
 """
 	Euler!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
       xGrid, yGrid, zGrid ux, uy, uz, x, y, z)
+
 Simple 3D tracing using Euler's method.
 # Arguments
 - `iSize::Int,jSize::Int,kSize::Int`: grid size.
@@ -713,7 +715,7 @@ function test_trace_asymptote(IsSingle=false)
    return true
 end
 
-"""Trace field lines through a dipole field."""
+"Trace field lines through a dipole field."
 function test_trace_dipole()
    # Now do dipole magnetic field.
    # Start by creating a field of unit vectors...
