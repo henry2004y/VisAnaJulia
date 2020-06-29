@@ -1,10 +1,11 @@
 # Examples
 
-## IDL format output processing
+Examples of data loading are in [SWMF.jl](https://henry2004y.github.io/SWMF/dev/man/examples/).
+You can use all the functions in `SWMF.jl` by, e.g., `VisAna.readdata`, or you can just import the packge by `using SWMF`.
 
-The data loader examples are in [SWMF.jl](https://henry2004y.github.io/SWMF/dev/man/examples/). You can use all the functions in `SWMF.jl` by, e.g., `VisAna.readdata`, or you can just import the `SWMF.jl` package.
+## Quick exploration of data
 
-A general `plotdata` function is provided for quick visualizations. In addition to that, some plotting functions can be directly called as shown below, which allows for more control by the user.
+A general `plotdata` function is provided for quick visualizations.
 
 - 1D binary
 ```
@@ -47,7 +48,12 @@ subplot(2,2,(1,3))
 cutplot(data, "Ex", cut='y', cutPlaneIndex=128, plotrange=plotrange)
 ```
 
-## Multiple dispatch for matplotlib functions
+## Multiple dispatch for Matplotlib functions
+
+Using the same plotting functions as in Matplotlib is allowed, and actually recommended.
+Some plotting functions can be directly called as shown below, which allows for more control from the user.
+`using PyPlot` to import the full capability of the package, etc. adding colorbar, changing line colors, setting colorbar range with `clim`.
+
 - line plot
 ```
 plot(data, "p", linewidth=2, color="green")
@@ -152,3 +158,10 @@ Currently the `select_seeds` function uses pseudo random number generator that p
 ## Space data analysis
 
 In the [space](../../../space) folder, you can find scripts for comparing magnetic field with observations, cross polar cap potential analysis, diamagnetic current calculation, 1D data frequency analysis, minimum variance analysis, particle phase space distribution plots, cut plots near the X-line reconnection site, and static satellite analysis.
+
+## Plotting with Plots.jl (experimental)
+
+An experimental feature is implemented in [visual_plot.jl](../../../src/visual_plot.jl) for using user recipes in the Julia official plotting package.
+It is currently commented out in [visual_plot.jl](../../../src/VisAna.jl).
+The user recipe allows the plotting functions working on a custom type.
+I do not use `Plots.jl` simply because it's too slow and lacks many detailed controls.
