@@ -4,7 +4,7 @@
 [![](https://img.shields.io/badge/docs-latest-blue.svg)][VisAna-doc]
 [![][codecov-img]][codecov-url]
 
-SWMF data reading, converting, visualizing and analyzing using Julia.
+[SWMF](http://csem.engin.umich.edu/tools/swmf/) data reading, converting, visualizing and analyzing using Julia.
 
 For more details, please check the [document][VisAna-doc].
 
