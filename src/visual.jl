@@ -25,11 +25,8 @@ function plotlogdata(data::Data, func::AbstractString;
    plotmode = split(plotmode)
 
    for (ivar, var) in enumerate(vars)
-      # find the index for variables
-      VarIndex_ = findfirst(x->x==var, data.head.variables)
+      VarIndex_ = findindex(data, var)
 
-      isnothing(VarIndex_) &&
-      error("unknown plotting variable $(func[ivar])!")
       figure()
       if plotmode[ivar] == "line"
          plot(data[:,1],data[:,VarIndex_])
@@ -138,10 +135,7 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
          occursin("over", plotmode[ivar]) && (multifigure = false)
          if ivar == 1 || multifigure fig, ax = subplots() else ax = gca() end
          if !occursin(";",var)
-            VarIndex_ = findfirst(x->x==lowercase(var),
-               lowercase.(data.head.wnames))
-            isempty(VarIndex_) &&
-            error("$(var) not found in file header variables!")
+            VarIndex_ = findindex(data, var)
          end
 
          if plotmode[ivar] ∈ ("surf","surfbar","surfbarlog","cont","contbar",
@@ -302,9 +296,8 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
       for (ivar,var) in enumerate(vars)
          if plotmode[ivar] ∈ ("surf","surfbar","surfbarlog","cont","contbar",
             "contlog","contbarlog")
-            VarIndex_ = findfirst(x->x==lowercase(var),
-            lowercase.(data.head.wnames))
-            isempty(VarIndex_) && error("$(var) not found in header variables!")
+
+            VarIndex_ = findindex(data, var)
 
             if ivar == 1 || multifigure fig, ax = subplots() else ax = gca() end
 
@@ -324,13 +317,9 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
                W    = @view W[:,:,cutPlaneIndex]
             end
          elseif plotmode[ivar] ∈ ("stream","streamover")
-            VarStream  = split(var,";")
-            VarIndex1_ = findfirst(x->x==lowercase(VarStream[1]),
-            lowercase.(data.head.wnames))
-            VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]),
-            lowercase.(data.head.wnames))
-            (isempty(VarIndex1_) || isempty(VarIndex2_)) &&
-            error("$(VarStream) not found in header variables!")
+            varStream  = split(var,";")
+            VarIndex1_ = findindex(data, varStream[1])
+            VarIndex2_ = findindex(data, varStream[2])
 
             v1 = @view w[:,:,:,VarIndex1_]
             v2 = @view w[:,:,:,VarIndex2_]
@@ -418,8 +407,7 @@ function cutplot(data::Data, var::AbstractString;
    plotinterval=0.1, density=1.0, cutPlaneIndex=1,level=20)
 
    x, w = data.x, data.w
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
-   isempty(VarIndex_) && error("$(var) not found in header variables!")
+   VarIndex_ = findindex(data, var)
 
    X = @view x[:,:,:,1]
    Y = @view x[:,:,:,2]
@@ -474,13 +462,9 @@ function streamslice(data::Data, var::AbstractString;
    plotinterval=0.1, density=1.0, cutPlaneIndex=1, color="w")
 
    x,w = data.x, data.w
-   VarStream  = split(var,";")
-   VarIndex1_ = findfirst(x->x==lowercase(VarStream[1]),
-      lowercase.(data.head.wnames))
-   VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]),
-      lowercase.(data.head.wnames))
-   (isempty(VarIndex1_) || isempty(VarIndex2_)) &&
-      @error "$(VarStream) not found in header variables!"
+   varStream  = split(var,";")
+   VarIndex1_ = findindex(data, varStream[1])
+   VarIndex2_ = findindex(data, varStream[2])
 
    X = @view x[:,:,:,1]
    Y = @view x[:,:,:,2]
@@ -606,9 +590,7 @@ function tricontourf(data::Data, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
 
    x, w = data.x, data.w
-
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
-   isempty(VarIndex_) && error("$(var) not found in header variables!")
+   VarIndex_ = findindex(data, var)
 
    X = vec(x[:,:,1])
    Y = vec(x[:,:,2])
@@ -636,9 +618,7 @@ function plot_trisurf(data::Data, var::AbstractString;
    plotrange=[-Inf,Inf,-Inf,Inf], kwargs=Dict())
 
    x, w = data.x, data.w
-
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
-   isempty(VarIndex_) && error("$(var) not found in header variables!")
+   VarIndex_ = findindex(data, var)
 
    X = vec(x[:,:,1])
    Y = vec(x[:,:,2])
@@ -753,9 +733,7 @@ end
 function getdata(data, var, plotrange, plotinterval)
    x, w = data.x, data.w
    ndim = data.head.ndim
-
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
-   isempty(VarIndex_) && error("$(var) not found in header variables!")
+   VarIndex_ = findindex(data, var)
 
    if data.head.gencoord # Generalized coordinates
       X = vec(x[:,:,1])
@@ -806,6 +784,13 @@ function getdata(data, var, plotrange, plotinterval)
    return xi, yi, wi
 end
 
+"Find variable index in data."
+function findindex(data::Data, var::AbstractString)
+	VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
+   isnothing(VarIndex_) && error("$(var) not found in file header variables!")
+   return VarIndex_
+end
+
 """
 	animatedata()
 
@@ -815,13 +800,4 @@ in advance to avoid any jump in the movie.
 """
 function animatedata()
 
-end
-
-
-function animate(i, filelist)
-   clf()
-   fhead, d, flist = readdata(filelist.name,verbose=false,npict=i+1)
-   plotdata(d[1],fhead[1],"p",plotmode="contbar")
-
-   return gca()
 end
