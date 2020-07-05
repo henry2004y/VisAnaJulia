@@ -5,7 +5,7 @@
 !!! note
     This package is still under development, so be careful for any future breaking changes!
 
-SWMF data reading, converting, visualizing and analyzing using Julia.
+[SWMF](http://csem.engin.umich.edu/tools/swmf) data reading, converting, visualizing and analyzing using Julia.
 
 This package is inherited from its predecessor in IDL (developed by G.Tóth) and Matlab (developed by H.Zhou). Currently instead of a real "package", this is more like a collection of scripts. The data loader is split into an stand-alone package [SWMF](https://github.com/henry2004y/SWMF).
 
