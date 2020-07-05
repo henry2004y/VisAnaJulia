@@ -12,7 +12,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 01/10/2020
 
-using Statistics, LinearAlgebra, CSV, CodecZlib, Dates, PyPlot
+using Statistics, LinearAlgebra, CSV, DataFrames, CodecZlib, Dates, PyPlot, Mmap
 
 
 function MVA(Bx, By, Bz)
@@ -41,8 +41,8 @@ This function is currently only written for the specific input file.
 function MVA_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
    # Load magnetometer data Bx, By, Bz
    if filename[end-1:end] == "gz"
-      df = CSV.read(GzipDecompressorStream(open(filename));
-         header=2, delim=" ", ignorerepeated=true)
+      df = CSV.File(transcode(GzipDecompressor, Mmap.mmap(filename));
+         header=2, delim=" ", ignorerepeated=true) |> DataFrame!
    else
       df = CSV.File(filename; header=2, delim=" ", ignorerepeated=true)
    end
