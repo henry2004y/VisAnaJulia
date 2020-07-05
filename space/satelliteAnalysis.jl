@@ -192,7 +192,7 @@ function multi_satellite_contour(filename="satellites_PIC.txt",
       var_ = findfirst(x->x==var, header) + 1
       @show var, var_
 
-      for i in 1:length(satelliteNo)
+      for i in eachindex(satelliteNo)
          c[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
       end
 
@@ -259,10 +259,12 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
    vdisp = range(crange..., length=11)
    vplot = range(crange..., length=clength)
 
-   var_ = 10 # index for pressure
+   pe_ = 9  # index for electron pressure
+   pi_ = 10 # index for ion pressure
 
-   for i in 1:length(satelliteNo)
-      p[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
+   for i in eachindex(satelliteNo)
+      p[:,i] = data[index_ .+ Int(satelliteNo[i]),pe_] .+
+               data[index_ .+ Int(satelliteNo[i]),pi_]
       pmean[:,i] = sma(p[:,i],100) # box average over +-100s for each location
    end
 
@@ -276,7 +278,7 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
 
    DN = matplotlib.colors.DivergingNorm
 
-   fig, ax = subplots(figsize=(3.5,6))
+   fig, ax = subplots(figsize=(3.5,7))
    plt.rc("font", family="serif", size=14)
 
    if DoSubtractMean
@@ -304,11 +306,12 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
       peakDn_index = Int[]
       σUp = std(p[:,59]) # at z=0.5
       σDn = std(p[:,8]) # at z=-0.5
-      tGap = 10 # peaks must be differed by a time range to be picked
+      @info σUp, σDn
+      tGap = 9 # peaks must be differed by a time range to be picked
       pmean = mean(p, dims=1) # Averaged pressure at each location over time
 
       for i = 1:size(p,1)
-         if p[i,59] - pmean[59] > 1.4σUp
+         if p[i,59] - pmean[59] > 1.0σUp
          #if zUpMean[i] > 1.5σUp
             if isempty(peakUp_index)
                append!(peakUp_index, i)
@@ -317,7 +320,7 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
             end
          end
 
-         if p[i,8] - pmean[8] > 1.4σDn
+         if p[i,8] - pmean[8] > 1.0σDn
          #if zDnMean[i] > 1.5σDn
             if isempty(peakDn_index)
                append!(peakDn_index, i)
@@ -352,7 +355,7 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
    plt.colorbar(cax=cax, boundaries=vplot, ticks=vdisp)
    ax.set_title(L"\Delta P_t\ [nPa]")
 
-   ax.annotate("($('a'+No-1))", xy=(-0.16, 1.0), xycoords="axes fraction")
+   ax.annotate("($('a'+No-1))", xy=(-0.17, 1.0), xycoords="axes fraction")
 
    if occursin("pic",lowercase(filename))
       ax.set_ylabel("MHD-EPIC, simulation time [s]")
@@ -396,7 +399,7 @@ function satellite_p_contour_test(filename="satellites_y0_PIC.txt",
    # Subtract the average
    var_ = 10
 
-   for i in 1:length(satelliteNo)
+   for i in eachindex(satelliteNo)
       p[:,i] = data[index_ .+ Int(satelliteNo[i]),var_]
       #pmean[:,i] = sma(p[:,i],100) # box average over +-100s for each location
    end
@@ -415,7 +418,7 @@ function satellite_p_contour_test(filename="satellites_y0_PIC.txt",
    σUp = std(p[:,59]) # may be changed
    σDn = std(p[:,8])  # may be changed
    tGap = 10 # peaks must be differed by a time range to be picked
-   for i = 1:length(index_)
+   for i in eachindex(index_)
       #if c[i,59] - cmean[59] > 1.5σUp
       if zUpMean[i] > 1.5σUp
          if isempty(peakUp_index)
@@ -746,8 +749,8 @@ end
 #multi_satellite_contour("satellites_y0_PIC.txt", DoSubtractMean=true)
 #multi_satellite_contour("satellites_boundary_PIC.txt", plane='z', DoSubtractMean=true)
 
-#peakUp, peakDn = satellite_p_contour("satellites_y0_Hall.txt"; No=1, plane='y')
-#satellite_p_contour("satellites_boundary_PIC.txt"; No=4, plane='z')
+peakUp, peakDn = satellite_p_contour("satellites_y0_PIC.txt"; No=2, plane='y')
+#satellite_p_contour("satellites_boundary_Hall.txt"; No=3, plane='z')
 
 #pMeanHall = satellite_p_contour_test("satellites_y0_Hall.txt"; No=1)
 #pMeanPIC = satellite_p_contour_test("satellites_y0_PIC.txt"; No=1)

@@ -119,7 +119,7 @@ Jz = @. qi*ρi/mi*Uzi+qe*ρe/me*Uze
 fig, ax = plt.subplots(10,2,figsize=(8.00,9.00))
 c = Vector{PyObject}(undef,length(ax))
 axin = Vector{PyObject}(undef,length(ax))
-for i in 1:length(ax)
+for i in eachindex(ax)
 	axin[i] = inset_axes(ax[i],
       width="5%",  # width = 5% of parent_bbox width
       height="100%",  # height : 50%
@@ -169,9 +169,9 @@ xstart, zstart = seeds[1,:], seeds[2,:]
 append!(xstart, [-1.9, -1.9, -1.95, -1.97, -1.95, -1.9, -1.95, -1.95, -1.95])
 append!(zstart, [-0.4, -0.5, -0.4, 0.3, 0.4, 0.2, 0.05, -0.1, -0.2])
 
-xl = [Vector{Float32}(undef,0) for _ in 1:length(xstart)]
-zl = [Vector{Float32}(undef,0) for _ in 1:length(xstart)]
-for i = 1:length(xstart)
+xl = [Vector{Float32}(undef,0) for _ in eachindex(xstart)]
+zl = [Vector{Float32}(undef,0) for _ in eachindex(xstart)]
+for i in eachindex(xstart)
    xs,zs = xstart[i],zstart[i]
    xl[i], zl[i] = trace2d_rk4(Bx, Bz, xs, zs, x, z, ds=0.03, maxstep=10000,
    gridType="ndgrid")
@@ -268,7 +268,7 @@ vm[20] = max(abs.(Dₑ)...)+ϵ
 
 c[20] = ax[20].contourf(Z,X, Dₑ, levels, norm=DN(0), vmin=-vm[20], vmax=vm[20])
 
-for i in 1:length(ax)
+for i in eachindex(ax)
    #.ax.locator_params(nbins=5) does not work together with norm(0)!
    cb = colorbar(c[i], cax=axin[i])
    cb.ax.tick_params(labelsize=5)

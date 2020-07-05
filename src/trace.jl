@@ -596,7 +596,7 @@ function select_seeds(x, y; nSeed=100)
    xstart = rand(MersenneTwister(0),nSeed)*(xmax-xmin) .+ xmin
    ystart = rand(MersenneTwister(1),nSeed)*(ymax-ymin) .+ ymin
    seeds = zeros(eltype(x[1]),2,nSeed)
-   for i = 1:length(xstart)
+   for i in eachindex(xstart)
       seeds[1,i] = xstart[i]
       seeds[2,i] = ystart[i]
    end
@@ -612,7 +612,7 @@ function select_seeds(x, y, z; nSeed=100)
    ystart = rand(MersenneTwister(1),nSeed)*(ymax-ymin) .+ ymin
    zstart = rand(MersenneTwister(2),nSeed)*(zmax-zmin) .+ zmin
    seeds = zeros(eltype(x[1]),3,length(xstart))
-   for i = 1:length(xstart)
+   for i in eachindex(xstart)
       seeds[1,i] = xstart[i]
       seeds[2,i] = ystart[i]
       seeds[3,i] = zstart[i]

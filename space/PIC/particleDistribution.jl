@@ -66,7 +66,7 @@ function dist_select(fnameParticle, xC=-1.90, yC=0.0, zC=-0.1,
    uy = @view data.w[:,:,:,uy_]
    uz = @view data.w[:,:,:,uz_]
 
-   for ip = 1:length(x)
+   for ip in eachindex(x)
       for iR = 1:nBox
          if region[1,iR] < x[ip] < region[2,iR] &&
             region[3,iR] < y[ip] < region[4,iR] &&
@@ -308,7 +308,7 @@ function dist_plot(pType='e')
       uy = @view data.w[:,:,:,uy_]
       uz = @view data.w[:,:,:,uz_]
 
-      for ip = 1:length(x)
+      for ip in eachindex(x)
          for iR = 1:nBox
             if region[1,iR] < x[ip] < region[2,iR] &&
                region[3,iR] < y[ip] < region[4,iR] &&
@@ -347,7 +347,7 @@ function dist_plot(pType='e')
       uy = @view data.w[:,:,:,uy_]
       uz = @view data.w[:,:,:,uz_]
 
-      for ip = 1:length(x)
+      for ip in eachindex(x)
          for iR = 1:nBox
             if region[1,iR] < x[ip] < region[2,iR] &&
                region[3,iR] < y[ip] < region[4,iR] &&
@@ -489,7 +489,7 @@ end
 
 function show_box_region()
    #dir = "/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia"
-   dir = "/Users/hyzhou/"
+   dir = "/Users/hyzhou/Documents/Computer/DeepBlue"
    fnameE = "cut_particles0_region0_1_t00001640_n00020369.out"
    fnameI = "cut_particles1_region0_2_t00001640_n00020369.out"
 
@@ -561,12 +561,12 @@ function show_box_region()
 
    xl = [Vector{Float32}(undef,0) for _ in 1:length(xstart)]
    zl = [Vector{Float32}(undef,0) for _ in 1:length(xstart)]
-   for i = 1:length(xstart)
+   for i in eachindex(xstart)
       xs, zs = xstart[i], zstart[i]
       xl[i], zl[i] = trace2d_rk4(Bx, Bz, xs, zs, x, z, ds=0.02, maxstep=20000,
          gridType="ndgrid")
    end
-   [ax.plot(zl[j],xl[j],"-",color="k",lw=1.0) for j in 1:length(xstart)]
+   [ax.plot(zl[j],xl[j],"-",color="k",lw=1.0) for j in eachindex(xstart)]
 
    ax.contour(Z,X,Bz,[0.],colors="k",linestyles="dotted",linewidths=1.)
 
@@ -630,8 +630,8 @@ function HF_velocity()
    return Ūx, Ūy, Ūz
 end
 
-#=
-dir = "/Users/hyzhou"
+
+dir = "/Users/hyzhou/Documents/Computer/DeepBlue"
 fnameField = "3d_var_region0_0_t00001640_n00020369.out"
 PType = 'e'
 PlotVType = 2
@@ -646,9 +646,9 @@ end
 # Define regions
 xC, yC, zC = -1.75, 0.0, -0.2
 xL, yL, zL = 0.008, 0.2, 0.03 # box length in x,y,z
-=#
 
-#=
+
+
 @time region, particle = dist_select(
    fnameParticle, xC, yC, zC, xL, yL, zL,
    dir=dir, ParticleType=PType)
@@ -656,8 +656,8 @@ xL, yL, zL = 0.008, 0.2, 0.03 # box length in x,y,z
 @time dist_scan(region, particle, PType, PlotVType; dir=dir, fnameField=fnameField)
 
 @time plotExCut(fnameField, region, xC,yC,zC,xL,yL,zL, dir=dir)
-=#
 
-ax = dist_plot('i')
+
+#ax = dist_plot('i')
 #ux, uy, uz = HF_velocity()
-show_box_region() # horizontal
+#show_box_region() # horizontal
