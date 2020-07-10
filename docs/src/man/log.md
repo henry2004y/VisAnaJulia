@@ -22,7 +22,6 @@ Precise control of colorbar position in Matplotlib is not an easy task. `axis(â€
 
 The current wrapper over Matplotlib makes it difficult to modify the plots afterwards, which especially causes problems when dealing with time series snapshots. The colorbar is so hard to fix. The solution is, instead of using `level`, provide a range of points.
 
-
 ## User Recipe in Plots.jl
 
 There is a user recipe in Plots. This is exactly what I am looking for, but more issues are coming up. I have created a new branch for this development.
@@ -40,11 +39,13 @@ PyPlot.matplotlib.use("Agg")
 ```
 However, notice that currently Agg backend does not support draw_artist. For example, you cannot add an anchored text to your figure.
 
+## Streamline
+
+The built-in streamline function of Matplotlib/MATLAB is not proper for scientifically visualizing field information. The solution is to trace field lines with ODEs and plot the line series, similar to what has been done by [Spacepy](https://github.com/spacepy/spacepy/blob/master/spacepy/pybats/trace2d.py).
+
 ## GUI
 
-As for the GUI development, GTK seems to be an ideal candidate.
-
-- The built-in streamline function of Matplotlib is not proper for scientifically visualizing field information. The solution is to trace field lines with ODEs and plot the line series, similar to what has been done by [Spacepy](https://github.com/spacepy/spacepy/blob/master/spacepy/pybats/trace2d.py).
+As for the GUI development, GTK seems to be an ideal candidate. However, the interface in Julia lacks full support for the toolkit, which makes it a little bit hard to use.
 
 ## Todo List
 
@@ -54,7 +55,7 @@ As for the GUI development, GTK seems to be an ideal candidate.
 - [x] Cuts from 3D data visualization besides contour
 - [ ] Switch to Makie for 3D plotting and animation
 - [x] Field tracer 2D in Julia
-- [x] Derived variable support (outdated)
+- [x] Derived variable support (dropped because of GUI)
 - [x] General postprocessing script for concatenating and converting files.
 - [x] Direct wrapper over matplotlib functions to get seamless API
 - [x] Replace np.meshgrid with list comprehension
