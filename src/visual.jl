@@ -522,7 +522,7 @@ Wrapper over the plot function in matplotlib.
 """
 function plot(data::Data, var::AbstractString; kwargs...)
    x, w = data.x, data.w
-   VarIndex_ = findfirst(x->x==var, data.head.wnames)
+   VarIndex_ = findindex(data, var)
 
    c = plot(x, w[:,VarIndex_]; kwargs...)
 
@@ -536,7 +536,7 @@ Wrapper over the scatter function in matplotlib.
 """
 function scatter(data::Data, var::AbstractString; kwargs...)
    x, w = data.x, data.w
-   VarIndex_ = findfirst(x->x==var, data.head.wnames)
+   VarIndex_ = findindex(data, var)
 
    c = scatter(x, w[:,VarIndex_]; kwargs...)
 
@@ -786,7 +786,7 @@ end
 
 "Find variable index in data."
 function findindex(data::Data, var::AbstractString)
-	VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
+   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
    isnothing(VarIndex_) && error("$(var) not found in file header variables!")
    return VarIndex_
 end
