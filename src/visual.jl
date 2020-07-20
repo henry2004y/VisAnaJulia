@@ -9,34 +9,35 @@ import PyPlot: plot, scatter, contour, contourf, plot_surface, tricontourf,
 	   plot_trisurf, streamplot
 
 """
-	plotlogdata(data, head, vars, (plotmode="line", plotrange=[-Inf,Inf]))
+	plotlogdata(data, head, func, plotmode="line")
 
 Plot information from log file.
 # Input arguments
-- `data::Data`: output data.
-- `vars::String`: variables for plotting.
-- `plotmode::String`: (optional) type of plotting ["line","scatter"].
-- `plotrange::Vector`: (optional) range of plotting.
+- `data::Array`: output data.
+- `head::NamedTuple`: header info.
+- `func::String`: variables for plotting.
+- `plotmode::String`: type of plotting ["line","scatter"].
 """
-function plotlogdata(data::Data, func::AbstractString;
-   plotmode="line", plotrange=[-Inf,Inf] )
+function plotlogdata(data, head::NamedTuple, func::AbstractString;
+   plotmode="line")
 
    vars     = split(func)
    plotmode = split(plotmode)
 
    for (ivar, var) in enumerate(vars)
-      VarIndex_ = findindex(data, var)
+	  VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(head.variables))
+	  isnothing(VarIndex_) && error("$(var) not found in file header variables!")
 
       figure()
       if plotmode[ivar] == "line"
-         plot(data[:,1],data[:,VarIndex_])
+         plot(data[1,:],data[VarIndex_,:])
       elseif plotmode[ivar] == "scatter"
-         scatter(data[:,1],data[:,VarIndex_])
+         scatter(data[1,:],data[VarIndex_,:])
       else
          error("unknown plot mode for plotlogdata!")
       end
-      xlabel(data.head.variables[1])
-      ylabel(data.head.variables[VarIndex_])
+      xlabel(head.variables[1])
+      ylabel(head.variables[VarIndex_])
       title("log file data")
    end
 
