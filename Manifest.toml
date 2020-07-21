@@ -23,9 +23,9 @@ version = "1.0.6+2"
 
 [[CSV]]
 deps = ["CategoricalArrays", "DataFrames", "Dates", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode"]
-git-tree-sha1 = "a100a1dd6ab63fc49e79c90dae67e5bc126419ff"
+git-tree-sha1 = "f095e44feec53d0ae809714a78c25908d1f370e6"
 uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-version = "0.7.3"
+version = "0.7.4"
 
 [[CategoricalArrays]]
 deps = ["DataAPI", "Future", "JSON", "Missings", "Printf", "Statistics", "Unicode"]
@@ -129,15 +129,15 @@ version = "4.1.0+3"
 
 [[FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays"]
-git-tree-sha1 = "4783bbbeade37f2a8bd82af6c112510fde78e532"
+git-tree-sha1 = "be4180bdb27a11188d694ee3773122f4921f1a62"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "0.8.12"
+version = "0.8.13"
 
 [[FixedPointNumbers]]
 deps = ["Statistics"]
-git-tree-sha1 = "266baee2e9d875cb7a3bfdcc6cab553c543ff8ab"
+git-tree-sha1 = "06cc75081c58853a58f8e7e74eedd43b7ce9b730"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
-version = "0.8.2"
+version = "0.8.3"
 
 [[FreeType2_jll]]
 deps = ["Bzip2_jll", "Libdl", "Pkg", "Zlib_jll"]
@@ -157,9 +157,9 @@ uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[GR]]
 deps = ["Base64", "DelimitedFiles", "HTTP", "JSON", "LinearAlgebra", "Printf", "Random", "Serialization", "Sockets", "Test", "UUIDs"]
-git-tree-sha1 = "247adbd2b33c0c4b42efa20d1e807acf6312145f"
+git-tree-sha1 = "e26c513329675092535de20cc4bb9c579c8f85a0"
 uuid = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-version = "0.50.1"
+version = "0.51.0"
 
 [[GeometryBasics]]
 deps = ["IterTools", "LinearAlgebra", "StaticArrays", "StructArrays", "Tables"]
@@ -296,9 +296,9 @@ version = "0.4.3"
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[NaNMath]]
-git-tree-sha1 = "928b8ca9b2791081dc71a51c55347c27c618760f"
+git-tree-sha1 = "c84c576296d0e2fbb3fc134d3e09086b3ea617cd"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
-version = "0.3.3"
+version = "0.3.4"
 
 [[Ogg_jll]]
 deps = ["Libdl", "Pkg"]
@@ -347,9 +347,9 @@ version = "1.0.5"
 
 [[Plots]]
 deps = ["Base64", "Contour", "Dates", "FFMPEG", "FixedPointNumbers", "GR", "GeometryBasics", "GeometryTypes", "JSON", "LinearAlgebra", "Measures", "NaNMath", "PlotThemes", "PlotUtils", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "Requires", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs"]
-git-tree-sha1 = "21d5dd05d230a98b97223d271561f1871989944c"
+git-tree-sha1 = "ba747739872a67bc1a8078aec3313bde075b3fb0"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.5.4"
+version = "1.5.5"
 
 [[PooledArrays]]
 deps = ["DataAPI"]
@@ -409,17 +409,17 @@ uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [[SWMF]]
 deps = ["Glob", "Printf", "WriteVTK"]
-git-tree-sha1 = "b7362e0931834cb50cd5483149a582f9739f1a03"
+git-tree-sha1 = "15a5cb98cad6c8f58ea0e51659f7d2699b2082ac"
 repo-rev = "master"
 repo-url = "https://github.com/henry2004y/SWMF.jl.git"
 uuid = "e74ebddf-6ac1-4047-a0e5-c32c99e57753"
-version = "0.8.0"
+version = "0.8.1"
 
 [[SentinelArrays]]
 deps = ["Dates", "Random"]
-git-tree-sha1 = "41e78a6419de2279b23cc70342c7147dc4c98860"
+git-tree-sha1 = "cd9dccb026262a46d5a81ef1ce1e595150b2b8d2"
 uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.2.8"
+version = "1.2.9"
 
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
