@@ -550,7 +550,7 @@ end
 Wrapper over the contour function in matplotlib.
 """
 function contour(data::Data, var::AbstractString, levels=0;
-   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
+   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs...)
 
    xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
@@ -569,7 +569,7 @@ end
 Wrapper over the contourf function in matplotlib.
 """
 function contourf(data::Data, var::AbstractString, levels=0;
-   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
+   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs...)
 
    xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
@@ -588,7 +588,7 @@ end
 Wrapper over the tricontourf function in matplotlib.
 """
 function tricontourf(data::Data, var::AbstractString;
-   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs=Dict())
+   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs...)
 
    x, w = data.x, data.w
    VarIndex_ = findindex(data, var)
@@ -616,7 +616,7 @@ end
 Wrapper over the plot_trisurf function in matplotlib.
 """
 function plot_trisurf(data::Data, var::AbstractString;
-   plotrange=[-Inf,Inf,-Inf,Inf], kwargs=Dict())
+   plotrange=[-Inf,Inf,-Inf,Inf], kwargs...)
 
    x, w = data.x, data.w
    VarIndex_ = findindex(data, var)
