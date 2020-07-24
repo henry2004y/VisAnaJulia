@@ -25,25 +25,27 @@ struct BField{T<:AbstractFloat}
 end
 
 """
-	plotBSteady(flyby=8, DoSave=true)
+	plotBSteady(flyby=8; filename, DoSave, dirObs, npict)
 
 Plot quasi-steady state magnetic field comparison. Second norm is calculated to
 quantitatively estimate the difference.
-`flyby` is an integer in [1,2,7,8,28,29].
-`DoSave` decides
+# Input arguments
+- `flyby::Int`: flyby index in [1,2,7,8,28,29].
 """
 function plotBSteady(flyby=8; filename="box_var_4_n00080000.out", DoSave=false,
-   dir="/Users/hyzhou/Documents/research/Ganymede/Galileo")
+   dirObs="/Users/hyzhou/Documents/research/Ganymede/Galileo", npict=1)
 
    # Read observation data
-   t, df, BobsStrength = getBObs(flyby, dir)
+   t, df, BobsStrength = getBObs(flyby, dirObs)
 
    # Read simulation data
+   path = dirname(filename)
+   if isempty(path)
+      data = readdata(filename, npict=npict)
+   else
+      data = readdata(filename, dir=path, npict=npict)
+   end
 
-   npict = 1 # Remember to change this for different runs!
-   data = readdata(filename,
-      dir="/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia",
-      npict=npict)
 
    # Interpolate simulation data to observation data
    nx, nw = data.head.nx, data.head.nw
@@ -105,7 +107,7 @@ function plotBSteady(flyby=8; filename="box_var_4_n00080000.out", DoSave=false,
 
 end
 
-
+"Time accurate B field interpolation."
 function read_simulation_data(filename, dir, t, df, tStart, firstpict, lastpict)
 
    data = readdata(filename, dir=dir)
@@ -237,6 +239,7 @@ interpolation.
 `flyby` and `time_start` need to be modified when switching between flybys.
 =#
 
+#=
 flyby = 8
 filename = ["box_Hall_B_1200.outs", "box_PIC_B_1200.outs"]
 dir = "/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia"
@@ -298,3 +301,4 @@ end
 
 plt.subplots_adjust(hspace=0)
 fig.align_ylabels(ax)
+=#
