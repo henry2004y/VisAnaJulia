@@ -25,8 +25,8 @@ function plotlogdata(data, head::NamedTuple, func::AbstractString;
    plotmode = split(plotmode)
 
    for (ivar, var) in enumerate(vars)
-	  VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(head.variables))
-	  isnothing(VarIndex_) && error("$(var) not found in file header variables!")
+      VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(head.variables))
+      isnothing(VarIndex_) && error("$(var) not found in file header variables!")
 
       figure()
       if plotmode[ivar] == "line"
@@ -146,11 +146,11 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
 
             # More robust method needed!
             if plotmode[ivar] ∈ ["contbar", "contbarlog"]
-			   if level == 0
-               c = contourf(xi, yi, wi)
-			   else
-               c = contourf(xi, yi, wi, level)
-			   end
+	       if level == 0
+                  c = contourf(xi, yi, wi)
+	       else
+                  c = contourf(xi, yi, wi, level)
+	       end
             elseif plotmode[ivar] ∈ ["cont", "contlog"]
                c = contour(xi, yi, wi)
             elseif plotmode[ivar] ∈ ["surfbar", "surfbarlog"]
@@ -214,7 +214,7 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
                # Perform linear interpolation of the data (x,y) on grid(xi,yi)
                triang = matplotlib.tri.Triangulation(X,Y)
                Xi = [y for x in xi, y in yi]
-          	   Yi = [x for x in xi, y in yi]
+	       Yi = [x for x in xi, y in yi]
 
                W = w[:,1,VarIndex1_]
                interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
@@ -599,11 +599,11 @@ function tricontourf(data::Data, var::AbstractString;
 
    # This needs to be modified!!!
    if !all(isinf.(plotrange))
-	  xyIndex = X .> plotrange[1] .& X .< plotrange[2] .&
-	  Y .> plotrange[3] .& Y .< plotrange[4]
-	  X = X[xyIndex]
-	  Y = Y[xyIndex]
-	  W = W[xyIndex]
+      xyIndex = X .> plotrange[1] .& X .< plotrange[2] .&
+         Y .> plotrange[3] .& Y .< plotrange[4]
+      X = X[xyIndex]
+      Y = Y[xyIndex]
+      W = W[xyIndex]
    end
 
    c = tricontourf(X, Y, W)
@@ -627,11 +627,11 @@ function plot_trisurf(data::Data, var::AbstractString;
 
    # This needs to be modified!!!
    if !all(isinf.(plotrange))
-	  xyIndex = X .> plotrange[1] .& X .< plotrange[2] .&
-	  Y .> plotrange[3] .& Y .< plotrange[4]
-	  X = X[xyIndex]
-	  Y = Y[xyIndex]
-	  W = W[xyIndex]
+      xyIndex = X .> plotrange[1] .& X .< plotrange[2] .&
+         Y .> plotrange[3] .& Y .< plotrange[4]
+      X = X[xyIndex]
+      Y = Y[xyIndex]
+      W = W[xyIndex]
    end
 
    c = plot_trisurf(X, Y, W)
@@ -669,57 +669,57 @@ function streamplot(data::Data, var::AbstractString;
    VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]), wnames)
 
    if data.head.gencoord # Generalized coordinates
-	  X, Y = vec(x[:,:,1]), vec(x[:,:,2])
-	  if any(isinf.(plotrange))
-		 if plotrange[1] == -Inf plotrange[1] = minimum(X) end
-		 if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
-		 if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
-		 if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
-	  end
+      X, Y = vec(x[:,:,1]), vec(x[:,:,2])
+      if any(isinf.(plotrange))
+         if plotrange[1] == -Inf plotrange[1] = minimum(X) end
+	 if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
+         if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
+	 if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
+      end
 
-	  # Create grid values first.
-	  xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
-	  yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
+      # Create grid values first.
+      xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
+      yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
 
-     # Is there a triangulation method in Julia?
-	  tr = matplotlib.tri.Triangulation(X, Y)
-	  Xi = [y for x in xi, y in yi]
-	  Yi = [x for x in xi, y in yi]
+      # Is there a triangulation method in Julia?
+      tr = matplotlib.tri.Triangulation(X, Y)
+      Xi = [y for x in xi, y in yi]
+      Yi = [x for x in xi, y in yi]
 
-	  interpolator = matplotlib.tri.LinearTriInterpolator(tr, w[:,1,VarIndex1_])
-	  v1 = interpolator(Xi, Yi)
+      interpolator = matplotlib.tri.LinearTriInterpolator(tr, w[:,1,VarIndex1_])
+      v1 = interpolator(Xi, Yi)
 
-	  interpolator = matplotlib.tri.LinearTriInterpolator(tr, w[:,1,VarIndex2_])
-	  v2 = interpolator(Xi, Yi)
+      interpolator = matplotlib.tri.LinearTriInterpolator(tr, w[:,1,VarIndex2_])
+      v2 = interpolator(Xi, Yi)
 
    else # Cartesian coordinates
-	  X = x[:,1,1]
-	  Y = x[1,:,2]
-	  if all(isinf.(plotrange))
-		 Xi, Yi = X, Y
-		 v1, v2 = w[:,:,VarIndex1_]', w[:,:,VarIndex2_]'
-	  else
-		 if plotrange[1] == -Inf plotrange[1] = minimum(X) end
-		 if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
-		 if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
-		 if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
+      X = x[:,1,1]
+      Y = x[1,:,2]
+      if all(isinf.(plotrange))
+         Xi, Yi = X, Y
+         v1, v2 = w[:,:,VarIndex1_]', w[:,:,VarIndex2_]'
+      else
+	 if plotrange[1] == -Inf plotrange[1] = minimum(X) end
+	 if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
+         if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
+         if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
 
-		 w1, w2 = w[:,:,VarIndex1_], w[:,:,VarIndex2_]
+	 w1, w2 = w[:,:,VarIndex1_], w[:,:,VarIndex2_]
 
-		 xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
-		 yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
+         xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
+         yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
 
-		 Xi = [i for i in xi, j in yi]
-		 Yi = [j for i in xi, j in yi]
+         Xi = [i for i in xi, j in yi]
+	 Yi = [j for i in xi, j in yi]
 
-		 spline = Spline2D(X, Y, w1)
-		 v1 = spline(Xi[:], Yi[:])
-		 v1 = reshape(v1, size(Xi))'
+         spline = Spline2D(X, Y, w1)
+	 v1 = spline(Xi[:], Yi[:])
+	 v1 = reshape(v1, size(Xi))'
 
-		 spline = Spline2D(X, Y, w2)
-		 v2 = spline(Xi[:], Yi[:])
-		 v2 = reshape(v2, size(Xi))'
-	  end
+	 spline = Spline2D(X, Y, w2)
+	 v2 = spline(Xi[:], Yi[:])
+	 v2 = reshape(v2, size(Xi))'
+      end
    end
 
    if isempty(color)
@@ -755,7 +755,7 @@ function getdata(data, var, plotrange, plotinterval)
       triang = matplotlib.tri.Triangulation(X,Y)
       interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
       Xi = [y for x in xi, y in yi]
-	   Yi = [x for x in xi, y in yi]
+      Yi = [x for x in xi, y in yi]
       wi = interpolator(Xi, Yi)
    else # Cartesian coordinates
       if all(isinf.(plotrange))
