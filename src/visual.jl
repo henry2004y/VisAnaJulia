@@ -146,11 +146,11 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
 
             # More robust method needed!
             if plotmode[ivar] ∈ ["contbar", "contbarlog"]
-	       if level == 0
+	            if level == 0
                   c = contourf(xi, yi, wi)
-	       else
+	            else
                   c = contourf(xi, yi, wi, level)
-	       end
+	            end
             elseif plotmode[ivar] ∈ ["cont", "contlog"]
                c = contour(xi, yi, wi)
             elseif plotmode[ivar] ∈ ["surfbar", "surfbarlog"]
@@ -214,7 +214,7 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
                # Perform linear interpolation of the data (x,y) on grid(xi,yi)
                triang = matplotlib.tri.Triangulation(X,Y)
                Xi = [y for x in xi, y in yi]
-	       Yi = [x for x in xi, y in yi]
+	            Yi = [x for x in xi, y in yi]
 
                W = w[:,1,VarIndex1_]
                interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
