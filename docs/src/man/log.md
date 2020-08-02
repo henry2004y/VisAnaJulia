@@ -63,6 +63,11 @@ PyPlot.matplotlib.use("Agg")
 ```
 However, notice that currently Agg backend does not support draw_artist. For example, you cannot add an anchored text to your figure.
 
+## Makie
+
+[MakieLayout](https://jkrumbiegel.github.io/MakieLayout.jl/dev/) is a nice extension built on top of Makie to create publication quality figures and interactive plots.
+It basically includes all the funcationalities I want, so definitely worth a try.
+
 ## Macros
 
 Several places where macros can be used:
@@ -83,7 +88,7 @@ As for the GUI development, GTK seems to be an ideal candidate. However, the int
 - [x] Test suite for checking validity
 - [ ] Full coverage of tests
 - [x] Cuts from 3D data visualization besides contour
-- [ ] Switch to Makie for 3D plotting and animation
+- [ ] Port to Makie
 - [x] Field tracer 2D in Julia
 - [x] Derived variable support (dropped because of GUI)
 - [x] General postprocessing script for concatenating and converting files.
