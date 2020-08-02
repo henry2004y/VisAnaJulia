@@ -23,9 +23,9 @@ version = "1.0.6+2"
 
 [[CSV]]
 deps = ["CategoricalArrays", "DataFrames", "Dates", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode"]
-git-tree-sha1 = "de610631e1b94faaa23619f5cef3028a68e253e7"
+git-tree-sha1 = "a390152e6850405a48ca51bd7ca33d11a21d6230"
 uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-version = "0.7.5"
+version = "0.7.7"
 
 [[CategoricalArrays]]
 deps = ["DataAPI", "Future", "JSON", "Missings", "Printf", "Statistics", "Unicode"]
@@ -409,17 +409,17 @@ uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [[SWMF]]
 deps = ["Glob", "Printf", "WriteVTK"]
-git-tree-sha1 = "8ab2a15ab80009538a4f8725da68ab7468125ae0"
+git-tree-sha1 = "d5b822015c1593c2d615fa1469bd09117e674e4f"
 repo-rev = "master"
 repo-url = "https://github.com/henry2004y/SWMF.jl.git"
 uuid = "e74ebddf-6ac1-4047-a0e5-c32c99e57753"
-version = "0.8.1"
+version = "0.8.2"
 
 [[SentinelArrays]]
 deps = ["Dates", "Random"]
-git-tree-sha1 = "cd9dccb026262a46d5a81ef1ce1e595150b2b8d2"
+git-tree-sha1 = "7871163033b83a0d08bb601af56488c6f642a113"
 uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.2.9"
+version = "1.2.10"
 
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
