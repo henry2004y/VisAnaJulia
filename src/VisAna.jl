@@ -1,9 +1,9 @@
 module VisAna
-# SWMF data visualization and analysis.
+# BATSRUS data visualization and analysis.
 #
 # Hongyang Zhou, hyzhou@umich.edu
 
-using SWMF, Printf, PyCall, Dierckx
+using Batsrus, Printf, PyCall, Dierckx
 
 include("visual.jl")
 include("trace.jl")

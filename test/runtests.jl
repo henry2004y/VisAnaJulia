@@ -2,7 +2,7 @@
 
 ENV["MPLBACKEND"]="agg" # no GUI
 
-using VisAna, SWMF, PyPlot, Test
+using VisAna, Batsrus, PyPlot, Test
 
 @info("VisAna is calling PyPlot for plotting.")
 

@@ -7,7 +7,7 @@
 
 [SWMF](http://csem.engin.umich.edu/tools/swmf) data reading, converting, visualizing and analyzing using Julia.
 
-This package is inherited from its predecessor in IDL (developed by G.Tóth) and Matlab (developed by H.Zhou). Currently instead of a real "package", this is more like a collection of scripts. The data loader is split into an stand-alone package [SWMF](https://github.com/henry2004y/SWMF).
+This package is inherited from its predecessor in IDL (developed by G.Tóth) and Matlab (developed by H.Zhou). Currently instead of a real "package", this is more like a collection of scripts. The data loader and converter is split into an stand-alone package [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl).
 
 This package provides the following functionalities:
   * simulation data reader
@@ -49,7 +49,7 @@ Depth = 1
 
 VisAna has by far the fastest data loading speed among IDL, MATLAB, and Julia.
 It has almost the same performance as [spacepy](https://github.com/spacepy/spacepy).
-Check the [table](https://github.com/henry2004y/SWMF/blob/master/README.md#Benchmark) for details.
+Check the [table](https://henry2004y.github.io/Batsrus.jl/dev/#Benchmark) for details.
 
 ## Developers
 

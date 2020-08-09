@@ -1,7 +1,7 @@
 # Examples
 
-Examples of data loading are in [SWMF.jl](https://henry2004y.github.io/SWMF.jl/dev/man/examples/).
-You can use all the functions in `SWMF.jl` by, e.g., `VisAna.readdata`, or you can just import the packge by `using SWMF`.
+Examples of data loading are in [Batsrus.jl](https://henry2004y.github.io/Batsrus.jl/dev/man/examples/).
+You can use all the functions in `Batsrus.jl` by, e.g., `VisAna.readdata`, or you can just import the packge by `using Batsrus`.
 
 ## Quick exploration of data
 
@@ -151,7 +151,7 @@ end
 axis("equal")
 ```
 which will display
-![SWMF_test1_noAMR](../images/BxBz_y0cut.png)
+![BATSRUS_test1_noAMR](../images/BxBz_y0cut.png)
 
 Currently the `select_seeds` function uses pseudo random number generator that produces the same seeds every time.
 

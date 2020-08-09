@@ -3,7 +3,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 10/01/2019
 
-using VisAna, PyPlot, PyCall, Glob, Printf
+using Batsrus, VisAna, PyPlot, PyCall, Glob, Printf
 
 include("constants.jl")
 

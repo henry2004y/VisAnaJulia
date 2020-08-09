@@ -15,18 +15,21 @@ Julia 1.4+
 ## Installation
 ```
 using Pkg
-Pkg.add(PackageSpec(url="https://github.com/henry2004y/SWMF", rev="master"))
+Pkg.add("Batsrus")
 Pkg.add(PackageSpec(url="https://github.com/henry2004y/VisAnaJulia", rev="master"))
 ```
-Currently Julia does not have a clear way of letting one unregistered package depend on another unregistered package without first add the other package. See the [issue](https://github.com/JuliaLang/Pkg.jl/issues/492) for details. This can be fixed once I register the [SWMF.jl](https://github.com/henry2004y/SWMF.jl) package.
+Currently Julia does not have a clear way of letting one unregistered package depend on another unregistered package without first adding the other package. See the [issue](https://github.com/JuliaLang/Pkg.jl/issues/492) for details.
+This is fixed after I register the [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl) package.
 
 ## Usage
-```
-#using Pkg; Pkg.activate(".") # for dev only
-using VisAna
-```
 
 See the [examples](docs/src/man/examples.md).
+
+For local development of the package,
+```
+using Pkg; Pkg.activate(".")
+using VisAna
+```
 
 ## Guides
 

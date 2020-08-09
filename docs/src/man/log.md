@@ -9,7 +9,7 @@ The color range is also an issue.
 
 ## Dependency and Package Structure
 
-As to avoid the cross-dependency hail on PyPlot, I split the original package into pure IO [SWMF](https://github.com/henry2004y/SWMF) and post-processing and plotting. This is also a nicer way of organizing larger code base.
+As to avoid the cross-dependency hail on PyPlot, I split the original package into pure IO [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl) and post-processing and plotting. This is also a nicer way of organizing larger code base.
 
 Currently VisAna is more of a collection of scripts, instead of a true package.
 I am planning to build individual packages for each feature, so that others can make more use of what they want specifically.
