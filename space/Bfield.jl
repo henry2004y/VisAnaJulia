@@ -5,7 +5,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 02/03/2020
 
-using SWMF, CSV, Dates, PyPlot, Interpolations
+using Batsrus, CSV, Dates, PyPlot, Interpolations
 
 #=
 ## Calculate differences & save to output file

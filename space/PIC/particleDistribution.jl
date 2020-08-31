@@ -3,7 +3,7 @@
 #
 # Hongyang Zhou, hyzhou@umich.edu 01/30/2020
 
-using SWMF, VisAna, PyPlot, Printf, LinearAlgebra, Statistics
+using Batsrus, VisAna, PyPlot, Printf, LinearAlgebra, Statistics
 # For precise colorbar control
 using PyCall
 axes_grid1 = pyimport("mpl_toolkits.axes_grid1")
