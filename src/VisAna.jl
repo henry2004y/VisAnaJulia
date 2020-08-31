@@ -5,6 +5,7 @@ module VisAna
 
 using Batsrus, Printf, PyCall, Dierckx
 
+include("utility.jl")
 include("visual.jl")
 include("trace.jl")
 #include("visual_plot.jl")

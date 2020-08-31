@@ -110,8 +110,7 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
    ## Plot
    if ndim == 1
       for (ivar,var) in enumerate(vars)
-         VarIndex_ = findfirst(x->x==lowercase(var),
-            lowercase.(data.head.wnames))
+         VarIndex_ = findindex(data, var)
          if ivar == 1 || multifigure fig, ax = subplots() else ax = gca() end
          if !occursin("scatter",plotmode[ivar])
             plot(x,w[:,VarIndex_])
@@ -147,9 +146,9 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
             # More robust method needed!
             if plotmode[ivar] ∈ ["contbar", "contbarlog"]
 	            if level == 0
-                  c = contourf(xi, yi, wi)
+                  c = contourf(xi, yi, wi')
 	            else
-                  c = contourf(xi, yi, wi, level)
+                  c = contourf(xi, yi, wi', level)
 	            end
             elseif plotmode[ivar] ∈ ["cont", "contlog"]
                c = contour(xi, yi, wi)
@@ -192,10 +191,8 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
 
          elseif plotmode[ivar] ∈ ("stream","streamover")
             VarStream  = split(var,";")
-            VarIndex1_ = findfirst(x->x==lowercase(VarStream[1]),
-            lowercase.(data.head.wnames))
-            VarIndex2_ = findfirst(x->x==lowercase(VarStream[2]),
-            lowercase.(data.head.wnames))
+            VarIndex1_ = findindex(data, VarStream[1])
+            VarIndex2_ = findindex(data, VarStream[2])
 
             if data.head.gencoord # Generalized coordinates
                X, Y = vec(x[:,:,1]), vec(x[:,:,2])
@@ -258,10 +255,8 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
 
          elseif occursin("quiver", plotmode[ivar])
             VarQuiver  = split(var,";")
-            VarIndex1_ = findfirst(x->x==lowercase(VarQuiver[1]),
-            lowercase.(data.head.wnames))
-            VarIndex2_ = findfirst(x->x==lowercase(VarQuiver[2]),
-            lowercase.(data.head.wnames))
+            VarIndex1_ = findindex(data, VarQuiver[1])
+            VarIndex2_ = findindex(data, VarQuiver[2])
 
             X, Y = x[:,1,1], x[1,:,2]
             v1, v2 = w[:,:,VarIndex1_]', w[:,:,VarIndex2_]'
@@ -555,9 +550,9 @@ function contour(data::Data, var::AbstractString, levels=0;
    xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
    if levels != 0
-      c = plt.contour(xi, yi, wi, levels; kwargs...)
+      c = plt.contour(xi, yi, wi', levels; kwargs...)
    else
-      c = plt.contour(xi, yi, wi; kwargs...)
+      c = plt.contour(xi, yi, wi'; kwargs...)
    end
 
    return c::PyCall.PyObject
@@ -574,9 +569,9 @@ function contourf(data::Data, var::AbstractString, levels=0;
    xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
    if levels != 0
-      c = plt.contourf(xi, yi, wi, levels; kwargs...)
+      c = plt.contourf(xi, yi, wi', levels; kwargs...)
    else
-      c = plt.contourf(xi, yi, wi; kwargs...)
+      c = plt.contourf(xi, yi, wi'; kwargs...)
    end
 
    return c::PyCall.PyObject
@@ -648,7 +643,10 @@ function plot_surface(data::Data, var::AbstractString;
 
    xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
-   c = plot_surface(xi, yi, wi; kwargs...)
+   Xi = [y for x in xi, y in yi]
+   Yi = [x for x in xi, y in yi]
+
+   c = plot_surface(Xi, Yi, wi; kwargs...)
 
    return c::PyCall.PyObject
 end
@@ -699,26 +697,26 @@ function streamplot(data::Data, var::AbstractString;
          Xi, Yi = X, Y
          v1, v2 = w[:,:,VarIndex1_]', w[:,:,VarIndex2_]'
       else
-	 if plotrange[1] == -Inf plotrange[1] = minimum(X) end
-	 if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
+	      if plotrange[1] == -Inf plotrange[1] = minimum(X) end
+	      if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
          if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
          if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
 
-	 w1, w2 = w[:,:,VarIndex1_], w[:,:,VarIndex2_]
+	      w1, w2 = w[:,:,VarIndex1_], w[:,:,VarIndex2_]
 
          xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
          yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
 
          Xi = [i for i in xi, j in yi]
-	 Yi = [j for i in xi, j in yi]
+	      Yi = [j for i in xi, j in yi]
 
          spline = Spline2D(X, Y, w1)
-	 v1 = spline(Xi[:], Yi[:])
-	 v1 = reshape(v1, size(Xi))'
+	      v1 = spline(Xi[:], Yi[:])
+	      v1 = reshape(v1, size(Xi))'
 
-	 spline = Spline2D(X, Y, w2)
-	 v2 = spline(Xi[:], Yi[:])
-	 v2 = reshape(v2, size(Xi))'
+	      spline = Spline2D(X, Y, w2)
+	      v2 = spline(Xi[:], Yi[:])
+	      v2 = reshape(v2, size(Xi))'
       end
    end
 
@@ -730,67 +728,6 @@ function streamplot(data::Data, var::AbstractString;
    return c::PyCall.PyObject
 end
 
-"""Prepare data for passing to plotting functions."""
-function getdata(data, var, plotrange, plotinterval)
-   x, w = data.x, data.w
-   ndim = data.head.ndim
-   VarIndex_ = findindex(data, var)
-
-   if data.head.gencoord # Generalized coordinates
-      X = vec(x[:,:,1])
-      Y = vec(x[:,:,2])
-      W = vec(w[:,:,VarIndex_])
-
-      if any(abs.(plotrange) .== Inf)
-         if plotrange[1] == -Inf plotrange[1] = minimum(X) end
-         if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
-         if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
-         if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
-      end
-
-      # Create grid values first.
-      xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
-      yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
-      # Perform linear interpolation of the data (x,y) on grid(xi,yi)
-      triang = matplotlib.tri.Triangulation(X,Y)
-      interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
-      Xi = [y for x in xi, y in yi]
-      Yi = [x for x in xi, y in yi]
-      wi = interpolator(Xi, Yi)
-   else # Cartesian coordinates
-      if all(isinf.(plotrange))
-         xi = x[:,:,1]
-         yi = x[:,:,2]
-         wi = w[:,:,VarIndex_]
-      else
-         X = x[:,1,1]
-         Y = x[1,:,2]
-         if plotrange[1] == -Inf plotrange[1] = minimum(X) end
-         if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
-         if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
-         if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
-
-         W = w[:,:,VarIndex_]
-
-         xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
-         yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
-
-         spline = Spline2D(X, Y, W)
-         Xi = [i for i in xi, j in yi]
-         Yi = [j for i in xi, j in yi]
-         wi = spline(Xi[:], Yi[:])
-         wi = reshape(wi, size(Xi))'
-      end
-   end
-   return xi, yi, wi
-end
-
-"Find variable index in data."
-function findindex(data::Data, var::AbstractString)
-   VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
-   isnothing(VarIndex_) && error("$(var) not found in file header variables!")
-   return VarIndex_
-end
 
 """
 	animatedata()
