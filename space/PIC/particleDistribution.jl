@@ -653,9 +653,9 @@ xL, yL, zL = 0.008, 0.2, 0.03 # box length in x,y,z
    fnameParticle, xC, yC, zC, xL, yL, zL,
    dir=dir, ParticleType=PType)
 
-@time dist_scan(region, particle, PType, PlotVType; dir=dir, fnameField=fnameField)
+@time dist_scan(region, particle, PType, PlotVType; dir, fnameField)
 
-@time plotExCut(fnameField, region, xC,yC,zC,xL,yL,zL, dir=dir)
+@time plotExCut(fnameField, region, xC,yC,zC,xL,yL,zL; dir)
 
 
 #ax = dist_plot('i')
