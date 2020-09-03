@@ -30,7 +30,7 @@ function extractTestInfo(File::AbstractString, compiler::AbstractString="unknown
 
    for i in reverse(eachindex(lines))
       iStart = 0
-      if !IsComplete && occursin("no errors", lines[i])
+      if !IsComplete && occursin("report", lines[i])
          IsComplete = true; continue
       elseif IsComplete && startswith(lines[i],"-------")
          iEnd = i-1; continue
