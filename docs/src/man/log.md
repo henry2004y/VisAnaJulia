@@ -80,7 +80,9 @@ The built-in streamline function of Matplotlib/MATLAB is not proper for scientif
 
 ## GUI
 
-As for the GUI development, GTK seems to be an ideal candidate. However, the interface in Julia lacks full support for the toolkit, which makes it a little bit hard to use.
+As for the GUI development, GTK seems to be an ideal candidate. However, the [GTK interface in Julia](https://github.com/JuliaGraphics/Gtk.jl) lacks full support for the toolkit, which makes it a little bit hard to use. I have only played with it for half a day. You can design the appearance of your window interactively, and save your in an HTML-like file.
+
+At this point GUI is not necessarily needed, if it does not speed up my own workflow.
 
 ## Todo List
 
@@ -90,7 +92,7 @@ As for the GUI development, GTK seems to be an ideal candidate. However, the int
 - [x] Cuts from 3D data visualization besides contour
 - [ ] Port to Makie
 - [x] Field tracer 2D in Julia
-- [x] Derived variable support (dropped because of GUI)
+- [x] Derived variable support
 - [x] General postprocessing script for concatenating and converting files.
 - [x] Direct wrapper over matplotlib functions to get seamless API
 - [x] Replace np.meshgrid with list comprehension
