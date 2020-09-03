@@ -99,6 +99,28 @@ streamplot(data, "bx;bz")
 streamplot(data, "bx;bz", density=2.0, color="k", plotinterval=1.0, plotrange=[-10,10,-Inf,Inf])
 ```
 
+- streamline + contourf
+```
+using VisAna, Batsrus, PyPlot
+
+filename = "y*out"
+data = readdata(filename)
+
+DN = matplotlib.colors.DivergingNorm
+set_cmap("RdBu_r")
+
+contourf(data,"uxS0", 50, plotrange=[-3,3,-3,3], plotinterval=0.05, norm=DN(0))
+colorbar()
+streamplot(data, "uxS0;uzS0", density=2.0, color="g",plotrange=[-3,3,-3,3])
+xlabel("x"); ylabel("y"); title("Ux [km/s]")
+
+
+contourf(data,"uxS0", 50, plotinterval=0.05, norm=DN(0))
+colorbar()
+axis("scaled")
+xlabel("x"); ylabel("y"); title("uxS0")
+```
+
 ## Streamline tracing
 
 The built-in `streamplot` function in Matplotlib is not satisfactory for accurately tracing streamlines. Instead in VisAna we have native support field tracer.
