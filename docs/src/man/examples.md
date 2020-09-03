@@ -48,6 +48,13 @@ subplot(2,2,(1,3))
 cutplot(data, "Ex", cut='y', cutPlaneIndex=128, plotrange=plotrange)
 ```
 
+### Find indexes
+
+To get the index of a certain quantity, e.g. electron number density
+```
+ρe_= findfirst(x->x=="rhoS0", data.head.wnames)
+```
+
 ## Multiple dispatch for Matplotlib functions
 
 Using the same plotting functions as in Matplotlib is allowed, and actually recommended.
