@@ -121,8 +121,8 @@ for i = 80:100#length(filenames)
    @views z = data.x[:,:,:,3]
    w = data.w
 
-   ne_ = findfirst(isequal("rhoS0"), data.head.wnames])
-   ni_ = findfirst(isequal("rhoS1"), data.head.wnames])
+   ne_ = findfirst(isequal("rhoS0"), data.head.wnames)
+   ni_ = findfirst(isequal("rhoS1"), data.head.wnames)
    pi_ = findfirst(isequal("pS1"),   data.head.wnames)
    pe_ = findfirst(isequal("pS0"),   data.head.wnames)
 
