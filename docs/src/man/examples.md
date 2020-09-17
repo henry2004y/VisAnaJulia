@@ -190,7 +190,13 @@ In the [space](../../../space) folder, you can find scripts for comparing magnet
 
 ## Plotting with Plots.jl (experimental)
 
-An experimental feature is implemented in [visual_plot.jl](../../../src/visual_plot.jl) for using user recipes in the Julia official plotting package.
-It is currently commented out in [visual_plot.jl](../../../src/VisAna.jl).
+An experimental feature is implemented in [visual_plot.jl](../../../src/visual.jl) for using user recipes in the Julia official plotting package.
+It is currently commented out in [VisAna.jl](../../../src/VisAna.jl).
 The user recipe allows the plotting functions working on a custom type.
 I do not use `Plots.jl` simply because it's too slow and lacks many detailed controls.
+
+## Plotting with Makie (experimental)
+
+Another experimental feature is using Makie for plotting. Makie is known for its GPU support, but the startup time is currently significant, and the default setup is really ugly. However, within years I expect it to become the de facto plotting package. Checkout examples at [visual_Makie.jl](../../../src/visual_Makie.jl).
+
+
