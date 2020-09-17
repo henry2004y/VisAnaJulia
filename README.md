@@ -18,8 +18,7 @@ using Pkg
 Pkg.add("Batsrus")
 Pkg.add(PackageSpec(url="https://github.com/henry2004y/VisAnaJulia", rev="master"))
 ```
-Currently Julia does not have a clear way of letting one unregistered package depend on another unregistered package without first adding the other package. See the [issue](https://github.com/JuliaLang/Pkg.jl/issues/492) for details.
-This is fixed after I register the [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl) package.
+`VisAna` highly depends on [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl), which includes I/O functionalities. Even though it comes as a built-in dependency, I recommend adding `Batsrus.jl` explicitly to simplify the calling syntax.
 
 ## Usage
 
@@ -47,6 +46,10 @@ many functions for aiding the interpretation of data.
 
 See [here](docs/src/man/guide.md) for some development thoughts.
 In the future, each part will become a standalone package, and VisAna will only be a container.
+
+## Known Issues
+
+* Currently Julia does not have a clear way of letting one unregistered package depend on another unregistered package without first adding the other package manually. See the [issue](https://github.com/JuliaLang/Pkg.jl/issues/492) for details.
 
 ## Author
 
