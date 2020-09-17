@@ -145,11 +145,11 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
 
             # More robust method needed!
             if plotmode[ivar] ∈ ["contbar", "contbarlog"]
-	            if level == 0
+               if level == 0
                   c = contourf(xi, yi, wi')
-	            else
+	       else
                   c = contourf(xi, yi, wi', level)
-	            end
+	       end
             elseif plotmode[ivar] ∈ ["cont", "contlog"]
                c = contour(xi, yi, wi)
             elseif plotmode[ivar] ∈ ["surfbar", "surfbarlog"]

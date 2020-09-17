@@ -24,8 +24,8 @@ function getdata(data::Data, var::AbstractString, plotrange, plotinterval)
       # Perform linear interpolation of the data (x,y) on grid(xi,yi)
       triang = matplotlib.tri.Triangulation(X,Y)
       interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
-      Xi = [y for x in xi, y in yi]
-      Yi = [x for x in xi, y in yi]
+      Xi = [x for x in xi, _ in yi]
+      Yi = [y for _ in xi, y in yi]
       wi = interpolator(Xi, Yi)
    else # Cartesian coordinates
       if all(isinf.(plotrange))
@@ -46,8 +46,8 @@ function getdata(data::Data, var::AbstractString, plotrange, plotinterval)
          yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
 
          spline = Spline2D(X, Y, W)
-         Xi = [i for i in xi, j in yi]
-         Yi = [j for i in xi, j in yi]
+         Xi = [x for x in xi, _ in yi]
+         Yi = [y for _ in xi, y in yi]
          wi = spline(Xi[:], Yi[:])
          wi = reshape(wi, size(Xi))'
       end
