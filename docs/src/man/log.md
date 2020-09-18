@@ -68,6 +68,8 @@ PyPlot.matplotlib.use("Agg")
 ```
 However, notice that currently Agg backend does not support draw_artist. For example, you cannot add an anchored text to your figure.
 
+Unlike the user recipes in `Plots.jl`, using `PyPlot.jl` would require to have it as a dependency.
+
 ## Makie
 
 [MakieLayout](https://jkrumbiegel.github.io/MakieLayout.jl/dev/) is a nice extension built on top of Makie to create publication quality figures and interactive plots.
