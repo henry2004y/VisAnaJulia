@@ -26,6 +26,11 @@ The current wrapper over Matplotlib makes it difficult to modify the plots after
 
 There is a user recipe in Plots. This is exactly what I am looking for, but more issues are coming up. I have created a new branch for this development.
 
+* Repeatly using the same GKSTerm on Mac will display only white backgrounds in the end.
+* By default Plots uses gr() backend. The GR backend contour plot only accept vector x,y!
+* In Principle I don't want to have `Plots.jl` as a dependency. With simple plotting features this can work, but we may encounter [issues](https://github.com/JuliaPlots/RecipesBase.jl/issues/72) later.
+
+
 ## Scattered interpolation
 
 SWMF outputs may be in generalized coordinates. For the purpose of plotting, we often need to first interpolate onto a uniform mesh.
@@ -94,7 +99,7 @@ At this point GUI is not necessarily needed, if it does not speed up my own work
 - [x] Field tracer 2D in Julia
 - [x] Derived variable support
 - [x] General postprocessing script for concatenating and converting files.
-- [x] Direct wrapper over matplotlib functions to get seamless API
+- [x] Direct wrapper over Matplotlib functions to get seamless API
 - [x] Replace np.meshgrid with list comprehension
 - [ ] Find a substitution of triangulation in Julia
 - [ ] Allow dot syntax to get dictionary contents (Base.convert?)
