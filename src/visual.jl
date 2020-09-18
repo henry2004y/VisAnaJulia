@@ -88,8 +88,7 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
       # Display min & max for each variable
       for (ivar,var) in enumerate(vars)
          if occursin(";",var) continue end # skip the vars for streamline
-         VarIndex_ = findfirst(x->x==lowercase(var),
-            lowercase.(data.head.wnames))
+         VarIndex_ = findindex(data, var)
          if ndim == 1
             wmin[ivar] = minimum(w[:,VarIndex_])
             wmax[ivar] = maximum(w[:,VarIndex_])
@@ -147,9 +146,9 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
             if plotmode[ivar] ∈ ["contbar", "contbarlog"]
                if level == 0
                   c = contourf(xi, yi, wi')
-	       else
+               else
                   c = contourf(xi, yi, wi', level)
-	       end
+               end
             elseif plotmode[ivar] ∈ ["cont", "contlog"]
                c = contour(xi, yi, wi)
             elseif plotmode[ivar] ∈ ["surfbar", "surfbarlog"]
