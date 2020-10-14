@@ -43,7 +43,7 @@ function plotBSteady(flyby=8; filename="box_var_4_n00080000.out", DoSave=false,
    if isempty(path)
       data = readdata(filename, npict=npict)
    else
-      data = readdata(filename, dir=path, npict=npict)
+      data = readdata(basename(filename), dir=path, npict=npict)
    end
 
 
