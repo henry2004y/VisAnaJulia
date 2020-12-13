@@ -42,7 +42,7 @@ function MVA_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
    # Load magnetometer data Bx, By, Bz
    if filename[end-1:end] == "gz"
       df = CSV.File(transcode(GzipDecompressor, Mmap.mmap(filename));
-         header=2, delim=" ", ignorerepeated=true) |> DataFrame!
+         header=2, delim=" ", ignorerepeated=true) |> DataFrame
    else
       df = CSV.File(filename; header=2, delim=" ", ignorerepeated=true)
    end
