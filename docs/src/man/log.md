@@ -9,7 +9,9 @@ The color range is also an issue.
 
 ## Dependency and Package Structure
 
-As to avoid the cross-dependency hail on PyPlot, I split the original package into pure IO [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl) and post-processing and plotting. This is also a nicer way of organizing larger code base.
+As to avoid the cross-dependency hell on PyPlot, I split the original package into pure IO [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl) and post-processing and plotting. This is also a nicer way of organizing larger code base.
+Furthermore, after Julia 1.6, the Python style `import A as B` and `using LinearAlgebra: cholesky as c, lu as l` are supported.
+This makes it possible to completely drop the dependency on PyPlot.jl and instead everytime one would need to say `using VisAna, PyPlot` to trigger the Matplotlib functions. A very nice thing is that I can in principle switch between PyPlot.jl and Plots.jl easily, depending on which package to use!
 
 Currently VisAna is more of a collection of scripts, instead of a true package.
 I am planning to build individual packages for each feature, so that others can make more use of what they want specifically.
@@ -24,11 +26,12 @@ The current wrapper over Matplotlib makes it difficult to modify the plots after
 
 ## User Recipe in Plots.jl
 
-There is a user recipe in Plots. This is exactly what I am looking for, but more issues are coming up. I have created a new branch for this development.
+There is a *extremely powerful* user recipe in Plots.
 
 * Repeatly using the same GKSTerm on Mac will display only white backgrounds in the end.
-* By default Plots uses gr() backend. The GR backend contour plot only accept vector x,y!
-* In Principle I don't want to have `Plots.jl` as a dependency. With simple plotting features this can work, but we may encounter [issues](https://github.com/JuliaPlots/RecipesBase.jl/issues/72) later.
+* By default Plots uses `gr()` backend. The GR backend contour plot only accept vector x,y!
+* I don't want to have `Plots.jl` as a dependency. With simple plotting features this can work, but we may encounter [issues](https://github.com/JuliaPlots/RecipesBase.jl/issues/72) later. After Julia 1.6 this may be completely solved!
+* There is already a [UnitfulRecipes.jl](https://github.com/jw3126/UnitfulRecipes.jl) that provides the capability of auto-displaying units in figure labels, and it works smoothly with my user recipe. Amazing.
 
 
 ## Scattered interpolation
