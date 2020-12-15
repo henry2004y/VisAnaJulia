@@ -32,6 +32,7 @@ There is a *extremely powerful* user recipe in Plots.
 * By default Plots uses `gr()` backend. The GR backend contour plot only accept vector x,y!
 * I don't want to have `Plots.jl` as a dependency. With simple plotting features this can work, but we may encounter [issues](https://github.com/JuliaPlots/RecipesBase.jl/issues/72) later. After Julia 1.6 this may be completely solved!
 * There is already a [UnitfulRecipes.jl](https://github.com/jw3126/UnitfulRecipes.jl) that provides the capability of auto-displaying units in figure labels, and it works smoothly with my user recipe. Amazing.
+* I have already built a customized package [UnitfulBatsrus.jl](https://github.com/henry2004y/UnitfulBatsrus.jl.git) and set it as a dependency for VisAna. Instead of the usual `u"km/s"` notation, we just need to use `bu"amucc"`.
 
 
 ## Scattered interpolation
@@ -71,7 +72,7 @@ PyPlot.matplotlib.use("Agg")
 ```
 However, notice that currently Agg backend does not support draw_artist. For example, you cannot add an anchored text to your figure.
 
-Unlike the user recipes in `Plots.jl`, using `PyPlot.jl` would require to have it as a dependency.
+Unlike the user recipes in `Plots.jl`, using `PyPlot.jl` would require to have it as a dependency. (This might not be necessary for the upcoming Julia 1.6!)
 
 ## Makie
 
