@@ -114,3 +114,25 @@ At this point GUI is not necessarily needed, if it does not speed up my own work
 - [x] Particle phase space distribution plots
 - [ ] Animation
 - [ ] Make more separate small packages instead of one giant collection
+
+### Learning from yt
+
+The yt Project in Python is a much more mature postprocessing package than mine. That's a good place to learn.
+
+* Off-axis slices: very similar to ParaView and other 3D visualization tools provide, make a 2D cut at any direction. This requires a robust interpolation scheme.
+
+* Projection: it is like an integral form of a quantity in a certain direction, and can be weighted or unweighted. It is not a necessary feature, as one can easily implement this once he or she knows how to do make off-axis slices.
+
+* Same interface for both structured and unstructure data: this is important for a larger user base.
+
+* Mesh plotting: they provide a method for adding mesh on top of plots. I haven't had a good implementation of this yet.
+
+* Center: it would be good to give the option of choosing the center of plots.
+
+* Units: they build a unit system using dictionary themselves. I don't want to reinvent the wheel, so I will just keep an eye on `Unitful.jl` and yt. What is inherited from IDL in `Batsrus.jl` needs rewritten.
+
+* Property control: I don't like the way yt handles figure properties like colorbar, axes, etc. Matplotlib already teaches you how to set these things, and yet again in yt they wrap everything with names they come up with. This is a more of a burden instead of benefit. They do certain things right like `set_cmap`, but not all of them. The section `Further Customization via Matplotlib` is all I want to see. Using popular libraries generally means that new comers won't take long to get used to the interfaces, and developers can have a eaiser time developing new features.
+
+* Log scale: symlog for data containing both positive and negative data, and switch to linear scale for small values.
+
+
