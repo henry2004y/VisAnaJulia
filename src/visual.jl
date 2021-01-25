@@ -669,9 +669,9 @@ function streamplot(data::Data, var::AbstractString;
       X, Y = vec(x[:,:,1]), vec(x[:,:,2])
       if any(isinf.(plotrange))
          if plotrange[1] == -Inf plotrange[1] = minimum(X) end
-	 if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
+	      if plotrange[2] ==  Inf plotrange[2] = maximum(X) end
          if plotrange[3] == -Inf plotrange[3] = minimum(Y) end
-	 if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
+	      if plotrange[4] ==  Inf plotrange[4] = maximum(Y) end
       end
 
       # Create grid values first.
