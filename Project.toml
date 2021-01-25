@@ -1,17 +1,13 @@
 name = "VisAna"
 uuid = "3da60289-db0e-42b3-9214-5194de249930"
 authors = ["hyzhou <hyzhou@umich.edu>"]
-version = "0.7.10"
+version = "0.7.12"
 
 [deps]
 Batsrus = "e74ebddf-6ac1-4047-a0e5-c32c99e57753"
-CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-CodecZlib = "944b1d66-785c-5afd-91f1-9de20f533193"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Dierckx = "39dd38d3-220a-591b-8e3c-4c3a8c710a94"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-Mmap = "a63ad114-7e13-5084-954f-fe012c677804"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
@@ -25,7 +21,11 @@ UnitfulRecipes = "42071c24-d89e-48dd-8a24-8a12d9b8861f"
 julia = "1"
 
 [extras]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+CodecZlib = "944b1d66-785c-5afd-91f1-9de20f533193"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Mmap = "a63ad114-7e13-5084-954f-fe012c677804"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Test", "CodecZlib", "CSV", "DataFrames", "Mmap"]
