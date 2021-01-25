@@ -20,7 +20,7 @@ export trace2d, trace2d_rk4, trace2d_eul, trace3d, trace3d_eul,
 include("dipole.jl")
 
 """
-	bilin_reg(x, y, Q00, Q01, Q10, Q11)
+    bilin_reg(x, y, Q00, Q01, Q10, Q11)
 
 Bilinear interpolation for x1,y1=(0,0) and x2,y2=(1,1)
 Q's are surrounding points such that Q00 = F[0,0], Q10 = F[1,0], etc.
@@ -34,7 +34,25 @@ function bilin_reg(x, y, Q00, Q01, Q10, Q11)
 end
 
 """
-	DoBreak(iloc, jloc, iSize, jSize)
+	 trilin_reg(x, y, Q00, Q01, Q10, Q11)
+
+Trilinear interpolation for x1,y1,z1=(0,0,0) and x2,y2,z2=(1,1,1)
+Q's are surrounding points such that Q000 = F[0,0,0], Q100 = F[1,0,0], etc.
+"""
+function trilin_reg(x, y, z, Q)
+   fout =
+      Q[1]*(1.0-x)*(1.0-y)*(1.0-z) +
+      Q[2]* x *    (1.0-y)*(1.0-z) +
+      Q[3]* y *    (1.0-x)*(1.0-z) +
+      Q[4]* x * y * (1.0-z) +
+      Q[5]*(1.0-x)*(1.0-y)*z +
+      Q[6]* x *    (1.0-y)*z +
+      Q[7]* y *    (1.0-x)*z +
+      Q[8]* x * y * z
+end
+
+"""
+    DoBreak(iloc, jloc, iSize, jSize)
 
 Check to see if we should break out of an integration.
 """
@@ -76,20 +94,40 @@ function make_unit(iSize::T, jSize::T, kSize::T, ux, uy, uz) where {T<:Integer}
 end
 
 """
-	grid_interp!(x, y, field, xloc, yloc, xsize, ysize)
+    grid_interp!(x, y, field, ix, iy, xsize)
 
-Interpolate a value at (x,y) in a field. `xloc` and `yloc` are indexes for x,y
-locations (zero-based). `xsize` and `ysize` are the sizes of field in X and Y.
+Interpolate a value at (x,y) in a field. `ix` and `iy` are indexes for x,y
+locations (0-based). `xsize` is the size of field in X.
 """
-grid_interp!(x, y, field, xloc, yloc, xsize, ysize) =
-   bilin_reg(x-xloc, y-yloc,
-   field[yloc*xsize+xloc+1],
-   field[(yloc+1)*xsize+xloc+1],
-   field[yloc*xsize+xloc+2],
-   field[(yloc+1)*xsize+xloc+2])
+grid_interp!(x, y, field, ix, iy, xsize) =
+   bilin_reg(x-ix, y-iy,
+   field[iy*xsize+ix+1],
+   field[(iy+1)*xsize+ix+1],
+   field[iy*xsize+ix+2],
+   field[(iy+1)*xsize+ix+2])
 
 """
-	Euler!(iSize,jSize, maxstep, ds, xstart,ystart, xGrid,yGrid, ux,uy, x,y)
+    grid_interp!(x, y, z, field, ix, iy, iz, xsize, ysize)
+
+Interpolate a value at (x,y,z) in a field. `ix`,`iy` and `iz` are indexes
+for x,y and z locations (0-based). `xsize` and `ysize` are the sizes of field in
+X and Y.
+"""
+grid_interp!(x, y, z, field, ix, iy, iz, xsize, ysize) =
+   trilin_reg(x-ix, y-iy, z-iz,
+   [
+   field[iz*iy*size*ysize+iy*xsize+ix+1],
+   field[iz*iy*size*ysize+(iy+1)*xsize+ix+1],
+   field[iz*iy*size*ysize+iy*xsize+ix+2],
+   field[iz*iy*size*ysize+(iy+1)*xsize+ix+2],
+   field[(iz+1)*iy*size*ysize+iy*xsize+ix+1],
+   field[(iz+1)*iy*size*ysize+(iy+1)*xsize+ix+1],
+   field[(iz+1)*iy*size*ysize+iy*xsize+ix+2],
+   field[(iz+1)*iy*size*ysize+(iy+1)*xsize+ix+2]
+   ])
+
+"""
+    Euler!(iSize,jSize, maxstep, ds, xstart,ystart, xGrid,yGrid, ux,uy, x,y)
 
 Simple 2D tracing using Euler's method. Super fast but not super accurate.
 # Arguments
@@ -117,25 +155,23 @@ function Euler!(iSize, jSize, maxstep, ds, xstart, ystart, xGrid, yGrid, ux, uy,
    # Perform tracing using Euler's method
    for n = 1:maxstep-1
       # Find surrounding points
-      xloc = floor(Int, x[n])
-      yloc = floor(Int, y[n])
+      ix = floor(Int, x[n])
+      iy = floor(Int, y[n])
 
       # Break if we leave the domain
-      if DoBreak(xloc, yloc, iSize, jSize)
+      if DoBreak(ix, iy, iSize, jSize)
          nstep = n; break
       end
 
       # Interpolate unit vectors to current location
-      fx = grid_interp!(x[n], y[n], f1, xloc, yloc, iSize, jSize)
-      fy = grid_interp!(x[n], y[n], f2, xloc, yloc, iSize, jSize)
+      fx = grid_interp!(x[n], y[n], f1, ix, iy, iSize)
+      fy = grid_interp!(x[n], y[n], f2, ix, iy, iSize)
 
-      # Detect NaNs in function values
       if isnan(fx) || isnan(fy) || isinf(fx) || isinf(fy)
          nstep = n
          break
       end
 
-      # Perform single step
       x[n+1] = x[n] + ds * fx
       y[n+1] = y[n] + ds * fy
 
@@ -152,8 +188,8 @@ end
 
 
 """
-	Euler!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
-      xGrid, yGrid, zGrid ux, uy, uz, x, y, z)
+    Euler!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
+      xGrid, yGrid, zGrid, ux, uy, uz, x, y, z)
 
 Simple 3D tracing using Euler's method.
 # Arguments
@@ -161,7 +197,7 @@ Simple 3D tracing using Euler's method.
 - `maxstep::Int`: max steps.
 - `ds::Float64`: step size.
 - `xstart::Float64, ystart::Float64, zstart::Float64`: starting location.
-- `xGrid::Array{Float64,2},yGrid::Array{Float64,2},yGrid::Array{Float64,2}`: actual coord system.
+- `xGrid::Array{Float64,2},yGrid::Array{Float64,2},zGrid::Array{Float64,2}`: actual coord system.
 - `ux::Array{Float64,2},uy::Array{Float64,2},uz::Array{Float64,2}`: field to trace through.
 - `x::Vector{Float64},y::Vector{Float64},z::Vector{Float64}`: x, y, z of result stream.
 """
@@ -177,33 +213,31 @@ function Euler!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
    z[1] = (zstart-zGrid[1]) / dz
 
    # Create unit vectors from full vector field
-   f1, f2, f3 =  make_unit(iSize, jSize, kSize, ux, uy, uz)
+   f1, f2, f3 = make_unit(iSize, jSize, kSize, ux, uy, uz)
 
    nstep = 0
    # Perform tracing using Euler's method
    for n = 1:maxstep-1
       # Find surrounding points
-      xloc = floor(Int, x[n])
-      yloc = floor(Int, y[n])
-      zloc = floor(Int, z[n])
+      ix = floor(Int, x[n])
+      iy = floor(Int, y[n])
+      iz = floor(Int, z[n])
 
       # Break if we leave the domain
-      if DoBreak(xloc, yloc, zloc, iSize, jSize, kSize)
+      if DoBreak(ix, iy, iz, iSize, jSize, kSize)
          nstep = n; break
       end
 
       # Interpolate unit vectors to current location
-      fx = grid_interp!(x[n], y[n], z[n], f1, xloc,yloc,zloc, iSize,jSize,kSize)
-      fy = grid_interp!(x[n], y[n], z[n], f2, xloc,yloc,zloc, iSize,jSize,kSize)
-      fy = grid_interp!(x[n], y[n], z[n], f3, xloc,yloc,zloc, iSize,jSize,kSize)
+      fx = grid_interp!(x[n], y[n], z[n], f1, ix,iy,iz, iSize,jSize)
+      fy = grid_interp!(x[n], y[n], z[n], f2, ix,iy,iz, iSize,jSize)
+      fy = grid_interp!(x[n], y[n], z[n], f3, ix,iy,iz, iSize,jSize)
 
-      # Detect NaNs in function values
       if any(isnan,[fx, fy, fz]) || any(isinf, [fx, fy, fz])
          nstep = n
          break
       end
 
-      # Perform single step
       x[n+1] = x[n] + ds * fx
       y[n+1] = y[n] + ds * fy
       z[n+1] = z[n] + ds * fz
@@ -222,7 +256,7 @@ end
 
 
 """
-	RK4!(iSize,jSize, maxstep, ds, xstart,ystart, xGrid,yGrid, ux,uy, x,y)
+    RK4!(iSize,jSize, maxstep, ds, xstart,ystart, xGrid,yGrid, ux,uy, x,y)
 
 Fast and reasonably accurate 2D tracing with 4th order Runge-Kutta method and
 constant step size `ds`.
@@ -244,24 +278,24 @@ function RK4!(iSize, jSize, maxstep, ds, xstart, ystart, xGrid, yGrid, ux, uy,
    for n = 1:maxstep-1
       # See Euler's method for more descriptive comments.
       # SUBSTEP #1
-      xloc = floor(Int, x[n])
-      yloc = floor(Int, y[n])
-      if DoBreak(xloc, yloc, iSize, jSize); nstep = n; break end
+      ix = floor(Int, x[n])
+      iy = floor(Int, y[n])
+      if DoBreak(ix, iy, iSize, jSize); nstep = n; break end
 
-      f1x = grid_interp!(x[n], y[n], fx, xloc, yloc, iSize, jSize)
-      f1y = grid_interp!(x[n], y[n], fy, xloc, yloc, iSize, jSize)
+      f1x = grid_interp!(x[n], y[n], fx, ix, iy, iSize)
+      f1y = grid_interp!(x[n], y[n], fy, ix, iy, iSize)
       if isnan(f1x) || isnan(f1y) || isinf(f1x) || isinf(f1y)
          nstep = n; break
       end
       # SUBSTEP #2
       xpos = x[n] + f1x*ds/2.0
       ypos = y[n] + f1y*ds/2.0
-      xloc = floor(Int, xpos)
-      yloc = floor(Int, ypos)
-      if DoBreak(xloc, yloc, iSize, jSize); nstep = n; break end
+      ix = floor(Int, xpos)
+      iy = floor(Int, ypos)
+      if DoBreak(ix, iy, iSize, jSize); nstep = n; break end
 
-      f2x = grid_interp!(xpos, ypos, fx, xloc, yloc, iSize, jSize)
-      f2y = grid_interp!(xpos, ypos, fy, xloc, yloc, iSize, jSize)
+      f2x = grid_interp!(xpos, ypos, fx, ix, iy, iSize)
+      f2y = grid_interp!(xpos, ypos, fy, ix, iy, iSize)
 
       if isnan(f2x) || isnan(f2y) || isinf(f2x) || isinf(f2y)
          nstep = n; break
@@ -269,12 +303,12 @@ function RK4!(iSize, jSize, maxstep, ds, xstart, ystart, xGrid, yGrid, ux, uy,
       # SUBSTEP #3
       xpos = x[n] + f2x*ds/2.0
       ypos = y[n] + f2y*ds/2.0
-      xloc = floor(Int, xpos)
-      yloc = floor(Int, ypos)
-      if DoBreak(xloc, yloc, iSize, jSize); nstep = n; break end
+      ix = floor(Int, xpos)
+      iy = floor(Int, ypos)
+      if DoBreak(ix, iy, iSize, jSize); nstep = n; break end
 
-      f3x = grid_interp!(xpos, ypos, fx, xloc, yloc, iSize, jSize)
-      f3y = grid_interp!(xpos, ypos, fy, xloc, yloc, iSize, jSize)
+      f3x = grid_interp!(xpos, ypos, fx, ix, iy, iSize)
+      f3y = grid_interp!(xpos, ypos, fy, ix, iy, iSize)
       if isnan(f3x) || isnan(f3y) || isinf(f3x) || isinf(f3y)
          nstep = n; break
       end
@@ -282,12 +316,12 @@ function RK4!(iSize, jSize, maxstep, ds, xstart, ystart, xGrid, yGrid, ux, uy,
       # SUBSTEP #4
       xpos = x[n] + f3x*ds
       ypos = y[n] + f3y*ds
-      xloc = floor(Int, xpos)
-      yloc = floor(Int, ypos)
-      if DoBreak(xloc, yloc, iSize, jSize); nstep = n; break end
+      ix = floor(Int, xpos)
+      iy = floor(Int, ypos)
+      if DoBreak(ix, iy, iSize, jSize); nstep = n; break end
 
-      f4x = grid_interp!(xpos, ypos, fx, xloc, yloc, iSize, jSize)
-      f4y = grid_interp!(xpos, ypos, fy, xloc, yloc, iSize, jSize)
+      f4x = grid_interp!(xpos, ypos, fx, ix, iy, iSize)
+      f4y = grid_interp!(xpos, ypos, fy, ix, iy, iSize)
       if isnan(f4x) || isnan(f4y) || isinf(f4x) || isinf(f4y)
          nstep = n; break
       end
@@ -309,8 +343,8 @@ end
 
 
 """
-	RK4!(iSize,jSize,kSize, maxstep, ds, xstart,ystart,zstart, xGrid,yGrid,zGrid,
-      ux,uy,uz, x,y,z)
+    RK4!(iSize,jSize,kSize, maxstep, ds, xstart,ystart,zstart,
+      xGrid,yGrid,zGrid, ux,uy,uz, x,y,z)
 
 Fast and reasonably accurate 3D tracing with 4th order Runge-Kutta method and
 constant step size `ds`.
@@ -334,14 +368,14 @@ function RK4!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
    for n = 1:maxstep-1
       # See Euler's method for more descriptive comments.
       # SUBSTEP #1
-      xloc = floor(Int, x[n])
-      yloc = floor(Int, y[n])
-      zloc = floor(Int, z[n])
-      if DoBreak(xloc, yloc, zloc, iSize, jSize, kSize); nstep = n; break end
+      ix = floor(Int, x[n])
+      iy = floor(Int, y[n])
+      iz = floor(Int, z[n])
+      if DoBreak(ix, iy, iz, iSize, jSize, kSize); nstep = n; break end
 
-      f1x = grid_interp!(x[n],y[n],z[n], fx, xloc,yloc,zloc, iSize,jSize,kSize)
-      f1y = grid_interp!(x[n],y[n],z[n], fy, xloc,yloc,zloc, iSize,jSize,kSize)
-      f1z = grid_interp!(x[n],y[n],z[n], fz, xloc,yloc,zloc, iSize,jSize,kSize)
+      f1x = grid_interp!(x[n],y[n],z[n], fx, ix,iy,iz, iSize,jSize)
+      f1y = grid_interp!(x[n],y[n],z[n], fy, ix,iy,iz, iSize,jSize)
+      f1z = grid_interp!(x[n],y[n],z[n], fz, ix,iy,iz, iSize,jSize)
       if any(isnan,[f1x, f1y, f1z]) || any(isinf, [f1x, f1y, f1z])
          nstep = n; break
       end
@@ -349,14 +383,14 @@ function RK4!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
       xpos = x[n] + f1x*ds/2.0
       ypos = y[n] + f1y*ds/2.0
       zpos = z[n] + f1z*ds/2.0
-      xloc = floor(Int, xpos)
-      yloc = floor(Int, ypos)
-      zloc = floor(Int, zpos)
-      if DoBreak(xloc, yloc, zloc, iSize, jSize, kSize); nstep = n; break end
+      ix = floor(Int, xpos)
+      iy = floor(Int, ypos)
+      iz = floor(Int, zpos)
+      if DoBreak(ix, iy, iz, iSize, jSize, kSize); nstep = n; break end
 
-      f2x = grid_interp!(xpos,ypos,zpos, fx, xloc,yloc,zloc, iSize,jSize,kSize)
-      f2y = grid_interp!(xpos,ypos,zpos, fy, xloc,yloc,zloc, iSize,jSize,kSize)
-      f2z = grid_interp!(xpos,ypos,zpos, fz, xloc,yloc,zloc, iSize,jSize,kSize)
+      f2x = grid_interp!(xpos,ypos,zpos, fx, ix,iy,iz, iSize,jSize)
+      f2y = grid_interp!(xpos,ypos,zpos, fy, ix,iy,iz, iSize,jSize)
+      f2z = grid_interp!(xpos,ypos,zpos, fz, ix,iy,iz, iSize,jSize)
       if any(isnan,[f2x, f2y, f2z]) || any(isinf, [f2x, f2y, f2z])
          nstep = n; break
       end
@@ -364,14 +398,14 @@ function RK4!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
       xpos = x[n] + f2x*ds/2.0
       ypos = y[n] + f2y*ds/2.0
       zpos = z[n] + f2z*ds/2.0
-      xloc = floor(Int, xpos)
-      yloc = floor(Int, ypos)
-      zloc = floor(Int, zpos)
-      if DoBreak(xloc, yloc, zloc, iSize, jSize, kSize); nstep = n; break end
+      ix = floor(Int, xpos)
+      iy = floor(Int, ypos)
+      iz = floor(Int, zpos)
+      if DoBreak(ix, iy, iz, iSize, jSize, kSize); nstep = n; break end
 
-      f3x = grid_interp!(xpos,ypos,zpos, fx, xloc,yloc,zloc, iSize,jSize,kSize)
-      f3y = grid_interp!(xpos,ypos,zpos, fy, xloc,yloc,zloc, iSize,jSize,kSize)
-      f3z = grid_interp!(xpos,ypos,zpos, fz, xloc,yloc,zloc, iSize,jSize,kSize)
+      f3x = grid_interp!(xpos,ypos,zpos, fx, ix,iy,iz, iSize,jSize)
+      f3y = grid_interp!(xpos,ypos,zpos, fy, ix,iy,iz, iSize,jSize)
+      f3z = grid_interp!(xpos,ypos,zpos, fz, ix,iy,iz, iSize,jSize)
       if any(isnan,[f3x, f3y, f3z]) || any(isinf, [f3x, f3y, f3z])
          nstep = n; break
       end
@@ -380,14 +414,14 @@ function RK4!(iSize, jSize, kSize, maxstep, ds, xstart, ystart, zstart,
       xpos = x[n] + f3x*ds
       ypos = y[n] + f3y*ds
       zpos = z[n] + f3z*ds
-      xloc = floor(Int, xpos)
-      yloc = floor(Int, ypos)
-      zloc = floor(Int, zpos)
-      if DoBreak(xloc, yloc, zloc, iSize, jSize, kSize); nstep = n; break end
+      ix = floor(Int, xpos)
+      iy = floor(Int, ypos)
+      iz = floor(Int, zpos)
+      if DoBreak(ix, iy, iz, iSize, jSize, kSize); nstep = n; break end
 
-      f4x = grid_interp!(xpos,ypos,zpos, fx, xloc,yloc,zloc, iSize,jSize,kSize)
-      f4y = grid_interp!(xpos,ypos,zpos, fy, xloc,yloc,zloc, iSize,jSize,kSize)
-      f4z = grid_interp!(xpos,ypos,zpos, fz, xloc,yloc,zloc, iSize,jSize,kSize)
+      f4x = grid_interp!(xpos,ypos,zpos, fx, ix,iy,iz, iSize,jSize)
+      f4y = grid_interp!(xpos,ypos,zpos, fy, ix,iy,iz, iSize,jSize)
+      f4z = grid_interp!(xpos,ypos,zpos, fz, ix,iy,iz, iSize,jSize)
       if any(isnan,[f4x, f4y, f4z]) || any(isinf, [f4x, f4y, f4z])
          nstep = n; break
       end
@@ -411,8 +445,8 @@ end
 
 
 """
-	trace2d_rk4(fieldx, fieldy, xstart, ystart, gridx, gridy;
-		maxstep=20000, ds=0.01, gridType="meshgrid", direction="both")
+	 trace2d_rk4(fieldx, fieldy, xstart, ystart, gridx, gridy;
+		 maxstep=20000, ds=0.01, gridType="meshgrid", direction="both")
 
 Given a 2D vector field, trace a streamline from a given point to the edge of
 the vector field. The field is integrated using Runge Kutta 4. Slower than
@@ -477,8 +511,8 @@ function trace2d_rk4(fieldx, fieldy, xstart, ystart, gridx, gridy;
 end
 
 """
-	trace2d_eul(fieldx, fieldy, xstart, ystart, gridx, gridy;
-		maxstep=20000, ds=0.01, gridType="meshgrid", direction="both")
+	 trace2d_eul(fieldx, fieldy, xstart, ystart, gridx, gridy;
+		 maxstep=20000, ds=0.01, gridType="meshgrid", direction="both")
 
 Given a 2D vector field, trace a streamline from a given point to the edge of
 the vector field. The field is integrated using Euler's method. While this is
@@ -547,8 +581,8 @@ trace2d(fieldx, fieldy, xstart, ystart, gridx, gridy) =
    trace2d_rk4(fieldx, fieldy, xstart, ystart, gridx, gridy)
 
 """
-	trace3d_eul(fieldx, fieldy, fieldz, xstart, ystart, zstart, gridx, gridy,
-      gridz; maxstep=20000, ds=0.01)
+	 trace3d_eul(fieldx, fieldy, fieldz, xstart, ystart, zstart, gridx, gridy,
+       gridz; maxstep=20000, ds=0.01)
 
 Given a 3D vector field, trace a streamline from a given point to the edge of
 the vector field. The field is integrated using Euler's method. Only valid for
@@ -583,7 +617,7 @@ trace3d(fieldx, fieldy, fieldz, xstart, ystart, zstart, gridx, gridy, gridz) =
    gridx, gridy, gridz)
 
 """
-	select_seeds(x, y, nSeed=100)
+	 select_seeds(x, y, nSeed=100)
 
 Generate `nSeed` seeding points randomly in the grid range. If you specify
 `nSeed`, use the keyword input, otherwise it will be overloaded by the 3D
@@ -621,7 +655,7 @@ function select_seeds(x, y, z; nSeed=100)
 end
 
 """
-   test_trace_asymptote(IsSingle)
+    test_trace_asymptote(IsSingle)
 
 Test streamline tracing by plotting vectors and associated streamlines
 through a simple velocity field where Vx=x, Vy=-y.
