@@ -1,5 +1,7 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+UnitfulBatsrus = "ab123e51-91dc-4b5a-b171-f9f07dcc0a5b"
+
 
 [compat]
 Documenter = "0.24"
