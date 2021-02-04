@@ -10,14 +10,15 @@
 This package is inherited from its predecessor in IDL (developed by G.Tóth) and Matlab (developed by H.Zhou). Currently instead of a real "package", this is more like a collection of scripts. The data loader and converter is split into an stand-alone package [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl).
 
 This package provides the following functionalities:
-  * simulation data reader
-  * simulation data visualization
-  * data format conversion
-  * programming language interoperability
+  * SWMF simulation data visualization
+    * phase space distribution
+    * 2D slices of 3D data, including all common plots
+    * log variable plots
   * data analysis in space physics
-  * test particle tracing (WIP)
-
-The data analysis part includes spectral analysis, minimum variance analysis and many functions for aiding the interpretation of data.
+    * magnetic field comparison with satellite data
+    * spectral analysis
+    * minimum variance analysis
+    * wave analysis
 
 The ultimate goal is to build a convenient tool of reading and analyzing simulation outputs which is easy to install, easy to use, and fast.
 
@@ -39,7 +40,6 @@ Pages = [
     "man/types.md",
     "man/analysis.md"
     "man/trace.md"
-    "man/testparticle.md"
     "man/text.md"
 ]
 Depth = 1

@@ -15,8 +15,9 @@ This makes it possible to completely drop the dependency on PyPlot.jl and instea
 
 Currently VisAna is more of a collection of scripts, instead of a true package.
 I am planning to build individual packages for each feature, so that others can make more use of what they want specifically.
+For example, the field tracing and test particle tracing have now become individual modules [FieldTracer.jl](https://github.com/henry2004y/FieldTracer.jl) and [TestParticle.jl](https://github.com/henry2004y/TestParticle.jl). Furthermore, these two packages can be merged into one called *Tracer.jl*.
 
-Demos are provided for calling Matlab/Python directly from Julia for debugging and testing. This part will later be separated out for potential Python and Matlab users. Currently the plotting and interpolation needed during plotting are done in Python. For instance, the scattered interpolation is done via `Interpolate` in Scipy. Hopefully these additional dependencies will be cut down.
+Demos are provided for calling MATLAB/Python directly from Julia for debugging and testing. This part will later be separated out for potential Python and MATLAB users. Currently the plotting and interpolation needed during plotting are done in Python. For instance, the scattered interpolation is done via `Interpolate` in Scipy. Hopefully these additional dependencies will be cut down.
 
 At first I forgot to export the Data struct, so everytime when I modified the code and rerun plotdata, it will shout error at me, saying no type was found for the input type.
 
@@ -93,27 +94,30 @@ The built-in streamline function of Matplotlib/MATLAB is not proper for scientif
 
 As for the GUI development, GTK seems to be an ideal candidate. However, the [GTK interface in Julia](https://github.com/JuliaGraphics/Gtk.jl) lacks full support for the toolkit, which makes it a little bit hard to use. I have only played with it for half a day. You can design the appearance of your window interactively, and save your in an HTML-like file.
 
+Makie is actually good at this, with the underlying OpenGL support.
+
 At this point GUI is not necessarily needed, if it does not speed up my own workflow.
 
 ## Todo List
 
 - [x] Fixed colorbar control through Matplotlib
 - [x] Test suite for checking validity
-- [ ] Full coverage of tests
 - [x] Cuts from 3D data visualization besides contour
-- [ ] Port to Makie
 - [x] Field tracer 2D in Julia
 - [x] Derived variable support
 - [x] General postprocessing script for concatenating and converting files.
 - [x] Direct wrapper over Matplotlib functions to get seamless API
 - [x] Replace np.meshgrid with list comprehension
+- [x] Magnetic field line plots from simulation
+- [x] Particle phase space distribution plots
+- [ ] Add [FieldTracer.jl](https://github.com/henry2004y/FieldTracer.jl) and [TestParticle.jl](https://github.com/henry2004y/TestParticle.jl) to dependencies and create tests
 - [ ] Find a substitution of triangulation in Julia
 - [ ] Allow dot syntax to get dictionary contents (Base.convert?)
 - [ ] Macros for quickly looking at data (GUI is the ideal solution!)
-- [x] Magnetic field line plots from simulation
-- [x] Particle phase space distribution plots
+- [ ] Port to Makie
 - [ ] Animation
 - [ ] Make more separate small packages instead of one giant collection
+- [ ] Full coverage of tests
 
 ### Learning from yt
 
