@@ -2,6 +2,7 @@
 
 using RecipesBase
 using UnitfulBatsrus, UnitfulRecipes
+# UnitfulBatsrus is an unregistered package!
 
 #@userplot mycontour
 

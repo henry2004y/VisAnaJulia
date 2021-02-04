@@ -230,14 +230,6 @@ git-tree-sha1 = "2b643523d52fc9fb4fe0729e6561d066055d58d8"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
 version = "1.5.0"
 
-[[UnitfulBatsrus]]
-deps = ["Unitful"]
-git-tree-sha1 = "91b269de1f17849a5dab087b334902a5427ee25e"
-repo-rev = "master"
-repo-url = "https://github.com/henry2004y/UnitfulBatsrus.jl.git"
-uuid = "ab123e51-91dc-4b5a-b171-f9f07dcc0a5b"
-version = "0.1.0"
-
 [[UnitfulRecipes]]
 deps = ["RecipesBase", "Unitful"]
 git-tree-sha1 = "e6650501531985f3b94130267dd5170f6e3dddc2"
