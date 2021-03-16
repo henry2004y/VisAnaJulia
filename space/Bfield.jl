@@ -74,7 +74,7 @@ function plotBSteady(flyby=8; filename="box_var_4_n00080000.out", DoSave=false,
    itpBz = interpolate(knots, Bz, Gridded(Linear()))
    BzSim = itpBz.(df.X,df.Y,df.Z)
 
-   BsimStrength = @. sqrt(BxSim^2 + BySim^2 + BzSim^2)
+   BsimStrength = hypot.(BxSim, BySim, BzSim)
 
    # Visualization
    figure(figsize=(12,5))
@@ -191,7 +191,7 @@ function read_simulation_data(filename, dir, t, df, tStart, firstpict, lastpict)
    BySim[kStart+npict:end] = itpBy.(df.X[kEnd+1:end],df.Y[kEnd+1:end],df.Z[kEnd+1:end])
    BzSim[kStart+npict:end] = itpBz.(df.X[kEnd+1:end],df.Y[kEnd+1:end],df.Z[kEnd+1:end])
 
-   BsimStrength = @. sqrt(BxSim^2 + BySim^2 + BzSim^2)
+   BsimStrength = hypot.(BxSim, BySim, BzSim)
 
    Bsim = BField(tSim, BxSim, BySim, BzSim, BsimStrength)
 end
@@ -218,7 +218,7 @@ function getBObs(flyby=8,
    df = CSV.File(joinpath(dir,Obsfile);header=2,delim=" ",ignorerepeated=true)
    t = DateTime.(df.yr, df.month, df.day, df.hr, df.min, floor.(Int, df.sec),
       floor.(Int, 1e3 .* (df.sec - floor.(df.sec))) )
-   BobsStrength = @. sqrt(df.Bx^2 + df.By^2 + df.Bz^2)
+   BobsStrength = hypot.(df.Bx, df.By, df.Bz)
 
    return t, df, BobsStrength
 end

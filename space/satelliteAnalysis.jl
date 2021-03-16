@@ -520,7 +520,7 @@ function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
    ΔBx= Bx .- B̄x
    ΔBy= By .- B̄y
    ΔBz= Bz .- B̄z
-   ΔB = @. sqrt(Bx^2 + By^2 + Bz^2) - sqrt(B̄x^2 + B̄y^2 + B̄z^2)
+   ΔB = @. hypot(Bx, By, Bz) - hypot(B̄x, B̄y, B̄z)
    ΔP = @. P - P̄ + (Pe - P̄e)
 
    VA = @. B/√(μ₀*ρ*amu)*1e-15 # [km/s]

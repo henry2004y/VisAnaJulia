@@ -71,23 +71,20 @@ function get_diamagnetic_current(filehead::Dict, data::Array{T,2}) where
 
    # j = B×▽p/B^2
    @inbounds for k = 1:nZ, j = 1:nY, i = 1:nX
-      Bmag = sqrt(Bx[i,j,k]^2 + Bx[i,j,k]^2 + Bz[i,j,k]^2)
+      Bmag = hypot(Bx[i,j,k], By[i,j,k], Bz[i,j,k])
       jDiaMag[1,i,j,k] = (By[i,j,k]*pz[i,j,k] - Bz[i,j,k]*py[i,j,k]) / Bmag
       jDiaMag[2,i,j,k] = (Bz[i,j,k]*px[i,j,k] - Bx[i,j,k]*pz[i,j,k]) / Bmag
       jDiaMag[3,i,j,k] = (Bx[i,j,k]*py[i,j,k] - By[i,j,k]*px[i,j,k]) / Bmag
-      jCurrent[i,j,k] =
-      sqrt(jDiaMag[1,i,j,k]^2 + jDiaMag[2,i,j,k]^2 + jDiaMag[3,i,j,k]^2)
+      jCurrent[i,j,k] = hypot(jDiaMag[:,i,j,k]...)
    end
 
    x = range(xMin, stop=xMax, length=nX)
    z = range(zMin, stop=zMax, length=nZ)
 
-
    contourf(x,z,jCurrent[:,2,:]',50)
    colorbar()
    xlabel("x")
    ylabel("z")
-
 end
 
 #get_diamagnetic_current(data.head., data)
@@ -154,8 +151,7 @@ for i = 80:100#length(filenames)
          (ni[i,j,k]*q*Bmag2)
       vDiaMag[3,i,j,k] = (Bx[i,j,k]*py[i,j,k] - By[i,j,k]*px[i,j,k]) /
          (ni[i,j,k]*q*Bmag2)
-      vMag[i,j,k] =
-         sqrt(vDiaMag[1,i,j,k]^2 + vDiaMag[2,i,j,k]^2 + vDiaMag[3,i,j,k]^2)
+      vMag[i,j,k] = hypot(vDiaMag[:,i,j,k]...)
    end
 
    yMid = floor(Int,nY/2)
@@ -263,8 +259,7 @@ for ipict = 1:npict
          (ni[i,j,k]*q*Bmag2)
       vDiaMag[3,i,j,k] = (Bx[i,j,k]*py[i,j,k] - By[i,j,k]*px[i,j,k]) /
          (ni[i,j,k]*q*Bmag2)
-      vMag[i,j,k] =
-         sqrt(vDiaMag[1,i,j,k]^2 + vDiaMag[2,i,j,k]^2 + vDiaMag[3,i,j,k]^2)
+      vMag[i,j,k] = hypot(vDiaMag[:,i,j,k]...)
    end
 
    yMid = floor(Int,nY/2)
@@ -332,8 +327,7 @@ end
        gradP[1,i,j,k] = (px[i,j,k]) / (ni[i,j,k]*q)
        gradP[2,i,j,k] = (py[i,j,k]) / (ni[i,j,k]*q)
        gradP[3,i,j,k] = (pz[i,j,k]) / (ni[i,j,k]*q)
-       gradPMag[i,j,k] = sqrt(gradP[1,i,j,k]^2 + gradP[2,i,j,k]^2 +
-       			gradP[3,i,j,k]^2)
+       gradPMag[i,j,k] = hypot(gradP[:,i,j,k]...)
    end
 
    figure()
@@ -348,7 +342,7 @@ end
    Ey = @view w[:,:,:,ey_]
    Ez = @view w[:,:,:,ez_]
 
-   E  = @. sqrt(Ex^2 + Ey^2 + Ez^2)
+   E  = @. hypot(Ex, Ey, Ez)
 
    figure()
    contourf(x[:,yMid,:],z[:,yMid,:],E[:,yMid,:],50)

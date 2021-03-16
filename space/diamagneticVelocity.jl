@@ -133,8 +133,7 @@ function processing(data::Data, saveDir::String, nType=1)
          (ni[i,j,k]*Bmag2) * cUnit
       vDiaMag[3,i,j,k] = (Bx[i,j,k]*py[i,j,k] - By[i,j,k]*px[i,j,k]) /
          (ni[i,j,k]*Bmag2) * cUnit
-      vMag[i,j,k] = sqrt(
-         vDiaMag[1,i,j,k]^2 + vDiaMag[2,i,j,k]^2 + vDiaMag[3,i,j,k]^2)
+      vMag[i,j,k] = hypot(vDiaMag[:,i,j,k]...)
    end
 
    yMid = floor(Int,nY/2)
@@ -225,7 +224,7 @@ function plot_beta(filename::String)
    Bx   = @view Bx[:,cutPlaneIndex,:]
    By   = @view By[:,cutPlaneIndex,:]
    Bz   = @view Bz[:,cutPlaneIndex,:]
-   PB   = sqrt.(Bx.^2 .+ By.^2 .+ Bz.^2)
+   PB   = hypot.(Bx, By, Bz)
 
    c = ax.contourf(cut1, cut2, W./PB)
    fig.colorbar(c,ax=ax)

@@ -27,7 +27,7 @@ function B_FFT(filename, varname="Bobs", vartype="total", Fs=1/0.3,
    data = matread(filename)
    B = data[varname]
    if vartype == "total"
-      Btmp = @. sqrt(B[Brange,1]^2 + B[Brange,2]^2 + B[Brange,3]^2)
+      Btmp = hypot.(B[Brange,1], B[Brange,2], B[Brange,3])
    elseif vartype == "x"
       Btmp = B[Brange,1]
    elseif vartype == "y"

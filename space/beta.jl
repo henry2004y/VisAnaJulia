@@ -28,7 +28,7 @@ W    = @view W[:,cutPlaneIndex,:]
 Bx   = @view Bx[:,cutPlaneIndex,:]
 By   = @view By[:,cutPlaneIndex,:]
 Bz   = @view Bz[:,cutPlaneIndex,:]
-PB   = sqrt.(Bx.^2 .+ By.^2 .+ Bz.^2)
+PB   = hypot.(Bx, By, Bz)
 
 c = ax.contourf(cut1,cut2,W./PB)
 fig.colorbar(c,ax=ax)
