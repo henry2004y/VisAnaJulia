@@ -21,7 +21,7 @@ end
 
 
 """
-	sma(x, n=100)
+    sma(x, n=100)
 
 Return the moving box average of the vector data `x` with box length 'n'.
 One-sided average on the left and right edge.
@@ -50,7 +50,7 @@ end
 
 
 """
-	sma(x, n)
+    sma(x, n)
 
 Return the moving box average of the 3D array data `x` with box length 'n'.
 One-sided average on the left and right edge.
@@ -87,7 +87,7 @@ end
 
 
 """
-	ema(x, n=5)
+    ema(x, n=5)
 
 Return the exponentially moving box average of the vector data `x` with box
 length 'n'.

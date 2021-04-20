@@ -8,7 +8,7 @@
 
 using MAT, FFTW, Statistics, PyPlot
 
-"""Moving box average."""
+"Moving box average."
 function sma(a::Array, n::Int)
    vals = zeros(size(a,1) - (n-1), size(a,2))
 

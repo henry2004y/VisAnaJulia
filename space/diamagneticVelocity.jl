@@ -7,7 +7,7 @@ using Batsrus, VisAna, PyPlot, PyCall, Glob, Printf
 
 include("constants.jl")
 
-"""Series of contour plots from box output."""
+"Series of contour plots from box output."
 function plot_contour_from_box(filename::String, dir=".")
 
    data = readdata(filename, dir=dir, verbose=false);
@@ -32,7 +32,7 @@ function plot_contour_from_box(filename::String, dir=".")
 
 end
 
-"""Series of contour plots from cuts."""
+"Series of contour plots from cuts."
 function plot_contour_from_cuts(filename::String, dir=".")
 
    data = readdata(filename, dir=dir)
@@ -60,6 +60,7 @@ end
 
 """
    get_diamagnetic_velocity(filename, filedir, nType)
+
 Calculate diamagnetic velocity from outputs.
 
 nType = 1 is Hall MHD, nType = 2 is PIC.
@@ -144,15 +145,14 @@ function processing(data::Data, saveDir::String, nType=1)
 
    fig, ax = subplots()
    cont_levels = range(0.0, 10000.0, length=50)
-   c = ax.contourf(x[xrange,yMid,zrange], z[xrange,yMid,zrange], vMag[xrange,y\
-Mid,zrange], levels=cont_levels)
+   c = ax.contourf(x[xrange,yMid,zrange], z[xrange,yMid,zrange],
+      vMag[xrange,yMid,zrange], levels=cont_levels)
    fig.colorbar(c, ax=ax, ticks=range(0.0, 10000.0, step=1000.0))
    xlabel("x"); ylabel("z")
    title(L"$\mathbf{B}\times \nabla P/(neB^2)$"*", t=$(i)")
 
    fig.set_size_inches(3.5,6)
    plt.axis("scaled")
-
 
    plt.savefig(saveDir*"/diamagnetic_$(i).png")
 end

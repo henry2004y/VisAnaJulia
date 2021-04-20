@@ -494,8 +494,8 @@ function streamslice(data::Data, var::AbstractString;
    yi = range(cut2[1,1], stop=cut2[1,end],
    step = (cut2[1,end]-cut2[1,1])/(size(cut2,2)-1))
 
-   Xi = [i for j in yi, i in xi]
-   Yi = [j for j in yi, i in xi]
+   Xi = [i for _ in yi, i in xi]
+   Yi = [j for j in yi, _ in xi]
 
    s = streamplot(Xi,Yi,v1',v2',color=color,linewidth=1.0,density=density)
 
@@ -506,7 +506,7 @@ function streamslice(data::Data, var::AbstractString;
    elseif cut == 'z'
       xlabel("x"); ylabel("y")
    end
-   return s
+   s
 end
 
 

@@ -52,7 +52,7 @@ function getdata(data::Data, var::AbstractString, plotrange, plotinterval)
          wi = reshape(wi, size(Xi))'
       end
    end
-   return xi, yi, wi
+   xi, yi, wi
 end
 
 
@@ -60,5 +60,5 @@ end
 function findindex(data::Data, var::AbstractString)
    VarIndex_ = findfirst(x->x==lowercase(var), lowercase.(data.head.wnames))
    isnothing(VarIndex_) && error("$(var) not found in file header variables!")
-   return VarIndex_
+   VarIndex_
 end

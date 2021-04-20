@@ -62,7 +62,6 @@ function MVA_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
    println("Ratio of intermediate variance to minimum variance = ",
       round(F.values[2]/F.values[3],digits=3))
 
-
    if DoPlot
       # Original Cartesian coordinates
       figure(figsize=(12,5))
@@ -101,5 +100,5 @@ function MVA_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
       tight_layout()
    end
 
-   return F
+   F
 end

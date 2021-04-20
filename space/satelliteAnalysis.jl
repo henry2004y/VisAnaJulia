@@ -25,7 +25,7 @@ end
 
 
 """
-	static_location_plot(filename, dir, nShift)
+    static_location_plot(filename, dir, nShift)
 
 Plot all MHD quantities for a static location during the simulation.
 # Arguments
@@ -110,7 +110,7 @@ function static_location_plot(filename="satellites_PIC.txt",
 end
 
 """
-	multi_satellite_plot(filename, dir)
+    multi_satellite_plot(filename, dir)
 
 One variable `var` plotted at 6 locations.
 """
@@ -148,8 +148,8 @@ function multi_satellite_plot(filename="satellites_PIC.txt",
 end
 
 """
-	multi_satellite_contour(filename, dir; DoSave=false,
-   	DoSubtractMean = true, nLead=10, nTrail=10)
+    multi_satellite_contour(filename, dir; DoSave=false,
+       DoSubtractMean = true, nLead=10, nTrail=10)
 
 Static satellite analysis, contour plots of all the variables as a function of
 location and time.
@@ -373,13 +373,14 @@ function satellite_p_contour(filename="satellites_y0_PIC.txt",
 end
 
 """
-	satellite_p_contour_test
+    satellite_p_contour_test(filename, dir; plane='y', nLead=10, nTrail=10,
+       No=1, DoSubtractMean=true)
 
 Test on different methods of obtaining the FTEs.
 """
 function satellite_p_contour_test(filename="satellites_y0_PIC.txt",
    dir="/Users/hyzhou/Documents/Computer/ParaView/data/"; plane='y',
-   DoSubtractMean = true, nLead=10, nTrail=10, No=1)
+   DoSubtractMean=true, nLead=10, nTrail=10, No=1)
 
    header, data, satelliteNo = read_satellite_data(dir*filename)
 
@@ -464,7 +465,7 @@ end
 
 
 """
-	wave_plot(nShift; DoPlot=false, filename, dir, iPlot=1, verbose)
+    wave_plot(nShift; DoPlot=false, filename, dir, iPlot=1, verbose)
 
 Static satellite wave analysis.
 `x` is the satellite position, `y` is the time, and `z` are values.
