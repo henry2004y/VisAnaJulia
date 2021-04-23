@@ -62,17 +62,17 @@ Plot the variable from SWMF output.
 - `plotrange::Vector`: (optional) range of plotting.
 - `plotinterval`: (optional) interval for interpolation.
 - `level`: (optional) level of contour.
-- `density`: (optional) density for streamlines.
 - `cut`: (optional) select 2D cut plane from 3D outputs ["x","y","z"].
 - `cutPlaneIndex`: (optional)
 - `multifigure`: (optional) 1 for multifigure display, 0 for subplots.
 - `verbose`: (optional) display additional information.
+- `density`: (optional) density for streamlines.
 Right now this can only deal with 2D plots or 3D cuts. Full 3D plots may be
 supported in the future.
 """
 function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
    plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, cutPlaneIndex=1,
-   density=1.0, multifigure=true, getrangeOnly=false, level=0, verbose=false)
+   multifigure=true, getrangeOnly=false, level=0, verbose=false, density=1.0)
 
    x, w = data.x, data.w
    plotmode = split(plotmode)
@@ -209,8 +209,8 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
                # The PyCall here can be potentially replaced with Spline2D.
                # Perform linear interpolation of the data (x,y) on grid(xi,yi)
                triang = matplotlib.tri.Triangulation(X,Y)
-               Xi = [y for x in xi, y in yi]
-	            Yi = [x for x in xi, y in yi]
+               Xi = [y for _ in xi, y in yi]
+	            Yi = [x for x in xi, _ in yi]
 
                W = w[:,1,VarIndex1_]
                interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
@@ -237,8 +237,8 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
                   xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
                   yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
 
-                  Xi = [i for i in xi, j in yi]
-                  Yi = [j for i in xi, j in yi]
+                  Xi = [i for i in xi, _ in yi]
+                  Yi = [j for _ in xi, j in yi]
 
                   spline = Spline2D(X, Y, w1)
                   v1 = spline(Xi[:], Yi[:])
@@ -250,7 +250,7 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
                end
             end
 
-            s = streamplot(Xi,Yi,v1,v2,color="w",linewidth=1.0,density=density)
+            s = streamplot(Xi,Yi,v1,v2; color="w", linewidth=1.0, density)
 
          elseif occursin("quiver", plotmode[ivar])
             VarQuiver  = split(var,";")
@@ -362,10 +362,10 @@ function plotdata(data::Data, func::AbstractString; cut="", plotmode="contbar",
             yi = range(cut2[1,1], stop=cut2[end,1],
             step=(cut2[end,1]-cut2[1,1])/(size(cut2,1)-1))
 
-            Xi = [i for j in yi, i in xi]
-            Yi = [j for j in yi, i in xi]
+            Xi = [i for _ in yi, i in xi]
+            Yi = [j for j in yi, _ in xi]
 
-            s = streamplot(Xi,Yi,v1,v2,color="w",linewidth=1.0,density=density)
+            s = streamplot(Xi,Yi,v1,v2; color="w", linewidth=1.0, density)
          end
 
          if cut == "x"
@@ -447,14 +447,14 @@ end
 """
 	streamslice(data::Data, var::String;
       plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
-      plotinterval=0.1, density=1.0, cutPlaneIndex=1,color="w")
+      plotinterval=0.1, density=1.0, cutPlaneIndex=1, color="w", linewidth=1.0)
 
 Plot streamlines on 2D slices of 3D box data. Variable string must be separated
 with `;`. Tranposes aree needed because of `meshgrid` and `ndgrid` conversion.
 """
 function streamslice(data::Data, var::AbstractString;
-   plotrange=[-Inf,Inf,-Inf,Inf], cut=' ',
-   plotinterval=0.1, density=1.0, cutPlaneIndex=1, color="w")
+   plotrange=[-Inf,Inf,-Inf,Inf], cut=' ', cutPlaneIndex=1,
+   plotinterval=0.1, kwargs...)
 
    x,w = data.x, data.w
    varStream  = split(var,";")
@@ -497,7 +497,7 @@ function streamslice(data::Data, var::AbstractString;
    Xi = [i for _ in yi, i in xi]
    Yi = [j for j in yi, _ in xi]
 
-   s = streamplot(Xi,Yi,v1',v2',color=color,linewidth=1.0,density=density)
+   s = streamplot(Xi,Yi,v1',v2'; kwargs...)
 
    if cut == 'x'
       xlabel("y"); ylabel("z")
@@ -642,8 +642,8 @@ function plot_surface(data::Data, var::AbstractString;
 
    xi, yi, wi = getdata(data, var, plotrange, plotinterval)
 
-   Xi = [y for x in xi, y in yi]
-   Yi = [x for x in xi, y in yi]
+   Xi = [y for _ in xi, y in yi]
+   Yi = [x for x in xi, _ in yi]
 
    c = plot_surface(Xi, Yi, wi; kwargs...)
 
@@ -651,13 +651,14 @@ function plot_surface(data::Data, var::AbstractString;
 end
 
 """
-	streamplot(data, var; plotrange, plotinterval=0.1, density=1.0, color="")
+	streamplot(data, var; plotrange, plotinterval=0.1, kwargs...)
 
 Wrapper over the streamplot function in matplotlib. Streamplot does not have
-**kwargs in the API.
+**kwargs in the API, but it supports `density`, `color`, and some other
+keywords.
 """
 function streamplot(data::Data, var::AbstractString;
-   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, density=1.0, color="")
+   plotrange=[-Inf,Inf,-Inf,Inf], plotinterval=0.1, kwargs...)
 
    x, w = data.x, data.w
    VarStream  = split(var,";")
@@ -680,8 +681,8 @@ function streamplot(data::Data, var::AbstractString;
 
       # Is there a triangulation method in Julia?
       tr = matplotlib.tri.Triangulation(X, Y)
-      Xi = [y for x in xi, y in yi]
-      Yi = [x for x in xi, y in yi]
+      Xi = [y for _ in xi, y in yi]
+      Yi = [x for x in xi, _ in yi]
 
       interpolator = matplotlib.tri.LinearTriInterpolator(tr, w[:,1,VarIndex1_])
       v1 = interpolator(Xi, Yi)
@@ -706,8 +707,8 @@ function streamplot(data::Data, var::AbstractString;
          xi = range(plotrange[1], stop=plotrange[2], step=plotinterval)
          yi = range(plotrange[3], stop=plotrange[4], step=plotinterval)
 
-         Xi = [i for i in xi, j in yi]
-	      Yi = [j for i in xi, j in yi]
+         Xi = [i for i in xi, _ in yi]
+	      Yi = [j for _ in xi, j in yi]
 
          spline = Spline2D(X, Y, w1)
 	      v1 = spline(Xi[:], Yi[:])
@@ -719,12 +720,7 @@ function streamplot(data::Data, var::AbstractString;
       end
    end
 
-   if isempty(color)
-      c = streamplot(Xi, Yi, v1, v2; density=density)
-   else
-      c = streamplot(Xi, Yi, v1, v2; density=density, color=color)
-   end
-   return c::PyCall.PyObject
+   c = streamplot(Xi, Yi, v1, v2; kwargs...)
 end
 
 
@@ -736,5 +732,5 @@ multiple snapshots. The main issue here is to determine the colorbar/axis range
 in advance to avoid any jump in the movie.
 """
 function animatedata()
-
+   @error "Never going to be implemented!"
 end
