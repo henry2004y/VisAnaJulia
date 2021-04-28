@@ -8,19 +8,6 @@
 
 using MAT, FFTW, Statistics, PyPlot
 
-"Moving box average."
-function sma(a::Array, n::Int)
-   vals = zeros(size(a,1) - (n-1), size(a,2))
-
-   for i in 1:size(a,1) - (n-1)
-      for j in 1:size(a,2)
-         vals[i,j] = mean(a[i:i+(n-1),j])
-      end
-   end
-
-   vals
-end
-
 function B_FFT(filename, varname="Bobs", vartype="total", Fs=1/0.3,
    Brange=1500:6000)
 

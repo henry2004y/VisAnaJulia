@@ -17,7 +17,7 @@
 using DelimitedFiles, Statistics, PyPlot, LinearAlgebra, Distributions, PyCall
 gridspec = pyimport("matplotlib.gridspec")
 
-include("Utility.jl")
+include("utility.jl")
 if !isdefined(Main, :Ganymede)
    include("Ganymede.jl")
    using .Ganymede

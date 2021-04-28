@@ -1,12 +1,16 @@
-using Documenter, VisAna
-
-#push!(LOAD_PATH,"../src/")
+using Documenter, VisAna, PyPlot
 
 makedocs(
     sitename="VisAna",
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true"
-    )
+    ),
+    pages = ["Home"           => "index.md",
+             "Analysis"   => "analysis.md",
+             "Example"   => "examples.md",
+             "Log"       => "log.md",
+             "Parker Spiral" => "parker_spiral.md"
+    ])
 )
 
 deploydocs(
