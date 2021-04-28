@@ -4,8 +4,6 @@
 [![](https://img.shields.io/badge/docs-latest-blue.svg)][SpaceAnalysis-doc]
 [![][codecov-img]][codecov-url]
 
-[SWMF](http://csem.engin.umich.edu/tools/swmf/) data reading, converting, visualizing and analyzing using Julia.
-
 This package provides the following functionalities for data analysis in space physics:
   * minimum variance analysis (MVA)
   * spectral analysis
