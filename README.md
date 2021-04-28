@@ -10,15 +10,13 @@ For more details, please check the [document][VisAna-doc].
 
 ## Prerequisites
 
-Julia 1.4+
+Julia 1.6+
 
 ## Installation
 ```
 using Pkg
-Pkg.add("Batsrus")
 Pkg.add(PackageSpec(url="https://github.com/henry2004y/VisAnaJulia", rev="master"))
 ```
-`VisAna` highly depends on [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl), which includes I/O functionalities. Even though it comes as a built-in dependency, I recommend adding `Batsrus.jl` explicitly to simplify the calling syntax.
 
 ## Usage
 
@@ -33,16 +31,10 @@ using VisAna
 ## Guides
 
 This package provides the following functionalities:
-  * simulation data reader
-  * simulation data visualization
-  * data format conversion
-  * programming language interoperability
   * data analysis in space physics
-  * test particle tracking
 
-The basic functionalities are splitted into a [standalone package](https://github.com/henry2004y/SWMF).
-The data analysis part includes spectral analysis, minimum variance analysis and
-many functions for aiding the interpretation of data.
+The basic functionalities are split into a [standalone package](https://github.com/henry2004y/Batsrus.jl).
+The data analysis part includes spectral analysis, minimum variance analysis and many functions for aiding the interpretation of data.
 
 See [here](docs/src/man/guide.md) for some development thoughts.
 In the future, each part will become a standalone package, and VisAna will only be a container.
