@@ -1,7 +1,7 @@
 # Public APIs
 
 ```@autodocs
-Modules = [VisAna]
+Modules = [SpaceAnalysis]
 Private = false
 Order = [:type, :function]
 ```

@@ -13,8 +13,9 @@ makedocs(;
              "Analysis"      => "man/analysis.md",
              "Example"       => "man/examples.md",
              "Log"           => "man/log.md",
-             "Parker Spiral" => "man/parker_spiral.md"
-    ])
+             "Parker Spiral" => "man/parker_spiral.md",
+             "Internal"      => "man/internal.md"
+    ]
 )
 
 deploydocs(
