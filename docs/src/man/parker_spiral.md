@@ -3,8 +3,8 @@
 The [interplanetary magnetic field](https://en.wikipedia.org/wiki/Interplanetary_magnetic_field) (IMF), also called Parker spiral, is the component of the solar magnetic field that is dragged out from the solar corona by the solar wind flow to fill the Solar System. Depending on the polarity of the photospheric footpoint, the heliospheric magnetic field spirals inward or outward; the magnetic field follows the same shape of spiral in the northern and southern parts of the heliosphere, but with opposite field direction. These two magnetic domains are separated by a current sheet (an electric current that is confined to a curved plane). This heliospheric current sheet has a shape similar to a twirled ballerina skirt, and changes in shape through the solar cycle as the Sun's magnetic field reverses about every 11 years. 
 
 References:
-[Richard Fitzpatrick](https://farside.ph.utexas.edu/teaching/plasma/lectures1/node68.html)
-[Mathematica](https://demonstrations.wolfram.com/TheInterplanetaryMagneticFieldParkerSpiral/)[^1]
+1. [Richard Fitzpatrick](https://farside.ph.utexas.edu/teaching/plasma/lectures1/node68.html)
+2. [Mathematica](https://demonstrations.wolfram.com/TheInterplanetaryMagneticFieldParkerSpiral/)[^1]
 
 [^1]: many equations in the Mathematic page assume that θ=π/2, so that sin(θ) term is missing!
 
@@ -74,8 +74,8 @@ using3D()
 ax = fig.gca(projection="3d")
 
 for i = 1:1
-   φ₀ = i*π/4
-   φ = @. 2π *( φ₀ + rmin*ωsun/Vr*(r/rmin - log(r) - 1 + log(rmin)) )
+   local φ₀ = i*π/4
+   local φ = @. 2π *( φ₀ + rmin*ωsun/Vr*(r/rmin - log(r) - 1 + log(rmin)) )
 
    X = @. r * sin(θ) * cos(φ) / AU
    Y = @. r * sin(θ) * sin(φ) / AU

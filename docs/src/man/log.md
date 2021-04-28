@@ -1,41 +1,5 @@
 # Development Log
 
-## Animation
-
-This is a big headache for me right now.
-The current support of animation in Matplotlib is not good enough, especially for interactive plotting and scanning through multiple snapshots.
-
-The color range is also an issue.
-
-## Dependency and Package Structure
-
-As to avoid the cross-dependency hell on PyPlot, I split the original package into pure IO [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl) and post-processing and plotting. This is also a nicer way of organizing larger code base.
-Furthermore, after Julia 1.6, the Python style `import A as B` and `using LinearAlgebra: cholesky as c, lu as l` are supported.
-This makes it possible to completely drop the dependency on PyPlot.jl and instead everytime one would need to say `using VisAna, PyPlot` to trigger the Matplotlib functions. A very nice thing is that I can in principle switch between PyPlot.jl and Plots.jl easily, depending on which package to use!
-
-Currently VisAna is more of a collection of scripts, instead of a true package.
-I am planning to build individual packages for each feature, so that others can make more use of what they want specifically.
-For example, the field tracing and test particle tracing have now become individual modules [FieldTracer.jl](https://github.com/henry2004y/FieldTracer.jl) and [TestParticle.jl](https://github.com/henry2004y/TestParticle.jl). Furthermore, these two packages can be merged into one called *Tracer.jl*.
-
-Demos are provided for calling MATLAB/Python directly from Julia for debugging and testing. This part will later be separated out for potential Python and MATLAB users. Currently the plotting and interpolation needed during plotting are done in Python. For instance, the scattered interpolation is done via `Interpolate` in Scipy. Hopefully these additional dependencies will be cut down.
-
-At first I forgot to export the Data struct, so everytime when I modified the code and rerun plotdata, it will shout error at me, saying no type was found for the input type.
-
-Precise control of colorbar position in Matplotlib is not an easy task. `axis(“scaled”)` or `axis(“equal”)` will cause issue with the present layout, such as overlapping, cutoff, or too much white spaces. Things are improving, but it takes time. See the scripts in the space folder for some examples of controlling the layouts.
-
-The current wrapper over Matplotlib makes it difficult to modify the plots afterwards, which especially causes problems when dealing with time series snapshots. The colorbar is so hard to fix. The solution is, instead of using `level`, provide a range of points.
-
-## User Recipe in Plots.jl
-
-There is a *extremely powerful* user recipe in Plots.
-
-* Repeatly using the same GKSTerm on Mac will display only white backgrounds in the end.
-* By default Plots uses `gr()` backend. The GR backend contour plot only accept vector x,y!
-* I don't want to have `Plots.jl` as a dependency. With simple plotting features this can work, but we may encounter [issues](https://github.com/JuliaPlots/RecipesBase.jl/issues/72) later. After Julia 1.6 this may be completely solved!
-* There is already a [UnitfulRecipes.jl](https://github.com/jw3126/UnitfulRecipes.jl) that provides the capability of auto-displaying units in figure labels, and it works smoothly with my user recipe. Amazing.
-* I have already built a customized package [UnitfulBatsrus.jl](https://github.com/henry2004y/UnitfulBatsrus.jl.git) and set it as a dependency for VisAna. Instead of the usual `u"km/s"` notation, we just need to use `bu"amucc"`.
-
-
 ## Scattered interpolation
 
 SWMF outputs may be in generalized coordinates. For the purpose of plotting, we often need to first interpolate onto a uniform mesh.
@@ -51,8 +15,8 @@ yi = range(minimum(Y), stop=maximum(Y), step=interval)
 # Perform linear interpolation of the data (x,y) on grid(xi,yi)
 triang = matplotlib.tri.Triangulation(X,Y)
 interpolator = matplotlib.tri.LinearTriInterpolator(triang, W)
-Xi = [y for x in xi, y in yi]
-Yi = [x for x in xi, y in yi]
+Xi = [y for _ in xi, y in yi]
+Yi = [x for x in xi, _ in yi]
 wi = interpolator(Xi, Yi)
 ```
 
@@ -62,81 +26,8 @@ From the author of the package:
 
 Actually there is a [QHull](https://github.com/JuliaPolyhedra/QHull.jl) wrapper in Julia now. But again this is a wrapper over a Python library. In this case I would say: do not reinvent the wheel for no good reasons.
 
-## Wrapper over Matplotlib
-
-A direct wrapper over PyPlot function is possible, and would be more suitable for passing arguments. This may be a more plausible way to go than relying on recipes.
-
-When doing processing in batch mode on a cluster, there's usually no need to render the plots on screen. There exists such a backend for this purpose:
-```
-using PyPlot
-PyPlot.matplotlib.use("Agg")
-```
-However, notice that currently Agg backend does not support draw_artist. For example, you cannot add an anchored text to your figure.
-
-Unlike the user recipes in `Plots.jl`, using `PyPlot.jl` would require to have it as a dependency. (This might not be necessary for the upcoming Julia 1.6!)
-
-## Makie
-
-[MakieLayout](https://jkrumbiegel.github.io/MakieLayout.jl/dev/) is a nice extension built on top of Makie to create publication quality figures and interactive plots.
-It basically includes all the funcationalities I want, so definitely worth a try.
-
 ## Macros
 
 Several places where macros can be used:
 * Create a subarray with a name symbol
 * Reduce wrapper code duplicates
-
-## Streamline
-
-The built-in streamline function of Matplotlib/MATLAB is not proper for scientifically visualizing field information. The solution is to trace field lines with ODEs and plot the line series, similar to what has been done by [Spacepy](https://github.com/spacepy/spacepy/blob/master/spacepy/pybats/trace2d.py).
-
-## GUI
-
-As for the GUI development, GTK seems to be an ideal candidate. However, the [GTK interface in Julia](https://github.com/JuliaGraphics/Gtk.jl) lacks full support for the toolkit, which makes it a little bit hard to use. I have only played with it for half a day. You can design the appearance of your window interactively, and save your in an HTML-like file.
-
-Makie is actually good at this, with the underlying OpenGL support.
-
-At this point GUI is not necessarily needed, if it does not speed up my own workflow.
-
-## Todo List
-
-- [x] Fixed colorbar control through Matplotlib
-- [x] Test suite for checking validity
-- [x] Cuts from 3D data visualization besides contour
-- [x] Field tracer 2D in Julia
-- [x] Derived variable support
-- [x] General postprocessing script for concatenating and converting files.
-- [x] Direct wrapper over Matplotlib functions to get seamless API
-- [x] Replace np.meshgrid with list comprehension
-- [x] Magnetic field line plots from simulation
-- [x] Particle phase space distribution plots
-- [ ] Add [FieldTracer.jl](https://github.com/henry2004y/FieldTracer.jl) and [TestParticle.jl](https://github.com/henry2004y/TestParticle.jl) to dependencies and create tests
-- [ ] Find a substitution of triangulation in Julia
-- [ ] Allow dot syntax to get dictionary contents (Base.convert?)
-- [ ] Macros for quickly looking at data (GUI is the ideal solution!)
-- [ ] Port to Makie
-- [ ] Animation
-- [ ] Make more separate small packages instead of one giant collection
-- [ ] Full coverage of tests
-
-### Learning from yt
-
-The yt Project in Python is a much more mature postprocessing package than mine. That's a good place to learn.
-
-* Off-axis slices: very similar to ParaView and other 3D visualization tools provide, make a 2D cut at any direction. This requires a robust interpolation scheme.
-
-* Projection: it is like an integral form of a quantity in a certain direction, and can be weighted or unweighted. It is not a necessary feature, as one can easily implement this once he or she knows how to do make off-axis slices.
-
-* Same interface for both structured and unstructure data: this is important for a larger user base.
-
-* Mesh plotting: they provide a method for adding mesh on top of plots. I haven't had a good implementation of this yet.
-
-* Center: it would be good to give the option of choosing the center of plots.
-
-* Units: they build a unit system using dictionary themselves. I don't want to reinvent the wheel, so I will just keep an eye on `Unitful.jl` and yt. What is inherited from IDL in `Batsrus.jl` needs rewritten.
-
-* Property control: I don't like the way yt handles figure properties like colorbar, axes, etc. Matplotlib already teaches you how to set these things, and yet again in yt they wrap everything with names they come up with. This is a more of a burden instead of benefit. They do certain things right like `set_cmap`, but not all of them. The section `Further Customization via Matplotlib` is all I want to see. Using popular libraries generally means that new comers won't take long to get used to the interfaces, and developers can have a eaiser time developing new features.
-
-* Log scale: symlog for data containing both positive and negative data, and switch to linear scale for small values.
-
-
