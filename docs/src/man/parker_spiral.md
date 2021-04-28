@@ -55,6 +55,8 @@ ax.grid(true)
 legend()
 
 ax.set_title("Interplanetary Magnetic Field In the Ecliptic Plane", va="bottom")
+
+show()
 ```
 
 ```@example 1
@@ -86,4 +88,6 @@ end
 xlabel("x [AU]")
 ylabel("y [AU]")
 zlabel("z [AU]")
+
+show()
 ```
