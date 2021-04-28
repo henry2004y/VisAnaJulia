@@ -22,26 +22,17 @@ Pkg.add(PackageSpec(url="https://github.com/henry2004y/VisAnaJulia", rev="master
 
 See the [examples](docs/src/man/examples.md).
 
-For local development of the package,
-```
-using Pkg; Pkg.activate(".")
-using VisAna
-```
-
 ## Guides
 
-This package provides the following functionalities:
-  * data analysis in space physics
+This package provides the following functionalities for data analysis in space physics:
+  * minimum variance analysis (MVA)
+  * spectral analysis
+  * moving box average for filtering magnetometer data
+  * coordinate transformations
 
-The basic functionalities are split into a [standalone package](https://github.com/henry2004y/Batsrus.jl).
-The data analysis part includes spectral analysis, minimum variance analysis and many functions for aiding the interpretation of data.
 
 See [here](docs/src/man/guide.md) for some development thoughts.
 In the future, each part will become a standalone package, and VisAna will only be a container.
-
-## Known Issues
-
-* Currently Julia does not have a clear way of letting one unregistered package depend on another unregistered package without first adding the other package manually. See the [issue](https://github.com/JuliaLang/Pkg.jl/issues/492) for details.
 
 ## Author
 
