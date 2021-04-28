@@ -1,9 +1,7 @@
-# Public types
-
-## Public types in module `VisAna`:
+# Public APIs
 
 ```@autodocs
 Modules = [VisAna]
 Private = false
-Order = [:type]
+Order = [:type, :function]
 ```
