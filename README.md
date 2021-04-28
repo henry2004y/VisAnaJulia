@@ -1,7 +1,7 @@
 # SpaceAnalysis
 [![](https://img.shields.io/github/workflow/status/henry2004y/VisAnaJulia/CI)](https://github.com/henry2004y/VisAnaJulia/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![](https://img.shields.io/badge/docs-latest-blue.svg)][VisAna-doc]
+[![](https://img.shields.io/badge/docs-latest-blue.svg)][SpaceAnalysis-doc]
 [![][codecov-img]][codecov-url]
 
 [SWMF](http://csem.engin.umich.edu/tools/swmf/) data reading, converting, visualizing and analyzing using Julia.
