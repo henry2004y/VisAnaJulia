@@ -44,7 +44,9 @@ ax.set_rlabel_position(-22.5)  # Move radial labels away from plotted line
 ax.grid(true)
 legend()
 
-ax.set_title(&quot;Interplanetary Magnetic Field In the Ecliptic Plane&quot;, va=&quot;bottom&quot;)</code></pre><pre class="documenter-example-output">PyObject Text(0.5, 1.0, &#39;Interplanetary Magnetic Field In the Ecliptic Plane&#39;)</pre><pre><code class="language-julia"># 3D
+ax.set_title(&quot;Interplanetary Magnetic Field In the Ecliptic Plane&quot;, va=&quot;bottom&quot;)
+
+show()</code></pre><pre><code class="language-julia"># 3D
 nr, nθ = 10, 50
 r_range = range(rmin, rmax, length=nr)
 θ_range = range(π/16, π*15/16, length=nθ)
@@ -71,4 +73,9 @@ end
 
 xlabel(&quot;x [AU]&quot;)
 ylabel(&quot;y [AU]&quot;)
-zlabel(&quot;z [AU]&quot;)</code></pre><pre class="documenter-example-output">PyObject Text(0.5, 0, &#39;z [AU]&#39;)</pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>many equations in the Mathematic page assume that θ=π/2, so that sin(θ) term is missing!</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../log/">« Log</a><a class="docs-footer-nextpage" href="../internal/">Internal »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Wednesday 28 April 2021 18:14">Wednesday 28 April 2021</span>. Using Julia version 1.6.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+zlabel(&quot;z [AU]&quot;)
+
+show()</code></pre><pre class="documenter-example-output">┌ Warning: Assignment to `φ₀` in soft scope is ambiguous because a global variable by the same name exists: `φ₀` will be treated as a new local. Disambiguate by using `local φ₀` to suppress this warning or `global φ₀` to assign to the existing global variable.
+└ @ none:3
+┌ Warning: Assignment to `φ` in soft scope is ambiguous because a global variable by the same name exists: `φ` will be treated as a new local. Disambiguate by using `local φ` to suppress this warning or `global φ` to assign to the existing global variable.
+└ @ none:4</pre><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-1"><a class="tag is-link" href="#citeref-1">1</a>many equations in the Mathematic page assume that θ=π/2, so that sin(θ) term is missing!</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../log/">« Log</a><a class="docs-footer-nextpage" href="../internal/">Internal »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Wednesday 28 April 2021 18:40">Wednesday 28 April 2021</span>. Using Julia version 1.6.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
