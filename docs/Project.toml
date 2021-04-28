@@ -1,3 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-VisAna = "3da60289-db0e-42b3-9214-5194de249930"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+SpaceAnalysis = "3da60289-db0e-42b3-9214-5194de249930"

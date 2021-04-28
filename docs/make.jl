@@ -1,14 +1,18 @@
-using Documenter, VisAna, PyPlot
+using Documenter, SpaceAnalysis, PyPlot
 
-makedocs(
-    sitename="VisAna",
-    format = Documenter.HTML(
-        prettyurls = get(ENV, "CI", nothing) == "true"
+makedocs(;
+    modules=[SpaceAnalysis],
+    authors="Hongyang Zhou <hyzhou@umich.edu> and contributors",
+    sitename="SpaceAnalysis",
+    format=Documenter.HTML(;
+        prettyurls=get(ENV, "CI", "false") == "true",
+        canonical="https://henry2004y.github.io/VisAnaJulia",
+        assets=String[],
     ),
-    pages = ["Home"           => "index.md",
-             "Analysis"   => "analysis.md",
-             "Example"   => "examples.md",
-             "Log"       => "log.md",
+    pages = ["Home"          => "index.md",
+             "Analysis"      => "analysis.md",
+             "Example"       => "examples.md",
+             "Log"           => "log.md",
              "Parker Spiral" => "parker_spiral.md"
     ])
 )
