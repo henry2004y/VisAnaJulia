@@ -1,24 +1,8 @@
 # Utility functions for space data analysis.
 
-using ImageFiltering, OffsetArrays
+using ImageFiltering, OffsetArrays, FFTW
 
-export sma, read_satellite_data, mag2db
-
-"Import satellite data. Require one line header presented."
-function read_satellite_data(fname)
-   f = readdlm(fname, ',', Float32, '\n'; header=true)
-
-   header = f[2][1:end-1]
-   data   = f[1]
-
-   satelliteNo = unique(data[:,1]) # number of static satellites
-
-   if minimum(satelliteNo) > 0.1
-      @error "Some thing is wrong with the input data!"
-   end
-
-   header, data, satelliteNo
-end
+export sma, mag2db, spectrum
 
 "Convert `x` from magnitude to decibels."
 mag2db(x) = 10. * log10.(x)
@@ -36,9 +20,8 @@ function sma(x, n::Tuple{Int,Int}=(5,5))
    imfilter(x, kernel)
 end
 
-
 """
-    sma(x, n=100)
+    sma(x, n=5)
 
 Simple moving box average of the vector data `x` with box length 'n'.
 One-sided average on the left and right edge with replicate border.
@@ -48,14 +31,22 @@ function sma(x::Vector, n::Int=5)
    sma(x, ((n-1)÷2, (n-1)÷2))
 end
 
-
 """
-    ema(x, n=5)
+    spectrum(x, Fs)
 
-Return the exponentially moving box average of the vector data `x` with box
-length 'n'.
-Check https://github.com/JuliaQuant/MarketTechnicals.jl/blob/master/src/movingaverages.jl
+Return the frequency and amplitude for the single-sided spectrum of vector `x`
+given sample frequency of `Fs`.
 """
-function ema(x::Vector, n::Int=5)
-   @warn "To be implemented!"
+function spectrum(x::Vector, Fs)
+   L = length(x)
+   x̃ = fft(x)
+   # Compute the two-sided spectrum amplitude P2.
+   P₂ = @. abs(x̃/L)
+   # Compute the single-sided spectrum amplitude P1.
+   P₁ = P₂[1:floor(Int, L/2+1)]
+   P₁[2:end-1] .= 2 .* P₁[2:end-1]
+
+   f = Fs * (0:(L/2)) / L
+
+   f, P₁
 end
