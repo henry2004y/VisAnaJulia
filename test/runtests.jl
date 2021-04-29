@@ -1,7 +1,5 @@
 # Test of SpaceAnalysis
 
-ENV["MPLBACKEND"]="agg" # no GUI
-
 using SpaceAnalysis, Test
 
 @testset "SpaceAnalysis.jl" begin
@@ -19,7 +17,7 @@ using SpaceAnalysis, Test
       f, P1 = spectrum(X, Fs)
       @test f[end] == 500. && maximum(P1) == 1.0303307012340501
 
-      @test mag2db(x)[end] == -12.760865229408134
+      @test mag2db(f)[end] == -12.760865229408134
    end
 
    @testset "MVA" begin # minimum variance analysis
