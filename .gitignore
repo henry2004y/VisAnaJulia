@@ -10,5 +10,6 @@
 *.vts
 *.tec
 *.zip
+*.mat
 *~
 docs/build/
