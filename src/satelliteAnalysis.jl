@@ -24,6 +24,22 @@ if !isdefined(Main, :Ganymede)
 end
 
 
+"Import satellite data. Require one line header presented."
+function read_satellite_data(fname)
+   f = readdlm(fname, ',', Float32, '\n'; header=true)
+
+   header = f[2][1:end-1]
+   data   = f[1]
+
+   satelliteNo = unique(data[:,1]) # number of static satellites
+
+   if minimum(satelliteNo) > 0.1
+      @error "Some thing is wrong with the input data!"
+   end
+
+   header, data, satelliteNo
+end
+
 """
     static_location_plot(filename, dir, nShift)
 
@@ -465,7 +481,7 @@ end
 
 
 """
-    wave_plot(nShift; DoPlot=false, filename, dir, iPlot=1, verbose)
+    wave_analysis(nShift; DoPlot=false, filename, dir, iPlot=1, verbose=false)
 
 Static satellite wave analysis.
 `x` is the satellite position, `y` is the time, and `z` are values.
@@ -477,7 +493,7 @@ Static satellite wave analysis.
 - `iPlot::Integer=1`: label tag index in alphabetical order starting from (a).
 - `verbose::Bool=false`: Display information.
 """
-function wave_plot(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
+function wave_analysis(nShift=115; DoPlot=false, filename="satellites_PIC.txt",
    dir="/Users/hyzhou/Documents/Computer/ParaView/data/", iPlot=1, verbose=true)
 
    header, data, satelliteNo = read_satellite_data(dir*filename)
@@ -759,7 +775,7 @@ peakUp, peakDn = satellite_p_contour("satellites_y0_PIC.txt"; No=2, plane='y')
 #nShift = 130
 #static_location_plot("satellites_Hall.txt",
 #   "/Users/hyzhou/Documents/Computer/ParaView/data/", nShift)
-#wave_plot(nShift; DoPlot=true, filename="satellites_Hall.txt", iPlot=1,
+#wave_analysis(nShift; DoPlot=true, filename="satellites_Hall.txt", iPlot=1,
 #   verbose=true)
 #fnew = check_wave_type()
 #check_wave_type()
