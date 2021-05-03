@@ -1,6 +1,6 @@
 # Test of SpaceAnalysis
 
-using SpaceAnalysis, Test, Random
+using SpaceAnalysis, Test, Random, DelimitedFiles
 
 rng = MersenneTwister(1234)
 
@@ -33,7 +33,21 @@ rng = MersenneTwister(1234)
       
    end
 
-   @testset "fluctuation" begin # wave fluctuation generation
-      
+   @testset "signal" begin # signal generation
+      n0 = 1e6 # density, [amu/m^3]
+      T0 = 1e6 # temperature, [K]
+      V0 = [-700., 0.0, 0.0]*1e3 # velocity, [m/s] 
+      B0 = [-3., 3., 0.]*1e-9 # magnetic field, [T]
+
+      varBG = VariableBackground(n0, T0, V0..., B0...)
+
+      s = generate_signal(varBG; fsignal=1, dv=1e5, fsample=2, tend=10, dir="y")
+
+      save_signal(s)
+
+      d = readdlm("sw.dat", '\t', Float64, header=true)
+
+      @test d[1][10, end-1] == -4.57e-9
+      rm("sw.dat")
    end
 end
