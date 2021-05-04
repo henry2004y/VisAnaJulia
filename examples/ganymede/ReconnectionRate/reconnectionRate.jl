@@ -16,8 +16,6 @@ if !isdefined(Main, :Ganymede)
    using .Ganymede: Rg, upstream_value
 end
 
-include("../Utility.jl")
-
 # Background
 # G8 B= -10 -6 -86 [nT], U=140 0 0 [km/s]
 Uxbk = upstream_value[2]
@@ -25,9 +23,8 @@ Bybk = upstream_value[6]
 Bzbk = upstream_value[7]
 TiltedAngle = atan(Bybk/Bzbk)
 
-#dir = "/Users/hyzhou/Documents/Computer/ParaView/data/"
-dirHallSurface = "/Users/hyzhou/Documents/Computer/ParaView/scripts/ReconnectionRate/dataSurf_Hall/"
-dirPICSurface = "/Users/hyzhou/Documents/Computer/ParaView/scripts/ReconnectionRate/dataSurf_PIC/"
+dirHallSurface = "dataSurf_Hall/"
+dirPICSurface = "dataSurf_PIC/"
 
 ##
 # Get upstream theoretical maximum potential drop
@@ -38,12 +35,9 @@ Potential_bk = Δy * cos(TiltedAngle) * Rg *
    Uxbk*1e3 * abs(Bzbk*cos(TiltedAngle)+Bybk*sin(TiltedAngle))*1e-9 *
    1e-3 # [kV]
 
-#data_hall = readdlm(dir*"CPCP_hall.txt", comments=true)
-#data_pic  = readdlm(dir*"CPCP_pic.txt", comments=true)
 data_hall = readdlm(dirHallSurface*"CPCP_test.txt", comments=true)
 data_pic  = readdlm(dirPICSurface*"CPCP_test.txt", comments=true)
 data_pic[:,1] .-= 300.
-
 
 if size(data_hall) != size(data_pic)
    @warn "Hall ($(size(data_hall)[1])) and MHD-EPIC ($(size(data_pic)[1])) " *

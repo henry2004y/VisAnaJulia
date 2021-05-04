@@ -1,6 +1,6 @@
 module Ganymede
 
-include("constants.jl")
+using SpaceAnalysis: me, mp, ϵ0, q 
 
 export Rg, μ₀, amu, upstream_value, γ
 export Index, getIndex

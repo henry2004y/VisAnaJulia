@@ -4,8 +4,6 @@
 # Identify boundary points from Paraview polyline tracing output
 # Integrate electric fields along the magnetopause boundary
 #
-# In the near future, I want to call Paraview directly in Julia.
-#
 # Hongyang Zhou, hyzhou@umich.edu 11/11/2019
 
 using DelimitedFiles, PyPlot, NumericalIntegration, LinearAlgebra
@@ -138,7 +136,8 @@ end
 
 
 """
-   integrate_along_boundary(filename)
+    integrate_along_boundary(filename)
+
 Integrate variables along the 2D boundary line.
 
 May add Hall velocity later!
