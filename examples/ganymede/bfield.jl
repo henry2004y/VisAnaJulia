@@ -1,4 +1,4 @@
-# Script for SWMF Galileo Flyby Simulation Comparison.
+# Script for SWMF Galileo flybys simulated magnetic field comparison.
 #
 # 1. Steady state
 # 2. Time accurate
@@ -7,45 +7,36 @@
 
 using Batsrus, CSV, Dates, PyPlot, Interpolations
 
-#=
-## Calculate differences & save to output file
-Bdiff = Bobs - Bsim
-# There`s a difference between the 2 definitions of 2-norm.
-norm2 = mean(abs(Bdiff(~isnan(Bdiff))).^2)^(1/2)
-# Find the index and value of the best parameter set
-[val, idx] = min(norm2)
-=#
-
 struct BField{T<:AbstractFloat}
    t::Vector{DateTime}
-   Bx::Vector{T}
-   By::Vector{T}
-   Bz::Vector{T}
-   Bmag::Vector{T}
+   Bx::AbstractVector{T}
+   By::AbstractVector{T}
+   Bz::AbstractVector{T}
+   Bmag::AbstractVector{T}
 end
 
 """
-	plotBSteady(flyby=8; filename, DoSave, dirObs, npict)
+	plotBSteady(flyby=8; file, dirobs, npict)
 
-Plot quasi-steady state magnetic field comparison. Second norm is calculated to
-quantitatively estimate the difference.
-# Input arguments
+Plot quasi-steady state magnetic field comparison between simulation results from `file`
+end observation from `dirobs`. Second norm is calculated to estimate the difference.
+# Arguments
 - `flyby::Int`: flyby index in [1,2,7,8,28,29].
 """
-function plotBSteady(flyby=8; filename="box_var_4_n00080000.out", DoSave=false,
-   dirObs="/Users/hyzhou/Documents/research/Ganymede/Galileo", npict=1)
+function plotBSteady(flyby=8; file="box_var_4_n00080000.out", dirobs=".", npict=1)
 
    # Read observation data
-   t, df, BobsStrength = getBObs(flyby, dirObs)
+   fileobs = joinpath(dirobs, "Galileo_G"*string(flyby)*"_flyby_MAG.dat")
+   t, df = getBObs(fileobs)
+   BobsStrength = hypot.(df.Bx, df.By, df.Bz)
 
    # Read simulation data
-   path = dirname(filename)
-   if isempty(path)
-      data = readdata(filename, npict=npict)
+   dirsim = dirname(file)
+   if isempty(dirsim)
+      data = readdata(file; npict)
    else
-      data = readdata(basename(filename), dir=path, npict=npict)
+      data = readdata(basename(file); dir=dirsim, npict)
    end
-
 
    # Interpolate simulation data to observation data
    nx, nw = data.head.nx, data.head.nw
@@ -100,17 +91,25 @@ function plotBSteady(flyby=8; filename="box_var_4_n00080000.out", DoSave=false,
    ax4.xaxis.set_major_formatter(formatter)
    legend()
    tight_layout()
-
-   if DoSave # Save the plot
-
-   end
-
+   nothing
 end
 
-"Time accurate B field interpolation."
-function read_simulation_data(filename, dir, t, df, tStart, firstpict, lastpict)
+"""
+    interp_simulation(file, dir, t, df, tStart, firstpict)
 
-   data = readdata(filename, dir=dir)
+Return interpolated time-accurate B field stored in `file` from snapshot `firstpict` onto
+timestamps `t` at satellite locations in `df`.
+`tStart` is the starting DateTime for the synthetic satellite.
+   
+This is designed to handle any number of simulation snapshots. If the simulation time
+interval is smaller than the observation's (which is usually the case), than the magnetic
+field along the trajectory before time `tstart` is obtained from the first single snapshot
+`firstpict`, and the field after the end time is obtained from the last single snapshot
+ipict=npict. In this way we avoid the artificial jump due to periodic interpolation.
+"""
+function interp_simulation(file, dir, t, df, tStart, firstpict)
+
+   data = readdata(file; dir)
 
    # Interpolate simulation data to observation data
    nx, nw = data.head.nx, data.head.nw
@@ -126,10 +125,10 @@ function read_simulation_data(filename, dir, t, df, tStart, firstpict, lastpict)
    kEnd = findfirst(tEnd .- t .< Second(0))
 
    nSim = kStart + (length(t) - kEnd + 1) + npict - 2
-   BxSim = Vector{Float32}(undef,nSim)
-   BySim = Vector{Float32}(undef,nSim)
-   BzSim = Vector{Float32}(undef,nSim)
-   tSim = Vector{DateTime}(undef,nSim)
+   BxSim = Vector{Float32}(undef, nSim)
+   BySim = Vector{Float32}(undef, nSim)
+   BzSim = Vector{Float32}(undef, nSim)
+   tSim = Vector{DateTime}(undef, nSim)
    tSim[1:kStart] = t[1:kStart]
 
    # This is an approximation
@@ -137,7 +136,7 @@ function read_simulation_data(filename, dir, t, df, tStart, firstpict, lastpict)
    tSim[kStart+npict-1:end] = t[kEnd:end]
 
    # Extract B field along the traj. before the starting time in one snapshot
-   data = readdata(filename, dir=dir, npict=firstpict)
+   data = readdata(file; dir, npict=firstpict)
 
    # Interpolate simulation data to observation data
    x = data.x[:,1,1,1]
@@ -165,7 +164,7 @@ function read_simulation_data(filename, dir, t, df, tStart, firstpict, lastpict)
    # Extract the magnetic field along the trajectory from multiple snapshot
    for ipict = 1:npict-1
       println("ipict=$(round(ipict,digits=2))")
-      data = readdata(filename, dir=dir, npict=firstpict+ipict)
+      data = readdata(file; dir, npict=firstpict+ipict)
       # Interpolate simulation data to observation data
       x = data.x[:,1,1,1]
       y = data.x[1,:,1,2]
@@ -178,18 +177,18 @@ function read_simulation_data(filename, dir, t, df, tStart, firstpict, lastpict)
       k = argmin( abs.(tSim[kStart+ipict] .- t) )
 
       itpBx = interpolate(knots, Bx, Gridded(Linear()))
-      BxSim[kStart+ipict] = itpBx(df.X[k],df.Y[k],df.Z[k])
+      BxSim[kStart+ipict] = itpBx(df.X[k], df.Y[k], df.Z[k])
 
       itpBy = interpolate(knots, By, Gridded(Linear()))
-      BySim[kStart+ipict] = itpBy(df.X[k],df.Y[k],df.Z[k])
+      BySim[kStart+ipict] = itpBy(df.X[k], df.Y[k], df.Z[k])
 
       itpBz = interpolate(knots, Bz, Gridded(Linear()))
-      BzSim[kStart+ipict] = itpBz(df.X[k],df.Y[k],df.Z[k])
+      BzSim[kStart+ipict] = itpBz(df.X[k], df.Y[k], df.Z[k])
    end
 
-   BxSim[kStart+npict:end] = itpBx.(df.X[kEnd+1:end],df.Y[kEnd+1:end],df.Z[kEnd+1:end])
-   BySim[kStart+npict:end] = itpBy.(df.X[kEnd+1:end],df.Y[kEnd+1:end],df.Z[kEnd+1:end])
-   BzSim[kStart+npict:end] = itpBz.(df.X[kEnd+1:end],df.Y[kEnd+1:end],df.Z[kEnd+1:end])
+   BxSim[kStart+npict:end] = itpBx.(df.X[kEnd+1:end], df.Y[kEnd+1:end], df.Z[kEnd+1:end])
+   BySim[kStart+npict:end] = itpBy.(df.X[kEnd+1:end], df.Y[kEnd+1:end], df.Z[kEnd+1:end])
+   BzSim[kStart+npict:end] = itpBz.(df.X[kEnd+1:end], df.Y[kEnd+1:end], df.Z[kEnd+1:end])
 
    BsimStrength = hypot.(BxSim, BySim, BzSim)
 
@@ -208,19 +207,14 @@ function timelinspace(d1::DateTime, d2::DateTime; n=2)
    return d1:δ:d2
 end
 
+"Read observation data from `file` and return the timestamps and data."
+function getBObs(file)
 
-function getBObs(flyby=8,
-   dir="/Users/hyzhou/Documents/research/Ganymede/Galileo")
-
-   # Read observation data
-   Obsfile = "Galileo_G"*string(flyby)*"_flyby_MAG.dat"
-
-   df = CSV.File(joinpath(dir,Obsfile);header=2,delim=" ",ignorerepeated=true)
+   df = CSV.File(file; header=2, delim=" ", ignorerepeated=true)
    t = DateTime.(df.yr, df.month, df.day, df.hr, df.min, floor.(Int, df.sec),
       floor.(Int, 1e3 .* (df.sec - floor.(df.sec))) )
-   BobsStrength = hypot.(df.Bx, df.By, df.Bz)
 
-   return t, df, BobsStrength
+   t, df
 end
 
 ##
@@ -229,23 +223,14 @@ end
 #   SimDir="/Users/hyzhou/Ganymede/Hall_AMR3/GM",)
 
 #=
-Plot time-accurate magnetic field comparisons.
-This function is able to handle any npict number of snapshots. If the simulation
-time interval is smaller than observation (which is usually the case), than the
-magnetic field along the trajectoryy before time_start is obtained from first
-single snapshot ipict=1, and B after time_end is obtained from the last single
-snapshot ipict=npict. In this way, I avoid the jump due to periodic
-interpolation.
-`flyby` and `time_start` need to be modified when switching between flybys.
-=#
-
-#=
+# Plot time-accurate magnetic field comparisons.
 flyby = 8
 filename = ["box_Hall_B_1200.outs", "box_PIC_B_1200.outs"]
 dir = "/Users/hyzhou/Documents/Computer/Julia/BATSRUS/VisAnaJulia"
 firstpict, lastpict = 1, 1
 
-t, df, BobsStrength = getBObs()
+t, df = getBObs()
+BobsStrength = hypot.(df.Bx, df.By, df.Bz)
 
 # Select the starting time for synthetic satellite
 if flyby == 8
@@ -256,9 +241,9 @@ elseif flyby == 28
    tStart = DateTime(2000,5,20,10,0,12)
 end
 
-Hall = read_simulation_data(filename[1], dir, t,df, tStartHall, firstpict,lastpict)
+Hall = interp_simulation(filename[1], dir, t,df, tStartHall, firstpict)
 
-PIC = read_simulation_data(filename[2], dir, t,df, tStart, firstpict,lastpict)
+PIC = interp_simulation(filename[2], dir, t,df, tStart, firstpict)
 
 fig, ax = plt.subplots(4,1,figsize=(10.0,5.0))
 plt.rc("font", family="serif", size=14)
