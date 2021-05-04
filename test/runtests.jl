@@ -47,7 +47,7 @@ rng = MersenneTwister(1234)
 
       d = readdlm("sw.dat", '\t', Float64, header=true)
 
-      @test d[1][10, end-1] == -4.57e-9
+      @test d[1][10, end-1] == -4.569e-9
       rm("sw.dat")
    end
 end
