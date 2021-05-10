@@ -1,4 +1,4 @@
-#
+# Minimum variance analysis
 
 export mva
 
