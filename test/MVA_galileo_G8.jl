@@ -10,11 +10,11 @@
 using CSV, DataFrames, CodecZlib, Dates, PyPlot, Mmap
 
 """
-    MVA_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
+    mva_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
 
 This function is currently only written for the specific input file.
 """
-function MVA_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
+function mva_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
    # Load magnetometer data Bx, By, Bz
    if filename[end-1:end] == "gz"
       df = CSV.File(transcode(GzipDecompressor, Mmap.mmap(filename));
@@ -24,7 +24,7 @@ function MVA_analysis(filename::AbstractString, index_::UnitRange, DoPlot=false)
    end
 
    # inbound crossing interval
-   F = MVA(df.Bx[index_], df.By[index_], df.Bz[index_])
+   F = mva(df.Bx[index_], df.By[index_], df.Bz[index_])
 
    t = DateTime.(df.yr, df.month, df.day, df.hr, df.min, floor.(Int, df.sec),
       floor.(Int, 1e3 .* (df.sec - floor.(df.sec))) )
