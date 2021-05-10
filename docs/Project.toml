@@ -1,5 +1,5 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 EmpiricalModeDecomposition = "13f08ee4-7ac9-11e8-319c-07f4727f0a09"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 SpaceAnalysis = "3da60289-db0e-42b3-9214-5194de249930"
