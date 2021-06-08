@@ -12,12 +12,12 @@ using TestParticle.Dipole: dipole
       t = (0:L-1)*T  # Time vector
       # Form a signal containing a 50 Hz sinusoid of amplitude 0.7 and
       # a 120 Hz sinusoid of amplitude 1.
-      S = @. 0.7*sin(2π*50*t) + sin(2π*120*t)
+      S = @. 0.7*sinpi(2*50*t) + sinpi(2*120*t)
       # Corrupt the signal with zero-mean white noise with a variance of 4.
       X = S + 2*randn(MersenneTwister(1234), length(t))
 
       f, P1 = spectrum(X, Fs)
-      @test f[end] == 500. && maximum(P1) == 0.9513531477953495
+      @test f[end] == 500. && maximum(P1) == 0.9513531477953538
 
       @test mag2db(f)[end] == 26.989700043360187
    end
@@ -34,7 +34,7 @@ using TestParticle.Dipole: dipole
       f = 7e-3 # frequency, [Hz]
       h = 1    # sample period, [s]
       t = range(0.0, 286.0, step=h)
-      y = @. sin(2π * f * t)
+      y = @. sinpi(2 * f * t)
       ynoise = y + 0.1*randn(MersenneTwister(1234), length(t))
 
       fmax = 1e-2
@@ -57,8 +57,8 @@ using TestParticle.Dipole: dipole
       @test Bμ[end] ≈ 3.8218046039957365e-9
 
       # Introduce 2 oscillations with different freqs s.t. there will be multiple IMFs.
-      Bx += 1e-9*sin.(2π * f * t[1:length(x)])
-      Bx += 1e-10*cos.(2π * 10f * t[1:length(x)])
+      Bx += 1e-9*sinpi.(2 * f * t[1:length(x)])
+      Bx += 1e-10*cospi.(2 * 10f * t[1:length(x)])
 
       # Bμ ∥ B should be dominant.
       Bμ, Bϕ, Bν = mfa(x, y, z, Bx, By, Bz; method="EMD", fsample, fmax, verbose=true)
@@ -67,20 +67,43 @@ using TestParticle.Dipole: dipole
    end
 
    @testset "signal" begin # signal generation
+      # Alfvénic perturbation
       n0 = 1e6 # density, [amu/m^3]
       T0 = 1e6 # temperature, [K]
       V0 = [-700., 0.0, 0.0]*1e3 # velocity, [m/s] 
       B0 = [-3., 3., 0.]*1e-9 # magnetic field, [T]
 
-      varBG = VariableBackground(n0, T0, V0..., B0...)
+      varBG = BackgroundVariable(n0, T0, V0..., B0...)
 
-      s = generate_signal(varBG; fsignal=1, dv=1e5, fsample=2, tend=10, dir="y")
+      s = generate_signal(varBG; fsignal=0.1, signal=:alfven, dv=1e5, fsample=2, tend=10,
+         dir="y")
 
       save_signal(s)
 
       d = readdlm("sw.dat", '\t', Float64, header=true)
 
-      @test d[1][10, end-1] == -4.569e-9
+      @test d[1][10, end-1] == 1.4167e-9
       rm("sw.dat")
+
+      # Density pulse
+      n0 = 2e6 # density, [amu/m^3]
+      T0 = 5e5 # temperature, [K]
+      V0 = [-600., 0.0, 0.0]*1e3 # [m/s] 
+      B0 = [5., 0., 0.]*1e-9 # [T]
+      
+      varBG = BackgroundVariable(n0, T0, V0..., B0...)
+      
+      fsignal = 1/150 # perturbation frequency, [Hz]
+      signal  = :fast # perturbation type
+      dv      = 5e4   # perturbation magnitude in velocity, [m/s]
+      dn      = 1     # perturbation magnitude in density, [amu/cc]
+      dir     = "y"   # perturbed direction(s)
+      fsample = 2     # sampling frequency, [Hz]
+      tstart  = 300   # [s]
+      tend    = 450   # [s]
+      
+      s = generate_signal(varBG; fsignal, signal, dv, fsample, tstart, tend, dir)
+      @test s.n[end] ≈ n0
+
    end
 end
