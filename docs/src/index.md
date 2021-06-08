@@ -29,8 +29,8 @@ Pages = [
     "man/examples.md",
     "man/functions.md",
     "man/types.md",
-    "man/analysis.md"
-    "man/trace.md"
+    "man/analysis.md",
+    "man/trace.md",
     "man/text.md"
 ]
 Depth = 1
