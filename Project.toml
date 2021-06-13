@@ -18,6 +18,7 @@ UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
 FFTW = "1.4"
 ImageFiltering = "0.6"
 OffsetArrays = "1.7"
+UnPack = "1"
 julia = "1"
 
 [extras]
