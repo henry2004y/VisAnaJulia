@@ -1,8 +1,7 @@
 # Test of SpaceAnalysis
 
 using SpaceAnalysis, Test, Random, DelimitedFiles
-using TestParticle: BMoment_Earth, Rₑ
-using TestParticle.Dipole: dipole
+using TestParticle: BMoment_Earth, Rₑ, dipole
 
 @testset "SpaceAnalysis.jl" begin
    @testset "Spectrum" begin
