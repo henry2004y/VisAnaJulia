@@ -4,6 +4,13 @@
 [![](https://img.shields.io/badge/docs-latest-blue.svg)][SpaceAnalysis-doc]
 [![][codecov-img]][codecov-url]
 
+---
+**NOTE**
+
+The package is under transition phase. If you are looking for SWMF-related functionalties, please refer to [Batsrus.jl](https://github.com/henry2004y/Batsrus.jl/)
+
+---
+
 This package provides the following functionalities for data analysis in space physics:
   * minimum variance analysis (MVA)
   * spectral analysis
