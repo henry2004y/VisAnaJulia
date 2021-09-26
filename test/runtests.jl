@@ -1,7 +1,18 @@
 # Test of SpaceAnalysis
 
 using SpaceAnalysis, Test, Random, DelimitedFiles
-using TestParticle: BMoment_Earth, Rₑ, dipole
+
+"Calculates the magnetic field from a dipole with magnetic moment `M` at `r`."
+function dipole(rIn, M)
+   x, y, z = rIn
+   r = sqrt(x^2 + y^2 + z^2)
+   Coef = 1e-7 / r^5 # μ₀/(4*π*r^5)
+
+   B = [3*x^2-r^2 3*x*y     3*x*z;
+        3*y*x     3*y^2-r^2 3*y*z;
+        3*z*x     3*z*y     3*z^2-r^2
+       ] * M * Coef
+end
 
 @testset "SpaceAnalysis.jl" begin
    @testset "Spectrum" begin
@@ -43,17 +54,19 @@ using TestParticle: BMoment_Earth, Rₑ, dipole
       @test ybk[100] ≈ -0.9506051118519016
 
       # Transfroming an ideal Earth dipole field along a straight line in x
+      Rₑ = 6.378e6
       x = range(3, 20, step=0.1) * Rₑ
       y = ones(size(x))
       z = 2 .* y
       Bx, By, Bz = similar(z), similar(z), similar(z)
+      BMoment_Earth = [0.0, 0.0, 7.94e22] # [V*s/(A*m)]
       for i in axes(x, 1)
          Bx[i], By[i], Bz[i] = dipole([x[i], y[i], z[i]], BMoment_Earth)
       end
       # Bμ ∥ B should be dominant.
       Bμ, Bϕ, Bν = mfa(x, y, z, Bx, By, Bz; method="MAVG", nw=15)
 
-      @test Bμ[end] ≈ 3.8218046039957365e-9
+      @test Bμ[end] == 3.8254010321827695e-9
 
       # Introduce 2 oscillations with different freqs s.t. there will be multiple IMFs.
       Bx += 1e-9*sinpi.(2 * f * t[1:length(x)])
@@ -62,7 +75,7 @@ using TestParticle: BMoment_Earth, Rₑ, dipole
       # Bμ ∥ B should be dominant.
       Bμ, Bϕ, Bν = mfa(x, y, z, Bx, By, Bz; method="EMD", fsample, fmax, verbose=true)
 
-      @test Bμ[end] ≈ 3.953128338980362e-9
+      @test Bμ[end] == 3.956605392869394e-9
    end
 
    @testset "signal" begin # signal generation
