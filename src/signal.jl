@@ -75,7 +75,7 @@ function generate_signal(varBG::BackgroundVariable; fsignal=1.0, fsample=5.0,
    end
 
    if signal == :alfven
-      δV = @. dv * sinpi(2 * fsignal * t)
+      δV = @. dv * sinpi(2 * fsignal * (t - tstart))
       δB = @. B0 / VA * δV
       if occursin("x", dir)
          Vx .+= δV
@@ -91,7 +91,7 @@ function generate_signal(varBG::BackgroundVariable; fsignal=1.0, fsample=5.0,
       end
 
    elseif signal == :fast
-      δn = @. dn * 1e6 * sinpi(2 * fsignal * t)
+      δn = @. dn * 1e6 * sinpi(2 * fsignal * (t - tstart))
       n .+= δn
    end
 
