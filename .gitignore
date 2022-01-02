@@ -13,3 +13,4 @@
 *.mat
 *~
 docs/build/
+Manifest.toml
