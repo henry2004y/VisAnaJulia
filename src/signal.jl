@@ -3,7 +3,7 @@
 export BackgroundVariable, BoundaryVariable
 export generate_signal, save_signal
 
-using DelimitedFiles, UnPack
+using DelimitedFiles
 
 abstract type Variable end
 
@@ -44,7 +44,7 @@ Currently only support input perturbation in velocity `dv`.
 - `tend=10.0`: end time in [s].
 - `dv=1e3`: velocity perturbation magnitude in [m/s].
 - `dn=1`: mass density perturbation magnitude in [amu/cc].
-- `signal=:alfven`: [:alfven, :fast].
+- `signal=:alfven`: [:alfven, :fast, :slow, :density].
 - `dir="xyz"`: direction(s) for the applied Alfvénic perturbations in Cartesian coordinates,
 which  can be any combination of "x", "y" and "z".
 - `model=:vlasiator`: model specific settings. In Vlasiator, the background magnetic field
@@ -52,7 +52,7 @@ includes both a dipole and a constant. Therefore in the solarwind input files ma
 values should not contain the constant field.
 """
 function generate_signal(varBG::BackgroundVariable; fsignal=1.0, fsample=5.0,
-   tstart=0.0, tend=10.0, signal=:alfven, dir="xyz", dv=1e3, dn=1, model=:vlasiator)
+   tstart=0.0, tend=10.0, signal=:density, dir="xyz", dv=1e3, dn=1, model=:vlasiator)
 
    n0, T0, Vx0, Vy0, Vz0, Bx0, By0, Bz0 = varBG.n, varBG.T, varBG.Vx, varBG.Vy, varBG.Vz,
       varBG.Bx, varBG.By, varBG.Bz
@@ -89,8 +89,35 @@ function generate_signal(varBG::BackgroundVariable; fsignal=1.0, fsample=5.0,
          Vz .+= δV
          Bz .+= δB
       end
-
    elseif signal == :fast
+      δn = @. dn * 1e6 * sinpi(2 * fsignal * (t - tstart))
+      n .+= δn
+      
+      δB = @. B0 * sinpi(2 * fsignal * (t - tstart))
+      if occursin("x", dir)
+         Bx .+= δB
+      end
+      if occursin("y", dir)
+         By .+= δB
+      end
+      if occursin("z", dir)
+         Bz .+= δB
+      end
+   elseif signal == :slow
+      δn = @. dn * 1e6 * sinpi(2 * fsignal * (t - tstart))
+      n .+= δn
+      
+      δB = @. B0 * sinpi(2 * fsignal * (t - tstart))
+      if occursin("x", dir)
+         Bx .-= δB
+      end
+      if occursin("y", dir)
+         By .-= δB
+      end
+      if occursin("z", dir)
+         Bz .-= δB
+      end
+   elseif signal == :density
       δn = @. dn * 1e6 * sinpi(2 * fsignal * (t - tstart))
       n .+= δn
    end
@@ -101,7 +128,7 @@ end
 
 "Save generated signal data `var` to `file`."
 function save_signal(var::BoundaryVariable; file="sw.dat", sigdigits=5)
-   @unpack t, n, T, Vx, Vy, Vz, Bx, By, Bz = var
+   (;t, n, T, Vx, Vy, Vz, Bx, By, Bz) = var
    open(file, "w") do io
       write(io, "# time density temperature Vx Vy Vz Bx By Bz\n")
       writedlm(io, round.([t n T Vx Vy Vz Bx By Bz]; sigdigits))
