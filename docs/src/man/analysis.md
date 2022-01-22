@@ -186,6 +186,76 @@ A more careful analysis is called Walén test.
 
 However, always keep in mind that the most reliable way of identifying waves is to calculate the dispersion relation.
 
+## SVD-Based Wave Analysis
+
+The singular value decomposition (SVD) technique [Santolík+ 2003](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2000RS002523) can be used to analyze wave signals from EM field observations. The magnetic field spectral matrices A is be obtained by performing short-time Fourier transforms (STFT) of the waveforms observed
+
+```math
+A =
+\begin{pmatrix}
+a_{00} & a_{01} & a{02} \\
+a_{10} & a_{11} & a{12} \\
+a_{20} & a_{21} & a{22} \\
+a_{30} & a_{31} & a{32} \\
+a_{40} & a_{41} & a{42} \\
+a_{50} & a_{51} & a{52} \\
+\end{pmatrix}
+= \sum_{n=1}^{N}
+\begin{pmatrix}
+\Re( |B_x^n|^2 ) & \Re( B_x^n B_y^{n\ast} )         & \Re( B_x^n B_z^{n\ast} ) \\
+\Re( B_x^n B_y^{n\ast} ) & \Re( |B_y^n|^2 )         & \Re( B_y^n B_z^{n\ast} ) \\
+\Re( B_x^n B_z^{n\ast} ) & \Re( B_y^n B_z^{n\ast} ) & \Re( |B_z^n|^2 )   \\
+0                        & \Im( B_x^n B_y^{n\ast} ) & \Im( B_x^n B_z^{n\ast} ) \\
+\Im( B_x^n B_y^{n\ast} ) & 0                        & \Im( B_y^n B_z^{n\ast} ) \\
+\Im( B_x^n B_z^{n\ast} ) & \Im( B_y^n B_z^{n\ast} ) & 0
+\end{pmatrix}
+```
+
+where N denotes the number of spectral matrices averaged over time. ``B_x^n``, ``B_y^n`` and ``B_z^n`` denote the three orthogonal components of the n-th magnetic field Fourier spectra in the MAG coordinate system[^MAG] for the obtained waveform by PWE/WFC.
+
+[^MAG]: The Geomagnetic Coordinate system (MAG) is defined so that its Z-axis is parallel to the magnetic dipole axis. The Y-axis of this system is perpendicular to the geographic poles such that if D is the dipole position and S is the south pole Y = D x S. Finally, the X-axis completes a right-handed orthogonal set. I still don't get it... Maybe take a look at this: [Magnetic Coordinate Systems](https://arxiv.org/pdf/1611.10321.pdf).
+
+A can be decomposed by SVD as follows:
+
+```math
+A = U \cdot W \cdot V^T,
+```
+
+where ``U``, ``W``, and ``V^T`` denote a ``6\times 3`` matrix, a ``3\times 3`` of three nonnegative singular values, and a ``3\times 3`` matrix with orthonormal rows, respectively. The wave normal polar angle ``\theta_k``, polarization ellipse ``L_p`` and planarity of polarization ``F`` can be calculated as follows:
+
+```math
+\theta_k = \tan^{-1}(\frac{\sqrt{v_1^2 + v_2^2}}{v_3})
+```
+
+```math
+|L_p| = w_2 / w_3 
+```
+
+```math
+F = 1 - \sqrt{w_1/w_3}
+```
+
+where ``w_1``, ``w_2``, and ``w_3`` denote the ascending series of singular values ``W``, and ``v_1``, ``v_2``, and ``v_3`` denote the corresponding order of the elements of matrix ``V^T``. (???) ``|L_p|=0`` and 1 indicate linear polarization and circular polarization, respectively. The sense of polarization can be determined from the sign of ``a_{01}``,  i.e., the positive and negative signs indicate that the wave is right-hand and left-hand polarized, respectively. The planarity of polarization ``F`` indicates the validity of the single plane-wave assumption. The SVD technique provides reasonable results when the single plane wave approximation is applicable. In that case, ``F`` is near unity; otherwise, ``F`` approaches zero.
+
+It should be noted that ``\theta_k`` has an ambiguity in the sign of polarity because the correlation between electric and magnetic field is not calculated. To determine the polarity of k-vector, we calculate the Poynting vector angle using electric and magnetic field complex spectra. The Poynting vector angle ``\theta_p`` can be derived as ``\theta_p = \cos^{-1}(S_3/\sqrt{S_1^2 + S_2^2 + S_3^2})``. ``\theta_p=0^o`` and ``180^o``  indicate parallel and anti-parallel propagation along the field line, respectively. ``S_1``, ``S_2``, and ``S_3`` denote the three components parallel to the Poynting vector ``\mathbf{S}`` as follows:
+
+```math
+\begin{pmatrix}
+S_1 \\ S_2 \\ S_3
+\end{pmatrix}
+=
+\begin{pmatrix}
+\hat{E}_y \hat{B}_z^\ast - \hat{E}_z \hat{B}_y^\ast \\
+-\hat{E}_x \hat{B}_z^\ast + \hat{E}_z \hat{B}_x^\ast \\
+\hat{E}_x \hat{B}_y^\ast - \hat{E}_y \hat{B}_x^\ast  
+\end{pmatrix}
+```
+
+where ``\hat{E}_x``, ``\hat{E}_y``, and ``\hat{E}_z`` denote the three orthogonal components of the electric field Fourier spectra in the MAG coordinate system.
+
+!!! note
+    I need to ask someone who is more familiar with this topic and implement the method myself.
+
 ## Correlation Test Between Two Variables
 
 This part takes the reference from [R](http://www.sthda.com/english/wiki/correlation-test-between-two-variables-in-r).
