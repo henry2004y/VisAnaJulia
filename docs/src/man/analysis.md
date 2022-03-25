@@ -186,9 +186,9 @@ A more careful analysis is called Walén test.
 
 However, always keep in mind that the most reliable way of identifying waves is to calculate the dispersion relation.
 
-## SVD-Based Wave Analysis
+## Wave Polarization Analysis
 
-The singular value decomposition (SVD) technique [Santolík+ 2003](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2000RS002523) can be used to analyze wave signals from EM field observations. The magnetic field spectral matrices A is be obtained by performing short-time Fourier transforms (STFT) of the waveforms observed
+The singular value decomposition (SVD) technique [Santolík+ 2003](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2000RS002523) can be used to analyze wave signals from EM field observations. The magnetic field spectral matrix A is be obtained by performing short-time Fourier transforms (STFT) of the waveforms observed
 
 ```math
 A =
@@ -202,12 +202,12 @@ a_{50} & a_{51} & a_{52} \\
 \end{pmatrix}
 = \sum_{n=1}^{N}
 \begin{pmatrix}
-\Re( |B_x^n|^2 ) & \Re( B_x^n B_y^{n\ast} )         & \Re( B_x^n B_z^{n\ast} ) \\
-\Re( B_x^n B_y^{n\ast} ) & \Re( |B_y^n|^2 )         & \Re( B_y^n B_z^{n\ast} ) \\
-\Re( B_x^n B_z^{n\ast} ) & \Re( B_y^n B_z^{n\ast} ) & \Re( |B_z^n|^2 )   \\
-0                        & \Im( B_x^n B_y^{n\ast} ) & \Im( B_x^n B_z^{n\ast} ) \\
-\Im( B_x^n B_y^{n\ast} ) & 0                        & \Im( B_y^n B_z^{n\ast} ) \\
-\Im( B_x^n B_z^{n\ast} ) & \Im( B_y^n B_z^{n\ast} ) & 0
+\Re( |B_x^n|^2 ) & \Re( B_x^n B_y^{n\ast} )          & \Re( B_x^n B_z^{n\ast} ) \\
+\Re( B_x^n B_y^{n\ast} ) & \Re( |B_y^n|^2 )          & \Re( B_y^n B_z^{n\ast} ) \\
+\Re( B_x^n B_z^{n\ast} ) & \Re( B_y^n B_z^{n\ast} )  & \Re( |B_z^n|^2 )   \\
+0                        & -\Im( B_x^n B_y^{n\ast} ) & -\Im( B_x^n B_z^{n\ast} ) \\
+\Im( B_x^n B_y^{n\ast} ) & 0                         & -\Im( B_y^n B_z^{n\ast} ) \\
+\Im( B_x^n B_z^{n\ast} ) & \Im( B_y^n B_z^{n\ast} )  & 0
 \end{pmatrix}
 ```
 
@@ -215,7 +215,7 @@ where N denotes the number of spectral matrices averaged over time. ``B_x^n``, `
 
 [^MAG]: The Geomagnetic Coordinate system (MAG) is defined so that its Z-axis is parallel to the magnetic dipole axis. The Y-axis of this system is perpendicular to the geographic poles such that if D is the dipole position and S is the south pole Y = D x S. Finally, the X-axis completes a right-handed orthogonal set. I still don't get it... Maybe take a look at this: [Magnetic Coordinate Systems](https://arxiv.org/pdf/1611.10321.pdf).
 
-A can be decomposed by SVD as follows:
+The spectral matrix A can be decomposed by SVD as follows:
 
 ```math
 A = U \cdot W \cdot V^T,
