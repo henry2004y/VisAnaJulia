@@ -188,17 +188,54 @@ However, always keep in mind that the most reliable way of identifying waves is 
 
 ## Wave Polarization Analysis
 
-The singular value decomposition (SVD) technique [Santolík+ 2003](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2000RS002523) can be used to analyze wave signals from EM field observations. The magnetic field spectral matrix A is be obtained by performing short-time Fourier transforms (STFT) of the waveforms observed
+FFT, MVA and singular value decomposition (SVD) techniques are the common tools for analyzing wave signals from EM field observations.
+Here we present a set of single satellite field analysis following [Santolík+ 2003](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2000RS002523).
+
+### SVD of the B-field
+
+Early satellites do not have E field detector onboard, so we start from utilizing B field only. Assuming a single plane wave at frequency f. The linearized Faraday's law gives
+
+```math
+\mathbf{k}\times\mathbf{E} = \omega \mathbf{B}
+```
+
+where ``\omega = 2\pi f`` and ``\mathbf{k}`` is the wave vector. Apparently the transverse wave follows
+
+```math
+\mathbf{B}\cdot\mathbf{k} = 0
+```
+
+Let ``\hat{S}_{ij} = <\hat{B}_i\hat{B}_j^\ast>``, where ``\hat{B}(f) = fft(B(t))`` and * denotes the conjugate. We have
+
+```math
+B_i B_j^\ast k_i = 0, \, j = 1...3
+```
+
+or
+
+```math
+S_{ij} k_i = 0,\, j = 1...3
+```
+
+There are three complex equations. For applying real SVD procedure, we turn these into six real equations
+
+```math
+A_{ij} k_i = 0
+```
+
+where ``\mathbf{k}`` is now expanded into ``(k_1, k_2, k_3, k_1, k_2, k_3)`` and the magnetic field spectral matrix A, which is obtained by performing short-time Fourier transforms (STFT) of the waveforms observed, can be written as[^complex_property]
+
+[^complex_property]: ``\Re(B_i B_j^\ast) = \Re(B_i^\ast B_j),\, \Im(B_i B_j^\ast) = -\Im(B_i^\ast B_j)``
 
 ```math
 A =
 \begin{pmatrix}
-a_{00} & a_{01} & a_{02} \\
-a_{10} & a_{11} & a_{12} \\
-a_{20} & a_{21} & a_{22} \\
-a_{30} & a_{31} & a_{32} \\
-a_{40} & a_{41} & a_{42} \\
-a_{50} & a_{51} & a_{52} \\
+a_{11} & a_{12} & a_{13} \\
+a_{21} & a_{22} & a_{23} \\
+a_{31} & a_{32} & a_{33} \\
+a_{41} & a_{42} & a_{43} \\
+a_{51} & a_{52} & a_{53} \\
+a_{61} & a_{62} & a_{63} \\
 \end{pmatrix}
 = \sum_{n=1}^{N}
 \begin{pmatrix}
@@ -211,37 +248,49 @@ a_{50} & a_{51} & a_{52} \\
 \end{pmatrix}
 ```
 
-where N denotes the number of spectral matrices averaged over time. ``B_x^n``, ``B_y^n`` and ``B_z^n`` denote the three orthogonal components of the n-th magnetic field Fourier spectra in the MAG coordinate system[^MAG] for the obtained waveform by PWE/WFC.
-
-[^MAG]: The Geomagnetic Coordinate system (MAG) is defined so that its Z-axis is parallel to the magnetic dipole axis. The Y-axis of this system is perpendicular to the geographic poles such that if D is the dipole position and S is the south pole Y = D x S. Finally, the X-axis completes a right-handed orthogonal set. I still don't get it... Maybe take a look at this: [Magnetic Coordinate Systems](https://arxiv.org/pdf/1611.10321.pdf).
+where N denotes the number of spectral matrices averaged over time. ``B_x^n``, ``B_y^n`` and ``B_z^n`` denote the three orthogonal components of the n-th magnetic field Fourier spectra in the Cartesian coordinate system for the obtained waveform.
 
 The spectral matrix A can be decomposed by SVD as follows:
 
 ```math
-A = U \cdot W \cdot V^T,
+A = U \cdot S \cdot V^T,
 ```
 
-where ``U``, ``W``, and ``V^T`` denote a ``6\times 3`` matrix, a ``3\times 3`` of three nonnegative singular values, and a ``3\times 3`` matrix with orthonormal rows, respectively. The wave normal polar angle ``\theta_k``, polarization ellipse ``L_p`` and planarity of polarization ``F`` can be calculated as follows:
+where ``U``, ``S``, and ``V^T`` denote a ``6\times 3`` matrix, a ``3\times 3`` of three nonnegative singular values, and a ``3\times 3`` matrix with orthonormal rows, respectively.
+
+Now we have 6 real equations but only 2 unknowns.[^unknowns] If this modified set does not degenerate to less than three equations it is not possible to find a vector equation ``\mathbf{k}`` which simultaneously solves all six equations.[^other_methods] Instead, a "solution" can be defined in the least squares sense, meaning that we search for a column vector ``\mathbf{k}`` which gives the minimum modulus of a six-dimensional vector ``\hat{A}\cdot\mathbf{k}``. This is essentially what SVD does for us!
+
+[^unknowns]: The wave vector ``\mathbf{k}`` has three components, but since we only care about its direction, unity is assumed, i.e. ``norm(\mathbf{k}) = 1``. This is usually described by a polar angle ``\theta`` ranging from ``[0,\pi/2]`` and an azimuthal angle ``\phi`` ranging from ``[-\pi, \pi]``.
+
+[^other_methods]: Many early approaches essentially take a subset of these six equations and solve for the unique solutions. For real signals, we may observe significant unpolarized fraction or noise. This is our motivation of considering the whole picture and remove the unwanted fraction as much as possible.
+
+The wave normal polar angle ``\theta``, polarization ellipse ``L_p`` and planarity of polarization ``F`` can be calculated as follows:
 
 ```math
-\theta_k = \tan^{-1}(\frac{\sqrt{v_1^2 + v_2^2}}{v_3})
+\theta = \tan^{-1}(\frac{\sqrt{v_1^2 + v_2^2}}{v_3})
 ```
 
 ```math
-|L_p| = w_2 / w_3 
+|L_p| = s_2 / s_3 
 ```
 
 ```math
-F = 1 - \sqrt{w_1/w_3}
+F = 1 - \sqrt{s_1/s_3}
 ```
 
-where ``w_1``, ``w_2``, and ``w_3`` denote the ascending series of singular values ``W``, and ``v_1``, ``v_2``, and ``v_3`` denote the corresponding order of the elements of matrix ``V^T``. (???) ``|L_p|=0`` and 1 indicate linear polarization and circular polarization, respectively. The sense of polarization can be determined from the sign of ``a_{01}``,  i.e., the positive and negative signs indicate that the wave is right-hand and left-hand polarized, respectively. The planarity of polarization ``F`` indicates the validity of the single plane-wave assumption. The SVD technique provides reasonable results when the single plane wave approximation is applicable. In that case, ``F`` is near unity; otherwise, ``F`` approaches zero.
+where ``s_1``, ``s_2``, and ``s_3`` denote the ascending series of singular values ``S``, and ``v_1``, ``v_2``, and ``v_3`` are the elements in the row of ``V^T`` corresponding to the minimum singular value at the diagonal of W.[^k_direction] ``|L_p|=0`` and 1 indicate linear polarization and circular polarization, respectively.
+In special coordinate systems we may be able to determine the sign of ellipticity, but mathmatically there is an ambiguity.[^MAG]
+The planarity of polarization ``F`` indicates the validity of the single plane-wave assumption. The SVD technique provides reasonable results when the single plane wave approximation is applicable. In that case, ``F`` is near unity; otherwise, ``F`` approaches zero.
 
-It should be noted that ``\theta_k`` has an ambiguity in the sign of polarity because the correlation between electric and magnetic field is not calculated. To determine the polarity of k-vector, we calculate the Poynting vector angle using electric and magnetic field complex spectra. The Poynting vector angle ``\theta_p`` can be derived as ``\theta_p = \cos^{-1}(S_3/\sqrt{S_1^2 + S_2^2 + S_3^2})``. ``\theta_p=0^o`` and ``180^o``  indicate parallel and anti-parallel propagation along the field line, respectively. ``S_1``, ``S_2``, and ``S_3`` denote the three components parallel to the Poynting vector ``\mathbf{S}`` as follows:
+[^k_direction]: See the original paper for the explanation.
+
+[^MAG]: In the Geomagnetic Coordinate system (MAG), the sense of polarization can be determined from the sign of ``a_{01}``,  i.e., the positive and negative signs indicate that the wave is right-hand and left-hand polarized, respectively. (??? Really???) MAG is defined such that its Z-axis is parallel to the magnetic dipole axis. The Y-axis of this system is perpendicular to the geographic poles such that if D is the dipole position and S is the south pole Y = D x S. Finally, the X-axis completes a right-handed orthogonal set. Maybe take a look at this: [Magnetic Coordinate Systems](https://arxiv.org/pdf/1611.10321.pdf).
+
+It should be noted that ``\theta_k`` has an ambiguity in the sign of polarity because the correlation between electric and magnetic field is not calculated. To determine the polarity of k-vector, we calculate the Poynting vector angle using electric and magnetic field complex spectra. The Poynting vector angle ``\theta_p`` can be derived as ``\theta_p = \cos^{-1}(P_3/\sqrt{P_1^2 + P_2^2 + P_3^2})``. ``\theta_p=0^o`` and ``180^o``  indicate parallel and anti-parallel propagation along the field line, respectively. ``P_1``, ``P_2``, and ``P_3`` denote the three components parallel to the Poynting vector ``\mathbf{P}`` as follows:
 
 ```math
 \begin{pmatrix}
-S_1 \\ S_2 \\ S_3
+P_1 \\ P_2 \\ P_3
 \end{pmatrix}
 =
 \begin{pmatrix}
@@ -251,7 +300,43 @@ S_1 \\ S_2 \\ S_3
 \end{pmatrix}
 ```
 
-where ``\hat{E}_x``, ``\hat{E}_y``, and ``\hat{E}_z`` denote the three orthogonal components of the electric field Fourier spectra in the MAG coordinate system.
+where ``\hat{E}_x``, ``\hat{E}_y``, and ``\hat{E}_z`` denote the three orthogonal components of the electric field Fourier spectra.
+
+### SVD of the EM fields
+
+With the vector of magnetic field fluctuations the propagation direction cannot be fully determined --- two antiparallel directions cannot be distinguished. We have to use both the magnetic and electric fields to fully determine the wave vector from the Faraday's law ``\mathbf{k}\times\mathbf{E} = \omega \mathbf{B}``. For the sake of simplicity we rewrite it to
+
+```math
+\mathbf{n}\times\mathbf{E} = c\mathbf{B},
+```
+
+where ``\mathbf{n} = \mathbf{k}c/\omega`` is a dimensionless vector having the modulus of the wave refractive index and the direction of the wave vector, c being the speed of light.
+
+Suppose the vectors ``\mathbf{B}`` and ``\mathbf{E}`` are represented by three magnetic components and three electric components in the same Cartesian coordinate system. We now proceed similarly as in the B-only case but instead of using the condition of perpendicularity between ``\mathbf{B}`` and ``\mathbf{k}`` we can directly use the equation above. Multiplying the three complex equations successively by the three cartesian components of ``c\mathbf{B}^\ast``, and by the three cartesian components of ``\mathbf{E}^\ast`` we have 18 mutually dependent complex equations
+
+```math
+\epsilon_{ijk} n_j E_k \zeta_l^\ast  = c B_i \zeta_l^\ast
+```
+
+where ``\epsilon_{ijk}`` is the Kronecker delta, indexes j,k follows the Einstein summation, and index i = 1...3, l = 1...6. ``\zeta`` is a 6-D "electromagnetic" vector defined as
+
+```math
+\zeta = (cB_1, cB_2, cB_3, E_1, E_2, E_3)
+```
+
+Terms ``E_k\zeta_l^\ast`` and ``cB_i\zeta_l^\ast`` can be respectively written as selected components ``Q_{(k+1)l}`` and ``Q_{il}`` of a 6x6 spectral matrix Q
+
+```math
+Q_{ij} = \zeta_i \zeta_j^\ast
+```
+
+The result can be rewritten as a set of 36 real equations for 3 components of a column vector ``\mathbf{n}``,
+
+```math
+A_E\cdot\mathbf{n} = \mathbf{b},
+```
+
+where ``A_E`` is a real ``36\times 3`` matrix, and ``\mathbf{b}`` is a 36-D real column vector.
 
 !!! note
     I need to ask someone who is more familiar with this topic and implement the method myself.
