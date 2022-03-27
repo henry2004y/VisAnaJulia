@@ -205,7 +205,7 @@ where ``\omega = 2\pi f`` and ``\mathbf{k}`` is the wave vector. Apparently the 
 \mathbf{B}\cdot\mathbf{k} = 0
 ```
 
-Let ``\hat{S}_{ij} = <\hat{B}_i\hat{B}_j^\ast>``, where ``\hat{B}(f) = fft(B(t))`` and * denotes the conjugate. We have
+Let ``\hat{S}_{ij} = <\hat{B}_i\hat{B}_j^\ast>``, where ``\hat{B}(f) = \textrm{fft}(B(t))`` and * denotes the complex conjugate. We have
 
 ```math
 B_i B_j^\ast k_i = 0, \, j = 1...3
@@ -248,7 +248,7 @@ a_{61} & a_{62} & a_{63} \\
 \end{pmatrix}
 ```
 
-where N denotes the number of spectral matrices averaged over time. ``B_x^n``, ``B_y^n`` and ``B_z^n`` denote the three orthogonal components of the n-th magnetic field Fourier spectra in the Cartesian coordinate system for the obtained waveform.
+where N denotes the number of spectral matrices averaged over time(???), ``B_x^n``, ``B_y^n`` and ``B_z^n`` denote the three orthogonal components of the n-th magnetic field Fourier spectra in the Cartesian coordinate system for the obtained waveform.
 
 The spectral matrix A can be decomposed by SVD as follows:
 
@@ -258,9 +258,10 @@ A = U \cdot S \cdot V^T,
 
 where ``U``, ``S``, and ``V^T`` denote a ``6\times 3`` matrix, a ``3\times 3`` of three nonnegative singular values, and a ``3\times 3`` matrix with orthonormal rows, respectively.
 
-Now we have 6 real equations but only 2 unknowns.[^unknowns] If this modified set does not degenerate to less than three equations it is not possible to find a vector equation ``\mathbf{k}`` which simultaneously solves all six equations.[^other_methods] Instead, a "solution" can be defined in the least squares sense, meaning that we search for a column vector ``\mathbf{k}`` which gives the minimum modulus of a six-dimensional vector ``\hat{A}\cdot\mathbf{k}``. This is essentially what SVD does for us!
+Now we have 6 real equations but only 2 unknowns. If this modified set does not degenerate to less than three equations it is not possible to find a vector equation ``\mathbf{k}`` which simultaneously solves all six equations.[^other_methods] Instead, a "solution" can be defined in the least squares sense, meaning that we search for a column vector ``\mathbf{k}`` which gives the minimum modulus of a six-dimensional vector ``\hat{A}\cdot\mathbf{k}``. This is essentially what SVD does for us!
 
-[^unknowns]: The wave vector ``\mathbf{k}`` has three components, but since we only care about its direction, unity is assumed, i.e. ``norm(\mathbf{k}) = 1``. This is usually described by a polar angle ``\theta`` ranging from ``[0,\pi/2]`` and an azimuthal angle ``\phi`` ranging from ``[-\pi, \pi]``.
+!!! note
+    The wave vector ``\mathbf{k}`` has three components, but since we only care about its direction, unity is assumed, i.e. ``norm(\mathbf{k}) = 1``. This is usually described by a polar angle ``\theta`` ranging from ``[0,\pi/2]`` and an azimuthal angle ``\phi`` ranging from ``[-\pi, \pi]``.
 
 [^other_methods]: Many early approaches essentially take a subset of these six equations and solve for the unique solutions. For real signals, we may observe significant unpolarized fraction or noise. This is our motivation of considering the whole picture and remove the unwanted fraction as much as possible.
 
@@ -278,11 +279,13 @@ The wave normal polar angle ``\theta``, polarization ellipse ``L_p`` and planari
 F = 1 - \sqrt{s_1/s_3}
 ```
 
-where ``s_1``, ``s_2``, and ``s_3`` denote the ascending series of singular values ``S``, and ``v_1``, ``v_2``, and ``v_3`` are the elements in the row of ``V^T`` corresponding to the minimum singular value at the diagonal of W.[^k_direction] ``|L_p|=0`` and 1 indicate linear polarization and circular polarization, respectively.
+where ``s_1``, ``s_2``, and ``s_3`` denote the ascending series of singular values ``S``, and ``v_1``, ``v_2``, and ``v_3`` are the elements in the row of ``V^T`` corresponding to the minimum singular value at the diagonal of W. ``|L_p|=0`` and 1 indicate linear polarization and circular polarization, respectively.
+
+!!! note
+    See the original paper for the explanation.
+
 In special coordinate systems we may be able to determine the sign of ellipticity, but mathmatically there is an ambiguity.[^MAG]
 The planarity of polarization ``F`` indicates the validity of the single plane-wave assumption. The SVD technique provides reasonable results when the single plane wave approximation is applicable. In that case, ``F`` is near unity; otherwise, ``F`` approaches zero.
-
-[^k_direction]: See the original paper for the explanation.
 
 [^MAG]: In the Geomagnetic Coordinate system (MAG), the sense of polarization can be determined from the sign of ``a_{01}``,  i.e., the positive and negative signs indicate that the wave is right-hand and left-hand polarized, respectively. (??? Really???) MAG is defined such that its Z-axis is parallel to the magnetic dipole axis. The Y-axis of this system is perpendicular to the geographic poles such that if D is the dipole position and S is the south pole Y = D x S. Finally, the X-axis completes a right-handed orthogonal set. Maybe take a look at this: [Magnetic Coordinate Systems](https://arxiv.org/pdf/1611.10321.pdf).
 
@@ -336,17 +339,118 @@ The result can be rewritten as a set of 36 real equations for 3 components of a 
 A_E\cdot\mathbf{n} = \mathbf{b},
 ```
 
-where ``A_E`` is a real ``36\times 3`` matrix, and ``\mathbf{b}`` is a 36-D real column vector.
+where ``A_E`` is a real ``36\times 3`` matrix, and ``\mathbf{b}`` is a 36-dimension real column vector. More explicitly,
+
+```math
+A_E =
+\begin{pmatrix}
+0 & \Re( Q_{61} ) & -\Re( Q_{51} ) \\
+0 & \Re( Q_{62} ) & -\Re( Q_{52} ) \\
+0 & \Re( Q_{63} ) & -\Re( Q_{53} ) \\
+0 & \Re( Q_{64} ) & -\Re( Q_{54} ) \\
+0 & \Re( Q_{65} ) & -\Re( Q_{55} ) \\
+0 & \Re( Q_{66} ) & -\Re( Q_{56} ) \\
+-\Re( Q_{61} ) & 0 & \Re( Q_{41} ) \\
+-\Re( Q_{62} ) & 0 & \Re( Q_{42} ) \\
+-\Re( Q_{63} ) & 0 & \Re( Q_{43} ) \\
+-\Re( Q_{64} ) & 0 & \Re( Q_{44} ) \\
+-\Re( Q_{65} ) & 0 & \Re( Q_{45} ) \\
+-\Re( Q_{66} ) & 0 & \Re( Q_{46} ) \\
+\Re( Q_{51} ) & -\Re( Q_{41} ) & 0 \\
+\Re( Q_{52} ) & -\Re( Q_{42} ) & 0 \\
+\Re( Q_{53} ) & -\Re( Q_{43} ) & 0 \\
+\Re( Q_{54} ) & -\Re( Q_{44} ) & 0 \\
+\Re( Q_{55} ) & -\Re( Q_{45} ) & 0 \\
+\Re( Q_{56} ) & -\Re( Q_{46} ) & 0 \\
+0 & \Im( Q_{61} ) & -\Im( Q_{51} ) \\
+0 & \Im( Q_{62} ) & -\Im( Q_{52} ) \\
+0 & \Im( Q_{63} ) & -\Im( Q_{53} ) \\
+0 & \Im( Q_{64} ) & -\Im( Q_{54} ) \\
+0 & \Im( Q_{65} ) & -\Im( Q_{55} ) \\
+0 & \Im( Q_{66} ) & -\Im( Q_{56} ) \\
+-\Im( Q_{61} ) & 0 & \Im( Q_{41} ) \\
+-\Im( Q_{62} ) & 0 & \Im( Q_{42} ) \\
+-\Im( Q_{63} ) & 0 & \Im( Q_{43} ) \\
+-\Im( Q_{64} ) & 0 & \Im( Q_{44} ) \\
+-\Im( Q_{65} ) & 0 & \Im( Q_{45} ) \\
+-\Im( Q_{66} ) & 0 & \Im( Q_{46} ) \\
+\Im( Q_{51} ) & -\Im( Q_{41} ) & 0 \\
+\Im( Q_{52} ) & -\Im( Q_{42} ) & 0 \\
+\Im( Q_{53} ) & -\Im( Q_{43} ) & 0 \\
+\Im( Q_{54} ) & -\Im( Q_{44} ) & 0 \\
+\Im( Q_{55} ) & -\Im( Q_{45} ) & 0 \\
+\Im( Q_{56} ) & -\Im( Q_{46} ) & 0 \\
+\end{pmatrix}
+```
+
+```math
+\mathbf{n} = (n_1, n_2, n_3)^T
+```
+
+```math
+\mathbf{b} =
+\begin{pmatrix}
+\Re( Q_{11} ) \\ \Re( Q_{12} ) \\ \Re( Q_{13} ) \\ \Re( Q_{14} ) \\ \Re( Q_{15} ) \\ \Re( Q_{16} ) \\
+\Re( Q_{21} ) \\ \Re( Q_{22} ) \\ \Re( Q_{23} ) \\ \Re( Q_{24} ) \\ \Re( Q_{25} ) \\ \Re( Q_{26} ) \\
+\Re( Q_{31} ) \\ \Re( Q_{32} ) \\ \Re( Q_{33} ) \\ \Re( Q_{34} ) \\ \Re( Q_{35} ) \\ \Re( Q_{36} ) \\
+0 \\ \Im( Q_{12} ) \\ \Im( Q_{13} ) \\ \Im( Q_{14} ) \\ \Im( Q_{15} ) \\ \Im( Q_{16} ) \\
+\Im( Q_{21} ) \\ 0 \\ \Im( Q_{23} ) \\ \Im( Q_{24} ) \\ \Im( Q_{25} ) \\ \Im( Q_{26} ) \\
+\Im( Q_{31} ) \\ \Im( Q_{32} ) \\ 0 \\ \Im( Q_{34} ) \\ \Im( Q_{35} ) \\ \Im( Q_{36} ) \\
+\end{pmatrix}
+```
 
 !!! note
-    I need to ask someone who is more familiar with this topic and implement the method myself.
+    In most programming languages, complex numbers and real numbers are different even the imaginary part is 0, so we need to take the real part of ``Q_{11}`` even though the imaginary part is 0.
+
+The system contains 36 equations for only 3 unknowns. However, in the ideal case of analytic signals these equations are obtained from only six real equations from Faraday's law. One of these six equations could be, moreover, eliminated using an appropriate phase factor for the complex amplitudes, and two of them are already contained in the condition ``\mathbf{E}\cdot\mathbf{B} = 0`` which internally bounds the complex electric and magnetic field amplitudes. For analytic signals, the system thus should degenerate into only 3 independent real equations for the three components of ``\mathbf{n}``.
+
+With real data, the multidimensional spectral analysis at a given frequency results in an estimate ``\hat{Q}`` of the spectral matrix which can be used instead of ``Q``,
+
+```math
+\hat{Q}_{ij} = <\zeta_i \zeta_j^\ast>
+```
+
+The system then becomes
+
+```math
+\hat{A}_E\cdot\hat{\mathbf{n}} = \hat{\mathbf{b}},
+```
+
+where ``\hat{A}_E`` and ``\hat{\mathbf{b}}`` are composed in the same way as equation ``A_E`` and ``\mathbf{n}``, but this time we use components of ``\hat{Q}`` instead of ``Q``.
+
+The matrix ``\hat{A}_E`` can thus be decomposed,
+
+```math
+\hat{A}_E = U_E \cdot S_E \cdot V_E^T,
+```
+
+where ``U_E``, ``S_E``, and ``V_E^T`` denote a ``36\times 3`` orthonormal matrix, a ``3\times 3`` of three nonnegative singular values, and a ``3\times 3`` matrix with orthonormal rows, respectively.
+
+The least squares solution is then directly given by
+
+```math
+\hat{\mathbf{n}} = V_E \cdot W_E^{-1} \cdot U_E^T \cdot \hat{\mathbf{b}}.
+```
+
+Similar to the pure B-field case, we have ellipticity
+
+```math
+|L_p| = s_2 / s_3 
+```
+
+and planarity
+
+```math
+F = 1 - \sqrt{s_1/s_3}
+```
+
+where ``s_1``, ``s_2``, and ``s_3`` denote the ascending series of singular values ``S_E``. This time we know the direction of the wave vector, so there's no ambiguity about the left or right hand polarizations.
 
 ## Correlation Test Between Two Variables
 
 This part takes the reference from [R](http://www.sthda.com/english/wiki/correlation-test-between-two-variables-in-r).
 
-Correlation test is used to evaluate the association between two or more
-variables.
+Correlation test is used to evaluate the association between two or more variables.
 
 !!! info
     If there is no relationship between the two variables, the average of ``x`` should be the same regardless of ``y`` and vice versa.
@@ -374,3 +478,7 @@ The p-value (significance level) of the correlation can be determined :
 t = \frac{|r|}{\sqrt{1-r^2}}\sqrt{n-2}
 ```
 where the corresponding p-value is determined using t table distribution for ``df=n-2``. If the p-value is ``< 5\%``, then the correlation between ``x`` and ``y`` is significant.
+
+### Time-dependent correlation
+
+In real lift, the properties of the signals may change as a function of time: different correlation relation may appear at different time intervals. Thus we usually need to perform the correlation analysis for each subsequent interval to obtain a time-dependent correlation, similar to the concept of short time Fourier transform.
