@@ -148,11 +148,11 @@ MFA coordinate system in the magnetosphere: the MFA directions ``\mathbf{\mu}``,
 The MFA coordinates system, showed in the figure for an assigned position in the inner magnetosphere, is established by means of  the unit vectors defined as
 
 ```math
-\begin{align}
-\mathbf{\mu}(t) = \mathbf{B}_0(t) / |\mathbf{B}_0(t)|, \\
-\mathbf{\phi}(t) = \mathbf{r}(t) \times \mathbf{B}_0(t) / |\mathbf{r}(t) \times \mathbf{B}_0(t)|, \\
-\mathbf{\nu}(t) = \mathbf{\mu}(t) \times \mathbf{\phi}(t),
-\end{align}
+\begin{aligned}
+\mathbf{\mu}(t) &= \mathbf{B}_0(t) / |\mathbf{B}_0(t)|, \\
+\mathbf{\phi}(t) &= \mathbf{r}(t) \times \mathbf{B}_0(t) / |\mathbf{r}(t) \times \mathbf{B}_0(t)|, \\
+\mathbf{\nu}(t) &= \mathbf{\mu}(t) \times \mathbf{\phi}(t),
+\end{aligned}
 ```
 
 where ``\mathbf{\mu}``, ``\mathbf{\phi}`` and ``\mathbf{\nu}`` are usually associated with compressional, toroidal and poloidal ULF waves modes respectively, while ``\mathbf{r}(t)`` represents the position vector of the spacecraft.
@@ -162,14 +162,14 @@ This definition may also be extended in upstream regions, but in this case the `
 Then we can define the instantaneous rotation matrix from geocentric to MFA reference frame as
 
 ```math
-\begin{align}
+\begin{aligned}
 \mathbf{R}(t) = 
 \begin{pmatrix}
 \mu_x(t) & \mu_y(t) & \mu_z(t) \\
 \phi_x(t) & \phi_y(t) & \phi_z(t) \\
 \nu_x(t) & \nu_y(t) & \nu_z(t)
 \end{pmatrix}
-\end{align}
+\end{aligned}
 ```
 
 that allows us to project the instantaneous magnetic field vector from the original geocentric reference frame into the MFA one:
