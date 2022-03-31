@@ -60,8 +60,8 @@ Spectrogram is used a lot in wave analysis. For my purpose, I use it as an appro
 ## Minimum Variance Analysis
 
 A nice introduction is given by Bengt U.Ö.Sonnerup and Maureen Scheible.
- Here is a brief summary of the idea. The implementation of MVA can be found in
- [`MVA.jl`](https://github.com/henry2004y/VisAnaJulia/blob/master/src/space/MVA.jl).
+Here is a brief summary of the idea. The implementation of MVA can be found in
+[`MVA.jl`](https://github.com/henry2004y/VisAnaJulia/blob/master/src/space/MVA.jl).
 
 The main purpose of minimum or maximum variance analysis (MVA) is to find, from
 single-spacecraft data, an estimator for the direction normal to a
@@ -126,14 +126,74 @@ A not so good example case is the Galileo G8 Ganymede flyby magnetometer data:
 ![](../images/B_Galileo_G8_LMN.png)
 where the ratio between the intermediate and minimum eigenvalue is only about 2.
 
+## Mean Field-Aligned Coordinates
+
+The magnetic field satellite data are usually referred to geocentric coordinate reference frames such as geocentric solar ecliptic (GSE) frame. Conversely, the MHD waves modes in magnetized plasma depend on the ambient magnetic field, and is then useful to rotate the magnetic field measurements into the _mean field-aligned (MFA) coordinate system_. This reference frame is useful to study the ultra-low frequency magnetic field variations along and perpendicular to the direction of the mean field. 
+
+The MFA coordinate system is a local coordinate system that relates to the geomagnetic field. In the ecliptic plane, the parallel direction is more or less aligned with z in GSE, the first perpendicular direction pointing from Earth to the region of interest, and the second perpendicular direction completing the right hand rule. 
+
+In order to identify the mean magnetic field the classical moving average (MAVG) approach is usually adopted, but does not always give reliable performance.
+In the solarwind, a technique widely used to study parallel and perpendicular magnetic field components of waves is the minimum variance analysis (MVA). However, the minimum variance direction does not necessarily coincide with that of the ambient magnetic field.
+
+If a time scale separation exists within the magnetic field measurements, these time series can be thought as a superposition of  a slowly varying (amplitude) ambient field ``\mathbf{B}_0(t)``, an higher frequency signal ``\mathbf{b}(t)``(or perturbation) and an incoherent noise ``\mathbf{n}(t)``:
+
+```math
+\mathbf{B}(t) = \mathbf{B}_0(t) + \mathbf{b}(t) + \mathbf{n}(t).
+```
+
+![](../images/MFA_coordinate_magnetosphere.png)
+
+MFA coordinate system in the magnetosphere: the MFA directions ``\mathbf{\mu}``, ``\mathbf{\phi}`` and ``\mathbf{\nu}`` are showed together with the satellite position (red dot). The geomagnetic field line (blue line) is computed through T96 magnetosphere model [Tsyganenko 1995] during solar quiet conditions. [Regi+, 2016](https://doi.org/10.4401/ag-7067)
+
+The MFA coordinates system, showed in the figure for an assigned position in the inner magnetosphere, is established by means of  the unit vectors defined as
+
+```math
+\begin{align}
+\mathbf{\mu}(t) = \mathbf{B}_0(t) / |\mathbf{B}_0(t)|, \\
+\mathbf{\phi}(t) = \mathbf{r}(t) \times \mathbf{B}_0(t) / |\mathbf{r}(t) \times \mathbf{B}_0(t)|, \\
+\mathbf{\nu}(t) = \mathbf{\mu}(t) \times \mathbf{\phi}(t),
+\end{align}
+```
+
+where ``\mathbf{\mu}``, ``\mathbf{\phi}`` and ``\mathbf{\nu}`` are usually associated with compressional, toroidal and poloidal ULF waves modes respectively, while ``\mathbf{r}(t)`` represents the position vector of the spacecraft.
+
+This definition may also be extended in upstream regions, but in this case the ``\mathbf{\phi}, \mathbf{\nu}`` components are simply related with transverse oscillations in the interplanetary region (e.g. foreshock upstream waves).
+
+Then we can define the instantaneous rotation matrix from geocentric to MFA reference frame as
+
+```math
+\begin{align}
+\mathbf{R}(t) = 
+\begin{pmatrix}
+\mu_x(t) & \mu_y(t) & \mu_z(t) \\
+\phi_x(t) & \phi_y(t) & \phi_z(t) \\
+\nu_x(t) & \nu_y(t) & \nu_z(t)
+\end{pmatrix}
+\end{align}
+```
+
+that allows us to project the instantaneous magnetic field vector from the original geocentric reference frame into the MFA one:
+
+```math
+\mathbf{B}^{MFA}(t) = \mathbf{R}(t)\mathbf{B}^{GSE}(t). 
+```
+
+It is clear that in order to obtain the time series ``\mathbf{B}^{MFA}(t)`` in the MFA reference system, the slowly varying mean field vector ``\mathbf{B}_0(t)`` must be found through an appropriate filtering procedure. The moving average (MAVG) is a good  choice with respect to any low-pass filter, as it introduces no artifacts.
+However in applying the MAVG method it is assumed that the characteristic fluctuation time ``T_0`` related to ``\mathbf{B}_0(t)`` is much greater than the period ``T_b`` of the perturbation ``\mathbf{b}(t)``. Moreover, ``T_0`` depends on both satellite motion and natural magnetic field variation (e.g. high velocity stream, coronal mass ejections, corotating interaction regions), and could be related to nonlinear and non stationary phenomena.
+Under these conditions the MAVG might be unsuitable in the rotation procedure, while a method such as the _empirical mode decomposition (EMD)_, is useful to identify nonlinear and nonstationary processes.
+
+This is discussed thoroughly in [Regi+, 2016](https://doi.org/10.4401/ag-7067).
+
 ## ULF Wave Detection
 
 ULF waves are MHD waves: Alfvén wave, fast wave and slow wave. One basic approach to identify waves is to check the correlation of quantity perturbations.
 
 The phase speed of shear Alfvén wave is
+
 ```math
 v_{pA} = \frac{\omega}{k} = v_A \cos{\theta}
 ```
+
 where ``v_A`` is the Alfvén speed and ``\theta`` is the angle between wave vector ``\mathbf{k}`` and magnetic field ``\mathbf{B}``.
 
 The perturbed quantities of Alfvén waves follow these relations:
@@ -144,10 +204,13 @@ The perturbed quantities of Alfvén waves follow these relations:
 where ``\delta \mathbf{v}``, ``\delta \mathbf{B}``, and ``\delta \rho`` are perturbed plasma velocity, magnetic fields, and plasma density, respectively, and ``B_0`` is the background magnetic magnitude.
 
 For slow and fast waves, the phase speeds are
+
 ```math
 v_{p\pm}^2 = \big(\frac{\omega}{k} \big) = \frac{1}{2}(v_s^2 + v_A^2) \pm \frac{1}{2}\Big[ (v_s^2 + v_A^2)^2 - 4v_s^2 v_A^2 \cos^2{\theta}\Big]^{1/2}
 ```
+
 The "+" is for fast waves and "−" for slow waves, and ``v_S`` is the sound speed. The perturbed quantities for fast and slow waves are
+
 ```math
 \delta \rho = \frac{\rho_0}{v_p}\frac{v_A^2\sin\theta}{B_0 (v_p - v_s^2/v_p)}\delta B\\
 \delta \mathbf{v} = -\frac{v_A^2 \cos{\theta}}{B_0 v_p}\delta\mathbf{B} + \frac{v_A^2 \sin{\theta}\delta B}{B_0 (v_p - v_s^2/v_p)}\frac{\mathbf{k}}{k}
@@ -155,6 +218,7 @@ The "+" is for fast waves and "−" for slow waves, and ``v_S`` is the sound spe
 Thus generally the Alfvén wave is identified by the correlations between velocity and magnetic field perturbations, and the fast and slow waves are identified by the negative (for slow waves) or positive (for fast waves) correlations between either density and magnetic field perturbation or thermal pressure and magnetic pressure perturbation.
 
 The second equation above can also be expressed in terms of magnetic and thermal pressure pertubations:
+
 ```math
 \delta P_B = \frac{\mathbf{B}_0 \cdot \mathbf{B}}{\mu_0}
 =\frac{V_A^2}{V_S^2}\left(1-\frac{k^2 V_S^{2} \cos^2\theta}{\omega^2}\right)\delta P_t
@@ -167,15 +231,19 @@ For the magnetosonic waves, consider using ``\delta \mathbf{E}`` and ``\delta \m
 Transverse and shear Alfvén wave refer to actually the same thing: the descriptions arise from  ``\mathbf{k}\cdot\mathbf{V}=0`` and ``\mathbf{V}\cdot\mathbf{B}_0=0``.
 
 The fast and slow magnetosonic waves are associated with non-zero perturbations in the plasma density and pressure, and also involve plasma motion parallel, as well as perpendicular, to the magnetic field. The latter observation suggests that the dispersion relations ``\omega=kV_{\pm}`` are likely to undergo significant modification in collisionless plasmas. In order to better understand the nature of the fast and slow waves, let us consider the cold-plasma limit, which is obtained by letting the sound speed ``V_S`` tend to zero. In this limit, the slow wave ceases to exist (in fact, its phase velocity tends to zero) whereas the dispersion relation for the fast wave reduces to
+
 ```math
 \omega = kV_A
 ```
+
 This can be identified as the dispersion relation for the compressional-Alfvén wave. Thus, we can identify the fast wave as the compressional-Alfvén wave modified by a non-zero plasma pressure.
 
 In the limit ``V_A\gg V_S``, which is appropriate to low-``\beta`` plasmas, the dispersion relation for the slow wave reduces to
+
 ```math
 \omega \simeq k\,V_S\,\cos\theta.
 ```
+
 This is actually the dispersion relation of a sound wave propagating along magnetic field-lines. Thus, in low-``\beta`` plasmas the slow wave is a sound wave modified by the presence of the magnetic field.
 
 In reality, waves can be mixed together with mode conversions. Also, notice that the classical wave theory is based on spatially homogeneous plasma assumption, which is rarely the case in nature such as the magnetosphere.
@@ -223,21 +291,12 @@ There are three complex equations. For applying real SVD procedure, we turn thes
 A_{ij} k_i = 0
 ```
 
-where ``\mathbf{k}`` is now expanded into ``(k_1, k_2, k_3, k_1, k_2, k_3)`` and the magnetic field spectral matrix A, which is obtained by performing short-time Fourier transforms (STFT) of the waveforms observed, can be written as[^complex_property]
+where ``\mathbf{k}`` is now expanded into ``(k_1, k_2, k_3, k_1, k_2, k_3)^T`` and the magnetic field spectral matrix A, which is obtained by performing short-time Fourier transforms (STFT) of the waveforms observed, can be written as[^complex_property]
 
 [^complex_property]: ``\Re(B_i B_j^\ast) = \Re(B_i^\ast B_j),\, \Im(B_i B_j^\ast) = -\Im(B_i^\ast B_j)``
 
 ```math
-A =
-\begin{pmatrix}
-a_{11} & a_{12} & a_{13} \\
-a_{21} & a_{22} & a_{23} \\
-a_{31} & a_{32} & a_{33} \\
-a_{41} & a_{42} & a_{43} \\
-a_{51} & a_{52} & a_{53} \\
-a_{61} & a_{62} & a_{63} \\
-\end{pmatrix}
-= \sum_{n=1}^{N}
+A = \sum_{n=1}^{N}
 \begin{pmatrix}
 \Re( |B_x^n|^2 ) & \Re( B_x^n B_y^{n\ast} )          & \Re( B_x^n B_z^{n\ast} ) \\
 \Re( B_x^n B_y^{n\ast} ) & \Re( |B_y^n|^2 )          & \Re( B_y^n B_z^{n\ast} ) \\
