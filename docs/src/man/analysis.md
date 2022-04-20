@@ -143,7 +143,7 @@ If a time scale separation exists within the magnetic field measurements, these 
 
 ![](../images/MFA_coordinate_magnetosphere.png)
 
-MFA coordinate system in the magnetosphere: the MFA directions ``\mathbf{\mu}``, ``\mathbf{\phi}`` and ``\mathbf{\nu}`` are showed together with the satellite position (red dot). The geomagnetic field line (blue line) is computed through T96 magnetosphere model [Tsyganenko 1995] during solar quiet conditions. [Regi+, 2016](https://doi.org/10.4401/ag-7067)
+MFA coordinate system in the magnetosphere: the MFA directions ``\mathbf{\mu}``, ``\mathbf{\phi}`` and ``\mathbf{\nu}`` are showed together with the satellite position (red dot). The geomagnetic field line (blue line) is computed through T96 magnetosphere model [Tsyganenko 1995] during solar quiet conditions. [Regi+, 2016][Regi2016]
 
 The MFA coordinates system, showed in the figure for an assigned position in the inner magnetosphere, is established by means of  the unit vectors defined as
 
@@ -182,7 +182,7 @@ It is clear that in order to obtain the time series ``\mathbf{B}^{MFA}(t)`` in t
 However in applying the MAVG method it is assumed that the characteristic fluctuation time ``T_0`` related to ``\mathbf{B}_0(t)`` is much greater than the period ``T_b`` of the perturbation ``\mathbf{b}(t)``. Moreover, ``T_0`` depends on both satellite motion and natural magnetic field variation (e.g. high velocity stream, coronal mass ejections, corotating interaction regions), and could be related to nonlinear and non stationary phenomena.
 Under these conditions the MAVG might be unsuitable in the rotation procedure, while a method such as the _empirical mode decomposition (EMD)_, is useful to identify nonlinear and nonstationary processes.
 
-This is discussed thoroughly in [Regi+, 2016](https://doi.org/10.4401/ag-7067).
+This is discussed thoroughly in [Regi+, 2016][Regi2016].
 
 ## ULF Wave Detection
 
@@ -541,3 +541,5 @@ where the corresponding p-value is determined using t table distribution for ``d
 ### Time-dependent correlation
 
 In real lift, the properties of the signals may change as a function of time: different correlation relation may appear at different time intervals. Thus we usually need to perform the correlation analysis for each subsequent interval to obtain a time-dependent correlation, similar to the concept of short time Fourier transform.
+
+[Regi2016]: https://doi.org/10.4401/ag-7067
