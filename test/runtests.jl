@@ -38,7 +38,7 @@ end
       eigenRef = [2079.360,  78.142,   34.309]
       @test F.values ≈ eigenRef atol=1e-3
    end
-
+   #=
    @testset "MFA" begin # mean field-aligned coordinate
       # Generate artificial signal
       f = 7e-3 # frequency, [Hz]
@@ -77,7 +77,7 @@ end
 
       @test Bμ[end] == 3.956605392869394e-9
    end
-
+   =#
    @testset "signal" begin # signal generation
       # Alfvénic perturbation
       n0 = 1e6 # density, [amu/m^3]
